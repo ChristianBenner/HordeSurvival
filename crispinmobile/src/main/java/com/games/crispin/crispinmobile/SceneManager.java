@@ -1,19 +1,31 @@
 package com.games.crispin.crispinmobile;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.opengl.GLSurfaceView;
 import android.util.Pair;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
+import static android.opengl.GLES20.GL_ALPHA;
+import static android.opengl.GLES20.GL_BLEND;
 import static android.opengl.GLES20.GL_COLOR_BUFFER_BIT;
+import static android.opengl.GLES20.GL_CULL_FACE;
+import static android.opengl.GLES20.GL_DEPTH_BUFFER_BIT;
+import static android.opengl.GLES20.GL_DEPTH_TEST;
+import static android.opengl.GLES20.GL_ONE_MINUS_SRC_ALPHA;
+import static android.opengl.GLES20.GL_SRC_ALPHA;
+import static android.opengl.GLES20.glBlendFunc;
 import static android.opengl.GLES20.glClear;
 import static android.opengl.GLES20.glClearColor;
+import static android.opengl.GLES20.glDisable;
+import static android.opengl.GLES20.glEnable;
 
 public class SceneManager implements GLSurfaceView.Renderer
 {
@@ -31,98 +43,89 @@ public class SceneManager implements GLSurfaceView.Renderer
         return sceneManagerInstance;
     }
 
-    class SceneConstructorPair
-    {
-        public Scene scene;
-        public Scene.Constructor constructor;
-
-        public SceneConstructorPair(Scene scene, Scene.Constructor constructor)
-        {
-            this.scene = scene;
-            this.constructor = constructor;
-        }
-    }
-
-    private ArrayList<Scene> scenes;
-    private ArrayList<SceneConstructorPair> scenesAndConstructors;
     private Scene currentScene;
+
+    // The default background colour of the graphics surface
+    private static final Colour DEFAULT_BACKGROUND_COLOUR =
+            new Colour(0.25f, 0.25f, 0.25f);
+
+    // The default state of depth being enabled
+    private static final boolean DEFAULT_DEPTH_ENABLED_STATE = true;
+
+    // The default state of alpha being enabled
+    private static final boolean DEFAULT_ALPHA_ENABLED_STATE = true;
+
+    // The default state of cull face being enabled
+    private static final boolean DEFAULT_CULL_FACE_ENABLED_STATE = true;
+
+    // The current background colour of the graphics surface
+    private Colour backgroundColour;
+
+    // Should the rendering take depth into consideration (not drawing order)
+    private boolean depthEnabled;
+
+    // Should the rendering support alpha colour channel
+    private boolean alphaEnabled;
+
+    // Should the rendering cull faces (faces that aren't in view)
+    private boolean cullFaceEnabled;
 
     private final Context CONTEXT;
 
     private SceneManager(Context context)
     {
         this.CONTEXT = context;
-        scenes = new ArrayList<>();
-        scenesAndConstructors = new ArrayList<>();
         currentScene = null;
+
+        setBackgroundColour(DEFAULT_BACKGROUND_COLOUR);
+        setDepthState(DEFAULT_DEPTH_ENABLED_STATE);
+        setAlphaState(DEFAULT_ALPHA_ENABLED_STATE);
+        setCullFaceState(DEFAULT_CULL_FACE_ENABLED_STATE);
     }
 
-    public void addScene(Scene scene, Scene.Constructor initFunc)
+    public void setBackgroundColour(Colour backgroundColour)
     {
-        // Add scene if it doesn't already exist
-        if(!scenes.contains(scene))
-        {
-            scenes.add(scene);
-
-            // Add constructor pair if constructor is provided
-            if(initFunc != null)
-            {
-                scenesAndConstructors.add(new SceneConstructorPair(scene, initFunc));
-            }
-        }
-
-        if(currentScene == null)
-        {
-            switchScene(scene);
-        }
+        this.backgroundColour = backgroundColour;
     }
 
-    public void addScene(Scene scene)
+    public Colour getBackgroundColour()
     {
-        addScene(scene, null);
+        return this.backgroundColour;
     }
 
-    // Returns true if the scene successfully loads or is loaded already
-    // todo: Make threaded
-    public boolean loadScene(Scene scene)
+    public void setDepthState(boolean depthState)
     {
-        if(scene == null)
-        {
-            // Construct the scene if it has a constructor
-            for(SceneConstructorPair sceneConstructorPair : scenesAndConstructors)
-            {
-                if(sceneConstructorPair.scene == scene)
-                {
-                    scene = sceneConstructorPair.constructor.init(CONTEXT);
-                    break;
-                }
-            }
-
-            return scene != null;
-        }
-        else
-        {
-            System.out.println("INFO: Scene is already loaded");
-            return true;
-        }
+        this.depthEnabled = depthState;
     }
 
-    private void switchScene(Scene scene)
+    public boolean isDepthEnabled()
     {
-        // If the scene is uninitialised, find its construct method and run it
-        if(scene == null)
-        {
-            for(SceneConstructorPair sceneConstructorPair : scenesAndConstructors)
-            {
-                if(sceneConstructorPair.scene == scene)
-                {
-                    scene = sceneConstructorPair.constructor.init(CONTEXT);
-                    break;
-                }
-            }
-        }
+        return this.depthEnabled;
+    }
 
-        currentScene = scene;
+    public void setAlphaState(boolean alphaState)
+    {
+        this.alphaEnabled = alphaState;
+    }
+
+    public boolean isAlphaEnabled() {
+        return this.alphaEnabled;
+    }
+
+    public void setCullFaceState(boolean cullFaceState)
+    {
+        this.cullFaceEnabled = cullFaceState;
+    }
+
+    public boolean isCullFaceEnabled() {
+        return cullFaceEnabled;
+    }
+
+    private HashMap<Integer, Scene.Constructor> sceneConstructorMap = new HashMap<Integer, Scene.Constructor>();
+
+    public void setScene(Scene.Constructor sceneConstructor)
+    {
+        currentScene = sceneConstructor.init(CONTEXT);
     }
 
     @Override
@@ -140,6 +143,50 @@ public class SceneManager implements GLSurfaceView.Renderer
     @Override
     public void onDrawFrame(GL10 gl)
     {
+        // Always clear the buffer bit
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        // If depth is enabled, clear the depth buffer bit and enable it in OpenGL ES. Otherwise
+        // disable in OpenGL ES
+        if(isDepthEnabled())
+        {
+            glClear(GL_DEPTH_BUFFER_BIT);
+            glEnable(GL_DEPTH_TEST);
+        }
+        else
+        {
+            glDisable(GL_DEPTH_TEST);
+        }
+
+        // If alpha is enabled, enable blend functionality in OpenGL ES and supply a blend function.
+        // Otherwise disable in OpenGL ES
+        if(isAlphaEnabled())
+        {
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        }
+        else
+        {
+            glDisable(GL_BLEND);
+        }
+
+        // If cull face is enabled, enable cull face in OpenGL ES, otherwise disable in OpenGL ES.
+        if(isCullFaceEnabled())
+        {
+            glEnable(GL_CULL_FACE);
+        }
+        else
+        {
+            glDisable(GL_CULL_FACE);
+        }
+
+        // Clear the graphics surface to the background colour
+        glClearColor(backgroundColour.getRed(),
+                backgroundColour.getGreen(),
+                backgroundColour.getBlue(),
+                backgroundColour.getAlpha());
+
+        // If the current scene exists, render it
         if(currentScene != null)
         {
             currentScene.render();

@@ -26,12 +26,88 @@ public class Crispin {
         return crispinInstance != null;
     }
 
+    public static void setBackgroundColour(Colour backgroundColour)
+    {
+        if(isInit())
+        {
+            crispinInstance.sceneManager.setBackgroundColour(backgroundColour);
+        }
+    }
+
+    public static Colour getBackgroundColour()
+    {
+        if(isInit())
+        {
+            return crispinInstance.sceneManager.getBackgroundColour();
+        }
+
+        return Colour.BLACK;
+    }
+
+    public static void setDepthState(boolean depthState)
+    {
+        if(isInit()) {
+            crispinInstance.sceneManager.setDepthState(depthState);
+        }
+    }
+
+    public static boolean isDepthEnabled()
+    {
+        if(isInit())
+        {
+            return crispinInstance.sceneManager.isDepthEnabled();
+        }
+
+        return false;
+    }
+
+    public static void setAlphaState(boolean alphaState)
+    {
+        if(isInit())
+        {
+            crispinInstance.sceneManager.setAlphaState(alphaState);
+        }
+    }
+
+    public static boolean isAlphaEnabled()
+    {
+        if(isInit())
+        {
+            return crispinInstance.sceneManager.isAlphaEnabled();
+        }
+
+        return false;
+    }
+
+    public static void setCullFaceState(boolean cullFaceState)
+    {
+        if(isInit())
+        {
+            crispinInstance.sceneManager.setCullFaceState(cullFaceState);
+        }
+    }
+
+    public static boolean isCullFaceEnabled()
+    {
+        if(isInit()) {
+            return crispinInstance.sceneManager.isCullFaceEnabled();
+        }
+
+        return false;
+    }
+
+    public static void setScene(Scene.Constructor sceneConstructor)
+    {
+        crispinInstance.sceneManager.setScene(sceneConstructor);
+    }
+
+/*
     // Add an un-initialised scene to the scene manager
     public static void addScene(Scene scene, Scene.Constructor initFunc)
     {
         if(isInit())
         {
-            crispinInstance.pAddScene(scene, initFunc);
+            crispinInstance.sceneManager.addScene(scene, initFunc);
         }
     }
 
@@ -40,7 +116,15 @@ public class Crispin {
     {
         if(isInit())
         {
-            crispinInstance.pAddScene(scene);
+            crispinInstance.sceneManager.addScene(scene);
+        }
+    }
+
+    public static void switchScene(Scene scene)
+    {
+        if(isInit())
+        {
+            crispinInstance.sceneManager.switchScene(scene);
         }
     }
 
@@ -49,11 +133,11 @@ public class Crispin {
     {
         if(isInit())
         {
-            return crispinInstance.pLoadScene(scene);
+            return crispinInstance.sceneManager.loadScene(scene);
         }
 
         return false;
-    }
+    }*/
 
     // The application context
     private final Context CONTEXT;
@@ -80,20 +164,5 @@ public class Crispin {
 
         // Set the application view to the graphics view
         appCompatActivity.setContentView(glSurfaceView);
-    }
-
-    private void pAddScene(Scene scene, Scene.Constructor initFunc)
-    {
-        sceneManager.addScene(scene, initFunc);
-    }
-
-    private void pAddScene(Scene scene)
-    {
-        sceneManager.addScene(scene);
-    }
-
-    private boolean pLoadScene(Scene scene)
-    {
-        return sceneManager.loadScene(scene);
     }
 }
