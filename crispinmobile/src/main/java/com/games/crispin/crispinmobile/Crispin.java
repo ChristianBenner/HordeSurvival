@@ -1,5 +1,6 @@
 package com.games.crispin.crispinmobile;
 
+import android.app.ActivityManager;
 import android.content.Context;
 import android.opengl.GLSurfaceView;
 import android.support.v7.app.AppCompatActivity;
@@ -17,13 +18,20 @@ public class Crispin {
 
     private static boolean isInit()
     {
-        if(crispinInstance == null)
+        // Initialised state
+        boolean initialised = false;
+
+        if(crispinInstance != null && crispinInstance.sceneManager != null)
+        {
+            initialised = true;
+        }
+        else
         {
             System.err.println("ERROR: Crispin has not been initialised, " +
                     "use Crispin.init(AppCompatActivity)");
         }
 
-        return crispinInstance != null;
+        return initialised;
     }
 
     public static void setBackgroundColour(Colour backgroundColour)
@@ -89,55 +97,41 @@ public class Crispin {
 
     public static boolean isCullFaceEnabled()
     {
-        if(isInit()) {
+        if(isInit())
+        {
             return crispinInstance.sceneManager.isCullFaceEnabled();
         }
 
         return false;
     }
 
+    public static int getSurfaceWidth()
+    {
+        if(isInit())
+        {
+            return crispinInstance.sceneManager.getSurfaceWidth();
+        }
+
+        return 0;
+    }
+
+    public static int getSurfaceHeight()
+    {
+        if(isInit())
+        {
+            return crispinInstance.sceneManager.getSurfaceHeight();
+        }
+
+        return 0;
+    }
+
     public static void setScene(Scene.Constructor sceneConstructor)
     {
-        crispinInstance.sceneManager.setScene(sceneConstructor);
-    }
-
-/*
-    // Add an un-initialised scene to the scene manager
-    public static void addScene(Scene scene, Scene.Constructor initFunc)
-    {
         if(isInit())
         {
-            crispinInstance.sceneManager.addScene(scene, initFunc);
+            crispinInstance.sceneManager.setScene(sceneConstructor);
         }
     }
-
-    // Add an initialised scene to the scene manager
-    public static void addScene(Scene scene)
-    {
-        if(isInit())
-        {
-            crispinInstance.sceneManager.addScene(scene);
-        }
-    }
-
-    public static void switchScene(Scene scene)
-    {
-        if(isInit())
-        {
-            crispinInstance.sceneManager.switchScene(scene);
-        }
-    }
-
-    // This will initialise a scene that has been previously provided a scene constructor
-    public static boolean loadScene(Scene scene)
-    {
-        if(isInit())
-        {
-            return crispinInstance.sceneManager.loadScene(scene);
-        }
-
-        return false;
-    }*/
 
     // The application context
     private final Context CONTEXT;
@@ -153,16 +147,34 @@ public class Crispin {
         // Get the application context
         this.CONTEXT = appCompatActivity.getApplicationContext();
 
-        // Use context to initialise a GLSurfaceView
-        glSurfaceView = new GLSurfaceView(CONTEXT);
+        if(isOpenGLESSupported())
+        {
+            // Use context to initialise a GLSurfaceView
+            glSurfaceView = new GLSurfaceView(CONTEXT);
 
-        // Get the scene manager instance
-        sceneManager = SceneManager.getInstance(CONTEXT);
+            // Tell the application to use OpenGL ES 2.0
+            glSurfaceView.setEGLContextClientVersion(2);
 
-        // Set the renderer to the scene manager
-        glSurfaceView.setRenderer(sceneManager);
+            // Get the scene manager instance
+            sceneManager = SceneManager.getInstance(CONTEXT);
 
-        // Set the application view to the graphics view
-        appCompatActivity.setContentView(glSurfaceView);
+            // Set the renderer to the scene manager
+            glSurfaceView.setRenderer(sceneManager);
+
+            // Set the application view to the graphics view
+            appCompatActivity.setContentView(glSurfaceView);
+        }
+        else
+        {
+            // Set the application view to the graphics view
+            appCompatActivity.setContentView(R.layout.activity_unsupported_device);
+        }
+    }
+
+    // Check if the OpenGL ES version 2.0 is supported
+    private boolean isOpenGLESSupported()
+    {
+        return ((ActivityManager) CONTEXT.getSystemService(Context.ACTIVITY_SERVICE))
+                .getDeviceConfigurationInfo().reqGlEsVersion >= 0x20000;
     }
 }
