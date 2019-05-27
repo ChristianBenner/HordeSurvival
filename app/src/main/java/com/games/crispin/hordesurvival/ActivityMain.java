@@ -11,10 +11,7 @@ public class ActivityMain extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Initialise the engine
-        Crispin.init(this);
-
-        // Set scene to test scene
-        Crispin.setScene(TestScene.TEST_SCENE_CONSTRUCTION);
+        // Initialise the engine with the first scene
+        Crispin.init(this, TestScene.TEST_SCENE_CONSTRUCTION);
     }
 }

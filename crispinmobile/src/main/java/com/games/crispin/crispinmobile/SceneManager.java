@@ -1,31 +1,37 @@
 package com.games.crispin.crispinmobile;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.opengl.GLSurfaceView;
-import android.util.Pair;
+import android.opengl.Matrix;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.FloatBuffer;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-import static android.opengl.GLES20.GL_ALPHA;
 import static android.opengl.GLES20.GL_BLEND;
 import static android.opengl.GLES20.GL_COLOR_BUFFER_BIT;
 import static android.opengl.GLES20.GL_CULL_FACE;
 import static android.opengl.GLES20.GL_DEPTH_BUFFER_BIT;
 import static android.opengl.GLES20.GL_DEPTH_TEST;
+import static android.opengl.GLES20.GL_FLOAT;
 import static android.opengl.GLES20.GL_ONE_MINUS_SRC_ALPHA;
 import static android.opengl.GLES20.GL_SRC_ALPHA;
+import static android.opengl.GLES20.GL_TRIANGLES;
 import static android.opengl.GLES20.glBlendFunc;
 import static android.opengl.GLES20.glClear;
 import static android.opengl.GLES20.glClearColor;
 import static android.opengl.GLES20.glDisable;
+import static android.opengl.GLES20.glDisableVertexAttribArray;
+import static android.opengl.GLES20.glDrawArrays;
 import static android.opengl.GLES20.glEnable;
+import static android.opengl.GLES20.glEnableVertexAttribArray;
+import static android.opengl.GLES20.glUniform4fv;
+import static android.opengl.GLES20.glUniformMatrix4fv;
+import static android.opengl.GLES20.glVertexAttribPointer;
+import static android.opengl.GLES20.glViewport;
 
 public class SceneManager implements GLSurfaceView.Renderer
 {
@@ -39,6 +45,10 @@ public class SceneManager implements GLSurfaceView.Renderer
         if(sceneManagerInstance == null)
         {
             sceneManagerInstance = new SceneManager(context);
+        }
+        else
+        {
+            sceneManagerInstance.updateContext(context);
         }
 
         return sceneManagerInstance;
@@ -55,10 +65,10 @@ public class SceneManager implements GLSurfaceView.Renderer
     private static final boolean DEFAULT_ALPHA_ENABLED_STATE = true;
 
     // The default state of cull face being enabled
-    private static final boolean DEFAULT_CULL_FACE_ENABLED_STATE = true;
+    private static final boolean DEFAULT_CULL_FACE_ENABLED_STATE = false;
 
     // The application context
-    private final Context CONTEXT;
+    private Context context;
 
     // The current scene
     private Scene currentScene;
@@ -84,12 +94,9 @@ public class SceneManager implements GLSurfaceView.Renderer
     // The height o the graphics surface
     private int surfaceHeight;
 
-    // Whether or not the application has been started
-    private boolean started;
-
     private SceneManager(Context context)
     {
-        this.CONTEXT = context;
+        this.context = context;
         currentScene = null;
         currentSceneConstructor = null;
         setBackgroundColour(DEFAULT_BACKGROUND_COLOUR);
@@ -98,7 +105,19 @@ public class SceneManager implements GLSurfaceView.Renderer
         setCullFaceState(DEFAULT_CULL_FACE_ENABLED_STATE);
         surfaceWidth = 0;
         surfaceHeight = 0;
-        started = false;
+    }
+
+    public void setStartScene(Scene.Constructor startSceneConstructor)
+    {
+        if(currentScene == null)
+        {
+            setScene(startSceneConstructor);
+        }
+    }
+
+    public void updateContext(Context context)
+    {
+        this.context = context;
     }
 
     public void setBackgroundColour(Colour backgroundColour)
@@ -152,11 +171,8 @@ public class SceneManager implements GLSurfaceView.Renderer
     public void setScene(Scene.Constructor sceneConstructor)
     {
         currentSceneConstructor = sceneConstructor;
-
-        if(started)
-        {
-            constructCurrentScene();
-        }
+        currentScene = null;
+        ShaderCache.removeAll();
     }
 
     private void constructCurrentScene()
@@ -164,7 +180,7 @@ public class SceneManager implements GLSurfaceView.Renderer
         if(currentSceneConstructor != null)
         {
             System.out.println("Constructing current scene");
-            currentScene = currentSceneConstructor.init(CONTEXT);
+            currentScene = currentSceneConstructor.init(context);
         }
         else
         {
@@ -176,7 +192,10 @@ public class SceneManager implements GLSurfaceView.Renderer
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config)
     {
-
+        if(currentScene != null)
+        {
+            ShaderCache.reinitialiseAll();
+        }
     }
 
     @Override
@@ -184,11 +203,13 @@ public class SceneManager implements GLSurfaceView.Renderer
     {
         this.surfaceWidth = width;
         this.surfaceHeight = height;
+
+        // Set the OpenGL viewport to fill the entire surface
+        glViewport(0, 0, width, height);
     }
 
     @Override
-    public void onDrawFrame(GL10 gl)
-    {
+    public void onDrawFrame(GL10 gl) {
         // Construct the current scene if it hasn't been already
         if(currentScene == null)
         {

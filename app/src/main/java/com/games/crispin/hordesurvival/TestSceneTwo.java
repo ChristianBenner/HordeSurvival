@@ -11,7 +11,7 @@ public class TestSceneTwo extends Scene {
 
     public TestSceneTwo(Context context)
     {
-
+        System.out.println("CONSTRUCTED TEST SCENE 2");
     }
 
     @Override

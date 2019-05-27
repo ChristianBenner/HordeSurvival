@@ -9,11 +9,14 @@ public class Crispin {
     // Store the instance of the engine
     private static Crispin crispinInstance = null;
 
-    public static void init(AppCompatActivity appCompatActivity) {
+    public static void init(AppCompatActivity appCompatActivity, Scene.Constructor startSceneConstructor) {
         // Prevent engine from being re-initialised
-        if (crispinInstance == null) {
-            crispinInstance = new Crispin(appCompatActivity);
-        }
+        //if (crispinInstance == null) {
+       //     crispinInstance = new Crispin(appCompatActivity);
+       // }
+
+        crispinInstance = new Crispin(appCompatActivity);
+        crispinInstance.sceneManager.setStartScene(startSceneConstructor);
     }
 
     private static boolean isInit()
