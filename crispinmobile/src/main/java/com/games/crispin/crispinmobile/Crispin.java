@@ -17,8 +17,17 @@ import android.support.v7.app.AppCompatActivity;
  */
 public class Crispin
 {
-    // Store the instance of the engine
+    // Store the static instance of the engine
     private static Crispin crispinInstance = null;
+
+    // Application context
+    private final Context CONTEXT;
+
+    // Graphics library surface view
+    private GLSurfaceView glSurfaceView;
+
+    // Scene manager
+    private SceneManager sceneManager;
 
     /**
      * Draws as much of the specified image as is currently available
@@ -41,35 +50,27 @@ public class Crispin
      * @see                         Scene.Constructor
      * @since                       1.0
      */
-    public static void init(AppCompatActivity appCompatActivity, Scene.Constructor startSceneConstructor)
+    public static void init(AppCompatActivity appCompatActivity,
+                            Scene.Constructor startSceneConstructor)
     {
         crispinInstance = new Crispin(appCompatActivity);
         crispinInstance.sceneManager.setStartScene(startSceneConstructor);
     }
 
     /**
-     * Checks whether or not the engine has been initialised. If the engine hasn't been initialised
-     * then an error message is printed.
+     * Flag to the SceneManager to set a new Scene
      *
-     * @return  <code>true</code> if engine is initialised, <code>false</code> otherwise
-     * @since   1.0
+     * @param sceneConstructor  The new scene to change to.
+     * @see                     SceneManager
+     * @see                     Scene.Constructor
+     * @since                   1.0
      */
-    private static boolean isInit()
+    public static void setScene(Scene.Constructor sceneConstructor)
     {
-        // Initialised state
-        boolean initialised = false;
-
-        if(crispinInstance != null && crispinInstance.sceneManager != null)
+        if(isInit())
         {
-            initialised = true;
+            crispinInstance.sceneManager.setScene(sceneConstructor);
         }
-        else
-        {
-            System.err.println("ERROR: Crispin has not been initialised, " +
-                    "use Crispin.init(AppCompatActivity)");
-        }
-
-        return initialised;
     }
 
     /**
@@ -105,13 +106,14 @@ public class Crispin
     }
 
     /**
-     * Set the depth state boolean. Setting to <code>true</code> allows depth processing - essential
-     * to most 3D graphical applications. Depth processing means that the Z buffer will be taken
-     * into consideration when drawing objects in-front or behind each other. If
-     * <code>false</code>, the objects would be rendered on-top of each-other in the order of their
-     * render calls (suitable for 2D graphical applications).
+     * Set the depth state boolean.
      *
-     * @param depthState    The desired background colour.
+     * @param depthState    The new depth state. Setting to <code>true</code> allows depth
+     *                      processing - a feature essential to 3D application that means that the Z
+     *                      buffer will be taken into consideration when drawing objects in-front or
+     *                      behind each other. If <code>false</code>, the objects would be rendered
+     *                      on-top of each-other in the order of their render calls (suitable for 2D
+     *                      graphical applications).
      * @since               1.0
      */
     public static void setDepthState(boolean depthState)
@@ -137,6 +139,15 @@ public class Crispin
         return false;
     }
 
+    /**
+     * Set the alpha state boolean.
+     *
+     * @param alphaState    The new alpha state. Setting to <code>true</code> allows alpha blending.
+     *                      Alpha blending is essential when creating graphics with transparent
+     *                      effects. If set to <code>false</code>, objects will have no
+     *                      transparency.
+     * @since               1.0
+     */
     public static void setAlphaState(boolean alphaState)
     {
         if(isInit())
@@ -145,6 +156,12 @@ public class Crispin
         }
     }
 
+    /**
+     * Get the alpha state
+     *
+     * @return  <code>true</code> if alpha is enabled, otherwise <code>false</code>
+     * @since   1.0
+     */
     public static boolean isAlphaEnabled()
     {
         if(isInit())
@@ -155,6 +172,17 @@ public class Crispin
         return false;
     }
 
+    /**
+     * Set the cull face state boolean.
+     *
+     * @param cullFaceState The new cull face state. Setting to <code>true</code> allows face
+     *                      culling. This culls the faces of any vertices being drawn
+     *                      anti-clockwise. This makes for more efficient rendering in 3D because
+     *                      it cuts out the need to render any faces that wouldn't be visible. If
+     *                      set to <code>false</code>, faces won't be culled.
+     *                      transparency.
+     * @since               1.0
+     */
     public static void setCullFaceState(boolean cullFaceState)
     {
         if(isInit())
@@ -163,6 +191,12 @@ public class Crispin
         }
     }
 
+    /**
+     * Get the cull face state
+     *
+     * @return  <code>true</code> if face culling is enabled, otherwise <code>false</code>
+     * @since   1.0
+     */
     public static boolean isCullFaceEnabled()
     {
         if(isInit())
@@ -173,6 +207,12 @@ public class Crispin
         return false;
     }
 
+    /**
+     * Get the graphics surface width
+     *
+     * @return  An integer of the graphics surface width in pixels
+     * @since               1.0
+     */
     public static int getSurfaceWidth()
     {
         if(isInit())
@@ -183,6 +223,12 @@ public class Crispin
         return 0;
     }
 
+    /**
+     * Get the graphics surface height
+     *
+     * @return  An integer of the graphics surface height in pixels
+     * @since               1.0
+     */
     public static int getSurfaceHeight()
     {
         if(isInit())
@@ -193,23 +239,48 @@ public class Crispin
         return 0;
     }
 
-    public static void setScene(Scene.Constructor sceneConstructor)
+    /**
+     * Checks whether or not the engine has been initialised. If the engine hasn't been initialised
+     * then an error message is printed.
+     *
+     * @return  <code>true</code> if engine is initialised, <code>false</code> otherwise
+     * @since   1.0
+     */
+    private static boolean isInit()
     {
-        if(isInit())
+        // Initialised state
+        boolean initialised = false;
+
+        if(crispinInstance != null && crispinInstance.sceneManager != null)
         {
-            crispinInstance.sceneManager.setScene(sceneConstructor);
+            initialised = true;
         }
+        else
+        {
+            System.err.println("ERROR: Crispin has not been initialised, " +
+                    "use Crispin.init(AppCompatActivity)");
+        }
+
+        return initialised;
     }
 
-    // The application context
-    private final Context CONTEXT;
-
-    // The GL surface view
-    private GLSurfaceView glSurfaceView;
-
-    // The scene manager
-    private SceneManager sceneManager;
-
+    /**
+     * Constructs the Crispin engine object. The object handles the major components to the
+     * engine such as the graphics surface and the scene manager. Constructor is private because
+     * only one should exist at one time. Construction of the object is made strict through a static
+     * initialisation function. If the engine fails to start correctly it will use Android UI to
+     * inform the application user of errors.
+     *
+     * @param appCompatActivity Reference to the application that called the function. It is used so
+     *                          that the engine can take control of what is shown. The engine also
+     *                          uses it to retrieve the application context and pass it down to
+     *                          other components or scenes (this can be useful when loading in a
+     *                          texture file for example).
+     * @see                     AppCompatActivity
+     * @see                     Scene.Constructor
+     * @see                     #init(AppCompatActivity, Scene.Constructor)
+     * @since                   1.0
+     */
     private Crispin(AppCompatActivity appCompatActivity)
     {
         // Get the application context
@@ -238,8 +309,14 @@ public class Crispin
             appCompatActivity.setContentView(R.layout.activity_unsupported_device);
         }
     }
-
-    // Check if the OpenGL ES version 2.0 is supported
+    
+    /**
+     * Checks if the minimum OpenGL ES version (version 2.0), is supported. The check is performed
+     * by receiving configuration information associated to the devices hardware.
+     *
+     * @return  <code>true</code> if engine is initialised, <code>false</code> otherwise
+     * @since   1.0
+     */
     private boolean isOpenGLESSupported()
     {
         return ((ActivityManager) CONTEXT.getSystemService(Context.ACTIVITY_SERVICE))

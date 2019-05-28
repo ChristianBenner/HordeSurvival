@@ -168,6 +168,13 @@ public class SceneManager implements GLSurfaceView.Renderer
         return this.surfaceHeight;
     }
 
+    /**
+     * This will replace the current scene being
+     *      * rendered and updated to one associated to the specified constructor lambda. Once the current
+     *      * scene has finished updating and rendering, the associated scene will be constructed and then
+     *      * set
+     * @param sceneConstructor
+     */
     public void setScene(Scene.Constructor sceneConstructor)
     {
         currentSceneConstructor = sceneConstructor;
