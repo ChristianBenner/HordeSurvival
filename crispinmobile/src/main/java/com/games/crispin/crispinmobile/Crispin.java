@@ -309,7 +309,7 @@ public class Crispin
             appCompatActivity.setContentView(R.layout.activity_unsupported_device);
         }
     }
-    
+
     /**
      * Checks if the minimum OpenGL ES version (version 2.0), is supported. The check is performed
      * by receiving configuration information associated to the devices hardware.
