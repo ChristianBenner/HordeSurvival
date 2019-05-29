@@ -18,11 +18,18 @@ import static android.opengl.GLES20.glShaderSource;
 import static android.opengl.GLES20.glUseProgram;
 
 public class GLSLShader {
+    private static final String TAG = "GLSLShader";
+
     private int programId;
     private String vertexShaderCode;
     private String fragmentShaderCode;
 
-    public GLSLShader(String vertexShaderCode, String fragmentShaderCode) throws Exception {
+    // List of different attribute and uniform handles that can appear in the shaders
+    protected int positionAttributeHandle;
+    protected int colourUniformHandle;
+    protected int matrixUniformHandle;
+
+    public GLSLShader(String vertexShaderCode, String fragmentShaderCode){
         this.vertexShaderCode = vertexShaderCode;
         this.fragmentShaderCode = fragmentShaderCode;
         programId = createProgram(vertexShaderCode, fragmentShaderCode);
@@ -34,9 +41,28 @@ public class GLSLShader {
         // will re-create the shader's OpenGL ES memory parts. This means that the user doesn't need
         // to worry about this and can just create new shader's in the constructor of their scenes.
         ShaderCache.registerShader(this);
+
+        positionAttributeHandle = -1;
+        colourUniformHandle = -1;
+        matrixUniformHandle = -1;
     }
 
-    public void reinit() throws Exception
+    public int getPositionAttributeHandle()
+    {
+        return positionAttributeHandle;
+    }
+
+    public int getColourUniformHandle()
+    {
+        return colourUniformHandle;
+    }
+
+    public int getMatrixUniformHandle()
+    {
+        return matrixUniformHandle;
+    }
+
+    public void reinit()
     {
         programId = createProgram(vertexShaderCode, fragmentShaderCode);
     }
@@ -61,7 +87,7 @@ public class GLSLShader {
         glUseProgram(0);
     }
 
-    private static int createProgram(String vertexShaderCode, String fragmentShaderCode) throws Exception
+    private static int createProgram(String vertexShaderCode, String fragmentShaderCode)
     {
         // Create a vertex shader
         final int VERTEX_SHADER_ID = loadShader(GL_VERTEX_SHADER, vertexShaderCode);
@@ -74,7 +100,7 @@ public class GLSLShader {
 
         // Throw exception on failure
         if (PROGRAM_ID == 0) {
-            throw new Exception("OpenGLES failed to generate a program object");
+            Log.error(TAG, "OpenGLES failed to generate a program object");
         }
 
         // Attach the vertex and fragment shaders to the program
@@ -101,7 +127,7 @@ public class GLSLShader {
         }
     }
 
-    private static int loadShader(int type, String shaderCode) throws Exception
+    private static int loadShader(int type, String shaderCode)
     {
         // Create a shader of the specified type and get the ID
         final int SHADER = glCreateShader(type);
@@ -109,7 +135,7 @@ public class GLSLShader {
         // Check if the shader ID is invalid
         if (SHADER == 0) {
             // Failed to generate shader object
-            throw new Exception("OpenGLES failed to generate " +
+            Log.error(TAG, "OpenGLES failed to generate " +
                     typeToString(type) +
                     " shader object");
         }
@@ -123,7 +149,7 @@ public class GLSLShader {
         // Check compilation
         if(!isCompiled(SHADER))
         {
-            throw new Exception("OpenGLES failed to compile " +
+            Log.error(TAG, "OpenGLES failed to compile " +
                     typeToString(type) +
                     "shader program");
         }

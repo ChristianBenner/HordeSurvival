@@ -2,36 +2,27 @@ package com.games.crispin.crispinmobile;
 
 public class Material
 {
-    private boolean lightingEnabled;
+    public static Material DEFAULT_MATERIAL = new Material();
+
     //texture
     //normal map texture
-    private GLSLShader shader;
 
-    public Material(boolean lightingEnabled)
+    public Material()
     {
-        this.lightingEnabled = lightingEnabled;
-        createShader();
     }
 
     public boolean isLightingEnabled()
     {
-        return this.lightingEnabled;
+        return false;
     }
 
-    // When changing any material properties, determine what shader needs to be associated to the
-    // material. Check if the shader with the correct properties exists in the ShaderCache already
-    public void createShader()
+    public boolean hasTexture()
     {
-        // Properties required
+        return false;
     }
 
-    public GLSLShader getShader()
+    public boolean hasNormalMap()
     {
-        return this.shader;
-    }
-
-    public void enableShader()
-    {
-        // Enable the shader, passing the objects
+        return false;
     }
 }

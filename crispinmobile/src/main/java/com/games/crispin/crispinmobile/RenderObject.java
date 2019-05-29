@@ -17,6 +17,8 @@ import static android.opengl.GLES20.glVertexAttribPointer;
 
 public class RenderObject
 {
+    private static final String TAG = "RenderObject";
+
     static final int ELEMENTS_PER_VERTEX = 3;
     static final int BYTES_PER_FLOAT = 4;
     static final int VERTEX_STRIDE = ELEMENTS_PER_VERTEX * BYTES_PER_FLOAT;
@@ -86,7 +88,10 @@ public class RenderObject
 
     private Material material;
 
-    public RenderObject()
+    private GLSLShader shader;
+    private boolean hasCustomShader;
+
+    public RenderObject(Material material)
     {
         // Initialise a vertex byte buffer for the shape float array
         final ByteBuffer VERTICES_BYTE_BUFFER = ByteBuffer.allocateDirect(
@@ -104,7 +109,58 @@ public class RenderObject
         // Set buffer to read the first co-ordinate
         VERTEX_BUFFER.position(0);
 
-        material = new Material(false);
+        setMaterial(material);
+        hasCustomShader = false;
+    }
+
+    public RenderObject()
+    {
+        this(Material.DEFAULT_MATERIAL);
+    }
+
+    public void setMaterial(Material material)
+    {
+        this.material = material;
+        updateShader();
+    }
+
+    private void updateShader()
+    {
+        if(!hasCustomShader)
+        {
+            // Determine the best shader to used depending on the material
+            if(material.isLightingEnabled() && material.hasTexture() && material.hasNormalMap())
+            {
+                // Use lighting, texture/normal map supporting shader
+            }
+            else if(material.isLightingEnabled() && material.hasTexture())
+            {
+                // Use lighting, texture supporting shader
+            }
+            else if(material.isLightingEnabled())
+            {
+                // Use lighting supporting shader
+            }
+            else
+            {
+                // Just use a colour shader
+                shader = new ColourShader();
+            }
+        }
+    }
+
+    public void useCustomShader(GLSLShader customShader)
+    {
+        if(customShader != null)
+        {
+            hasCustomShader = true;
+            shader = customShader;
+        }
+        else
+        {
+            Log.error(TAG, "Custom shader supplied is null");
+        }
+
     }
 
     public Material getMaterial()
@@ -140,9 +196,11 @@ public class RenderObject
         Matrix.rotateM(modelMatrix, 0, angle, rotationX, rotationY, rotationZ);
     }
 
-    public void draw(int matrixUniformHandle, int positionAttributeHandle, int colourUniformHandle, Camera camera)
+    public void draw(Camera camera)
     {
         updateModelMatrix();
+
+        shader.enableIt();
 
         float[] modelViewMatrix = new float[16];
         Matrix.multiplyMM(modelViewMatrix, 0, camera.getViewMatrix(), 0, modelMatrix, 0);
@@ -150,18 +208,20 @@ public class RenderObject
         float[] modelViewProjectionMatrix = new float[16];
         Matrix.multiplyMM(modelViewProjectionMatrix, 0, camera.getFustrumMatrix(), 0, modelViewMatrix, 0);
 
-        glUniformMatrix4fv(matrixUniformHandle, 1, false, modelViewProjectionMatrix, 0);
+        glUniformMatrix4fv(shader.getMatrixUniformHandle(), 1, false, modelViewProjectionMatrix, 0);
 
-        glEnableVertexAttribArray(positionAttributeHandle);
-        glVertexAttribPointer(positionAttributeHandle,
+        glEnableVertexAttribArray(shader.getPositionAttributeHandle());
+        glVertexAttribPointer(shader.getPositionAttributeHandle(),
                 ELEMENTS_PER_VERTEX,
                 GL_FLOAT,
                 false,
                 VERTEX_STRIDE,
                 VERTEX_BUFFER);
 
-        glUniform4fv(colourUniformHandle, 1, COLOUR, 0);
+        glUniform4fv(shader.getColourUniformHandle(), 1, COLOUR, 0);
         glDrawArrays(GL_TRIANGLES, 0, VERTEX_COUNT);
-        glDisableVertexAttribArray(positionAttributeHandle);
+        glDisableVertexAttribArray(shader.getPositionAttributeHandle());
+
+        shader.disableIt();
     }
 }

@@ -54,26 +54,21 @@ public class TestScene extends Scene {
     static Scene.Constructor TEST_SCENE_CONSTRUCTION = (context) -> new TestScene(context);
 
     private RenderObject cube;
-    private ColourShader colourShader;
     private Camera camera;
+    private TimeColourShader customShader;
 
     public TestScene(Context context)
     {
         // Set the background colour to yellow
         Crispin.setBackgroundColour(Colour.YELLOW);
 
+        customShader = new TimeColourShader();
+
+        // Create a cube object
         cube = new RenderObject();
+        cube.useCustomShader(customShader);
+
         camera = new Camera();
-
-        try
-        {
-            colourShader = new ColourShader();
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-
     }
 
     @Override
@@ -81,14 +76,17 @@ public class TestScene extends Scene {
 
     }
 
+    float time = 0.0f;
     @Override
     public void render()
     {
-        colourShader.enableIt();
+        customShader.setTime(time);
+        time += 0.1f;
+
         camera.setPosition(new Geometry.Point(0.0f, 0.0f, 1.0f));
         cube.setScale(0.4f, 0.4f, 0.4f);
         cube.setPosition(new Geometry.Point(0.0f, 0.0f, -2.0f));
         cube.setRotation(45.0f, 1.0f, 1.0f, 0.0f);
-        cube.draw(colourShader.getMatrixHandle(), colourShader.getPosHandle(), colourShader.getColourHandle(), camera);
+        cube.draw(camera);
     }
 }
