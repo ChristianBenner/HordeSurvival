@@ -30,11 +30,8 @@ public class Crispin
     private SceneManager sceneManager;
 
     /**
-     * Draws as much of the specified image as is currently available
-     * with its northwest corner at the specified coordinate (x, y).
-     * This method will return immediately in all cases, even if the
-     * entire image has not yet been scaled, dithered and converted
-     * for the current output device.
+     * Initialises the Crispin engine. Creates a graphical surface and components that enables the
+     * engine users to start an application that utilises GPU hardware.
      *
      * @param appCompatActivity     Reference to the application that called the function. It is
      *                              used so that the engine can take control of what is shown. The
