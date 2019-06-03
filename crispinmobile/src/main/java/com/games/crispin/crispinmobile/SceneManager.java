@@ -312,7 +312,7 @@ public class SceneManager implements GLSurfaceView.Renderer
 
     /**
      * The method is overridden from <code>GLSurfaceView.Renderer</code>, it is called when the
-     * surface gets created. At this point OpenGL ES memory has been destroyed so its a good time to
+     * surface gets created. At this point3D OpenGL ES memory has been destroyed so its a good time to
      * re-initialise components that depend on this memory.
      *
      * @param gl        A reference to the GL10 library. This is a legacy parameter that no longer
@@ -334,7 +334,7 @@ public class SceneManager implements GLSurfaceView.Renderer
 
     /**
      * The method is overridden from <code>GLSurfaceView.Renderer</code>, it is called when the
-     * surface changes. From this point, changes in surface width and height can be detected and
+     * surface changes. From this point3D, changes in surface width and height can be detected and
      * the graphics surface can be resized so that it fits the new dimensions.
      *
      * @param gl        A reference to the GL10 library. This is a legacy parameter that no longer
@@ -356,7 +356,7 @@ public class SceneManager implements GLSurfaceView.Renderer
 
     /**
      * The method is overridden from <code>GLSurfaceView.Renderer</code>, it is called when then
-     * surface is ready to be rendered (which can be many times per second). From this point,
+     * surface is ready to be rendered (which can be many times per second). From this point3D,
      * rendering and logic update mechanics have be implemented so that graphical output can be
      * processed.
      *
@@ -424,7 +424,7 @@ public class SceneManager implements GLSurfaceView.Renderer
 
     /**
      * The constructor for the scene manager sets the member variables for later usage. The
-     * application context is first supplied to the scene manager from this point.
+     * application context is first supplied to the scene manager from this point3D.
      *
      * @param context   Reference to the application context
      * @see             Context

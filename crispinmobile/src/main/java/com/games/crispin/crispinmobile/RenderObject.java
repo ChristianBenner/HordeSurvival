@@ -78,7 +78,7 @@ public class RenderObject
     private float scaleX;
     private float scaleY;
     private float scaleZ;
-    private Geometry.Point position;
+    private Point3D position;
     private float angle;
     private float rotationX;
     private float rotationY;
@@ -175,7 +175,7 @@ public class RenderObject
         this.scaleZ = z;
     }
 
-    public void setPosition(Geometry.Point position)
+    public void setPosition(Point3D position)
     {
         this.position = position;
     }
@@ -196,7 +196,7 @@ public class RenderObject
         Matrix.rotateM(modelMatrix, 0, angle, rotationX, rotationY, rotationZ);
     }
 
-    public void draw(Camera camera)
+    public void draw(Camera3D camera)
     {
         updateModelMatrix();
 
@@ -206,7 +206,7 @@ public class RenderObject
         Matrix.multiplyMM(modelViewMatrix, 0, camera.getViewMatrix(), 0, modelMatrix, 0);
 
         float[] modelViewProjectionMatrix = new float[16];
-        Matrix.multiplyMM(modelViewProjectionMatrix, 0, camera.getFustrumMatrix(), 0, modelViewMatrix, 0);
+        Matrix.multiplyMM(modelViewProjectionMatrix, 0, camera.getPerspectiveMatrix(), 0, modelViewMatrix, 0);
 
         glUniformMatrix4fv(shader.getMatrixUniformHandle(), 1, false, modelViewProjectionMatrix, 0);
 
