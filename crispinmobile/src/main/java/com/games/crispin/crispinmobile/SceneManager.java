@@ -373,6 +373,8 @@ public class SceneManager implements GLSurfaceView.Renderer
             constructCurrentScene();
         }
 
+        currentScene.update(1.0f);
+
         // Always clear the buffer bit
         glClear(GL_COLOR_BUFFER_BIT);
 

@@ -5,6 +5,7 @@ import android.content.Context;
 import com.games.crispin.crispinmobile.Camera3D;
 import com.games.crispin.crispinmobile.Colour;
 import com.games.crispin.crispinmobile.Crispin;
+import com.games.crispin.crispinmobile.Cube;
 import com.games.crispin.crispinmobile.Point3D;
 import com.games.crispin.crispinmobile.RenderObject;
 import com.games.crispin.crispinmobile.Scene;
@@ -17,7 +18,7 @@ import static android.opengl.GLES20.glVertexAttribPointer;
 public class TestScene extends Scene {
     static Scene.Constructor TEST_SCENE_CONSTRUCTION = (context) -> new TestScene(context);
 
-    private RenderObject cube;
+    private Cube cube;
     private Camera3D camera;
     private TimeColourShader customShader;
 
@@ -26,31 +27,35 @@ public class TestScene extends Scene {
         // Set the background colour to yellow
         Crispin.setBackgroundColour(Colour.YELLOW);
 
+        // Create the camera
+        camera = new Camera3D();
+        camera.setPosition(new Point3D(0.0f, 0.0f, 4.0f));
+
+        // Create the custom shader object
         customShader = new TimeColourShader();
 
         // Create a cube object
-        cube = new RenderObject();
+        cube = new Cube();
+
+        // Apply the custom shader to the cube
         cube.useCustomShader(customShader);
-
-        camera = new Camera3D();
     }
 
+    float angle = 0.0f;
     @Override
-    public void update(float deltaTime) {
+    public void update(float deltaTime)
+    {
+        // Update the custom shader
+        customShader.update(deltaTime);
 
+        angle += 1f;
+        cube.setRotation(angle, 1.0f, 1.0f, 0.0f);
     }
 
-    float time = 0.0f;
     @Override
     public void render()
     {
-        customShader.setTime(time);
-        time += 0.1f;
-
-        camera.setPosition(new Point3D(0.0f, 0.0f, 1.0f));
-        cube.setScale(0.4f, 0.4f, 0.4f);
-        cube.setPosition(new Point3D(0.0f, 0.0f, -2.0f));
-        cube.setRotation(45.0f, 1.0f, 1.0f, 0.0f);
+        // Draw the cube
         cube.draw(camera);
     }
 }

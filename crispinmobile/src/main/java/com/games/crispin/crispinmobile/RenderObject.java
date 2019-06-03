@@ -23,53 +23,6 @@ public class RenderObject
     static final int BYTES_PER_FLOAT = 4;
     static final int VERTEX_STRIDE = ELEMENTS_PER_VERTEX * BYTES_PER_FLOAT;
 
-    static final float TRIANGLE_COORDS[] =
-            {
-                    -1.0f, -1.0f, -1.0f,
-                    -1.0f, -1.0f, 1.0f,
-                    -1.0f, 1.0f, 1.0f,
-                    1.0f, 1.0f, -1.0f,
-                    -1.0f, -1.0f, -1.0f,
-                    -1.0f, 1.0f, -1.0f,
-
-                    1.0f, -1.0f, 1.0f,
-                    -1.0f, -1.0f, -1.0f,
-                    1.0f, -1.0f, -1.0f,
-                    1.0f, 1.0f, -1.0f,
-                    1.0f, -1.0f, -1.0f,
-                    -1.0f, -1.0f, -1.0f,
-
-                    -1.0f, -1.0f, -1.0f,
-                    -1.0f, 1.0f, 1.0f,
-                    -1.0f, 1.0f, -1.0f,
-                    1.0f, -1.0f, 1.0f,
-                    -1.0f, -1.0f, 1.0f,
-                    -1.0f, -1.0f, -1.0f,
-
-                    -1.0f, 1.0f, 1.0f,
-                    -1.0f, -1.0f, 1.0f,
-                    1.0f, -1.0f, 1.0f,
-                    1.0f, 1.0f, 1.0f,
-                    1.0f, -1.0f, -1.0f,
-                    1.0f, 1.0f, -1.0f,
-
-                    1.0f, -1.0f, -1.0f,
-                    1.0f, 1.0f, 1.0f,
-                    1.0f, -1.0f, 1.0f,
-                    1.0f, 1.0f, 1.0f,
-                    1.0f, 1.0f, -1.0f,
-                    -1.0f, 1.0f, -1.0f,
-
-                    1.0f, 1.0f, 1.0f,
-                    -1.0f, 1.0f, -1.0f,
-                    -1.0f, 1.0f, 1.0f,
-                    1.0f, 1.0f, 1.0f,
-                    -1.0f, 1.0f, 1.0f,
-                    1.0f, -1.0f, 1.0f
-            };
-
-    static final int VERTEX_COUNT = TRIANGLE_COORDS.length / ELEMENTS_PER_VERTEX;
-
     static final float COLOUR[] = {0.64f, 0.77f, 0.22f, 1.0f};
 
     // Float buffer that holds all the triangle co-ordinate data
@@ -91,11 +44,13 @@ public class RenderObject
     private GLSLShader shader;
     private boolean hasCustomShader;
 
-    public RenderObject(Material material)
+    final int VERTEX_COUNT;
+
+    protected RenderObject(float[] vertexData, Material material)
     {
         // Initialise a vertex byte buffer for the shape float array
         final ByteBuffer VERTICES_BYTE_BUFFER = ByteBuffer.allocateDirect(
-                TRIANGLE_COORDS.length * BYTES_PER_FLOAT);
+                vertexData.length * BYTES_PER_FLOAT);
 
         // Use the devices hardware's native byte order
         VERTICES_BYTE_BUFFER.order(ByteOrder.nativeOrder());
@@ -104,18 +59,31 @@ public class RenderObject
         VERTEX_BUFFER = VERTICES_BYTE_BUFFER.asFloatBuffer();
 
         // Add the array of floats to the buffer
-        VERTEX_BUFFER.put(TRIANGLE_COORDS);
+        VERTEX_BUFFER.put(vertexData);
 
         // Set buffer to read the first co-ordinate
         VERTEX_BUFFER.position(0);
 
+        // Calculate the number of vertices in the data
+        VERTEX_COUNT = vertexData.length / ELEMENTS_PER_VERTEX;
+
         setMaterial(material);
+
+        position = new Point3D(0.0f, 0.0f, 0.0f);
+        rotationX = 0.0f;
+        rotationY = 0.0f;
+        rotationZ = 0.0f;
+        angle = 0.0f;
+        scaleX = 1.0f;
+        scaleY = 1.0f;
+        scaleZ = 1.0f;
+
         hasCustomShader = false;
     }
 
-    public RenderObject()
+    protected RenderObject(float[] vertexData)
     {
-        this(Material.DEFAULT_MATERIAL);
+        this(vertexData, Material.DEFAULT_MATERIAL);
     }
 
     public void setMaterial(Material material)

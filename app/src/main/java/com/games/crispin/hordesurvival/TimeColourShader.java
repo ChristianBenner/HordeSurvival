@@ -23,10 +23,13 @@ public class TimeColourShader extends GLSLShader
                     "void main() {" +
                     "vec4 colour = uColour;" +
                     "colour.r = colour.r * sin(uTime);" +
+                    "colour.g = colour.g * cos(uTime);" +
                     "gl_FragColor = colour;" +
                     "}";
 
     private final int TIME_UNIFORM_HANDLE;
+
+    private float time;
 
     public TimeColourShader()
     {
@@ -35,12 +38,20 @@ public class TimeColourShader extends GLSLShader
         colourUniformHandle = getUniform("uColour");
         matrixUniformHandle = getUniform("uMatrix");
         TIME_UNIFORM_HANDLE = getUniform("uTime");
+
+        time = 0.0f;
     }
 
-    public void setTime(float time)
+    private void setTime(float time)
     {
         enableIt();
         glUniform1f(TIME_UNIFORM_HANDLE, time);
         disableIt();
+    }
+
+    public void update(float deltaTime)
+    {
+        time += 0.1f * deltaTime;
+        setTime(time);
     }
 }
