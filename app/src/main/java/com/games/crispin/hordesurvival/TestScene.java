@@ -18,8 +18,12 @@ public class TestScene extends Scene {
     static Scene.Constructor TEST_SCENE_CONSTRUCTION = (context) -> new TestScene(context);
 
     private Cube cube;
+    private Cube cubeTwo;
+    private Cube cubeThree;
+
     private Camera3D camera;
     private TimeColourShader customShader;
+    private float angle = 0.0f;
 
     public TestScene(Context context)
     {
@@ -28,19 +32,27 @@ public class TestScene extends Scene {
 
         // Create the camera
         camera = new Camera3D();
-        camera.setPosition(new Point3D(0.0f, 0.0f, 4.0f));
+        camera.setPosition(new Point3D(0.0f, 0.0f, 7.0f));
 
         // Create the custom shader object
         customShader = new TimeColourShader();
 
         // Create a cube object
         cube = new Cube();
+        cube.setPosition(new Point3D(0.0f, -2.0f, 0.0f));
+
+        cubeTwo = new Cube();
+        cubeTwo.setPosition(new Point3D(-2.0f, 2.0f, 0.0f));
+
+        cubeThree = new Cube();
+        cubeThree.setPosition(new Point3D(2.0f, 2.0f, 0.0f));
 
         // Apply the custom shader to the cube
         cube.useCustomShader(customShader);
+        cubeTwo.useCustomShader(customShader);
+        cubeThree.useCustomShader(customShader);
     }
 
-    float angle = 0.0f;
     @Override
     public void update(float deltaTime)
     {
@@ -49,6 +61,8 @@ public class TestScene extends Scene {
 
         angle += 1f;
         cube.setRotation(angle, 1.0f, 1.0f, 0.0f);
+        cubeTwo.setRotation(angle, 0.0f, 1.0f, 1.0f);
+        cubeThree.setRotation(angle, 1.0f, 0.0f, 1.0f);
     }
 
     @Override
@@ -56,5 +70,7 @@ public class TestScene extends Scene {
     {
         // Draw the cube
         cube.draw(camera);
+        cubeThree.draw(camera);
+        cubeTwo.draw(camera);
     }
 }

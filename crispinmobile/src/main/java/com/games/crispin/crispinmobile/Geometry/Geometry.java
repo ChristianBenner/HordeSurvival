@@ -82,52 +82,9 @@ public class Geometry {
         }
     }
 
-    public static class Vector {
-        public final float x, y, z;
 
-        public Vector(float x, float y, float z) {
-            this.x = x;
-            this.y = y;
-            this.z = z;
-        }
-
-        public float length(){
-            return (float)Math.sqrt(
-                    x * x
-                            + y * y
-                            + z*z);
-        }
-
-        // http://en.wikipedia.org/wiki/Cross_product
-        public Vector crossProduct(Vector other) {
-            return new Vector(
-                    (y * other.z) - (z * other.y),
-                    (z * other.x) - (x * other.z),
-                    (x * other.y) - (y * other.x));
-        }
-
-        public float dotProduct(Vector other)
-        {
-            return (x * other.x) + (y * other.y) + (z * other.z);
-        }
-
-        public Vector scale(float f)
-        {
-            return new Vector(x * f, y * f, z * f);
-        }
-
-        public Vector translateY(float y) { return new Vector(x, this.y + y, z); }
-
-        @Override
-        public String toString()
-        {
-            return "x: " + x + ", y: " + y + ", z: " + y;
-        }
-    }
-
-
-    public static Vector vectorBetween(Point3D from, Point3D to) {
-        return new Vector(
+    public static Vector3D vectorBetween(Point3D from, Point3D to) {
+        return new Vector3D(
                 to.x - from.x,
                 to.y - from.y,
                 to.z - from.z);
@@ -135,9 +92,9 @@ public class Geometry {
 
     public static class Ray {
         public final Point3D point3D;
-        public final Vector vector;
+        public final Vector3D vector;
 
-        public Ray(Point3D point3D, Vector vector) {
+        public Ray(Point3D point3D, Vector3D vector) {
             this.point3D = point3D;
             this.vector = vector;
         }
@@ -161,8 +118,8 @@ public class Geometry {
 
     public static float distanceBetween(Point3D point3D, Ray ray)
     {
-        Vector p1ToPoint = vectorBetween(ray.point3D, point3D);
-        Vector p2ToPoint = vectorBetween(ray.point3D.translate(ray.vector), point3D);
+        Vector3D p1ToPoint = vectorBetween(ray.point3D, point3D);
+        Vector3D p2ToPoint = vectorBetween(ray.point3D.translate(ray.vector), point3D);
 
 
         float areaOfTriangleTimesTwo = p1ToPoint.crossProduct(p2ToPoint).length();
@@ -176,9 +133,9 @@ public class Geometry {
     public static class Plane
     {
         public final Point3D point3D;
-        public final Vector normal;
+        public final Vector3D normal;
 
-        public Plane(Point3D point3D, Vector normal)
+        public Plane(Point3D point3D, Vector3D normal)
         {
             this.point3D = point3D;
             this.normal = normal;
@@ -187,7 +144,7 @@ public class Geometry {
 
     public static Point3D intersectionPoint(Ray ray, Plane plane)
     {
-        Vector rayToPlaneVector = vectorBetween(ray.point3D, plane.point3D);
+        Vector3D rayToPlaneVector = vectorBetween(ray.point3D, plane.point3D);
 
         float scaleFactor = rayToPlaneVector.dotProduct(plane.normal)
                 / ray.vector.dotProduct(plane.normal);

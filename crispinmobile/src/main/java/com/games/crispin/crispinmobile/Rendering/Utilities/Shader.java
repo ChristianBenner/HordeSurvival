@@ -54,7 +54,7 @@ public class Shader
      * Enable the shader program. Should be used before making draw calls to objects that you wish
      * to draw using the shader.
      *
-     * @since                       1.0
+     * @since 1.0
      */
     public void enableIt()
     {
@@ -64,7 +64,7 @@ public class Shader
     /**
      * Disable the shader program. Should be used when finished drawing objects with the shader.
      *
-     * @since                       1.0
+     * @since 1.0
      */
     public void disableIt()
     {
@@ -75,7 +75,7 @@ public class Shader
      * Re-create and compile the shader program. This is used to re-load the shader into OpenGL ES
      * memory if it is destroyed.
      *
-     * @since                       1.0
+     * @since 1.0
      */
     public void reconstruct()
     {
@@ -85,9 +85,9 @@ public class Shader
     /**
      * Get an integer ID for a handle of a specified attribute
      *
-     * @param   attributeName   The name of the attribute in the shader code
+     * @param attributeName The name of the attribute in the shader code
      * @return                  Integer ID of the attribute handle
-     * @since   1.0
+     * @since               1.0
      */
     public int getAttribute(String attributeName)
     {
@@ -97,9 +97,9 @@ public class Shader
     /**
      * Get an integer ID for a handle of a specified uniform
      *
-     * @param   uniformName The name of the uniform in the shader code
+     * @param uniformName   The name of the uniform in the shader code
      * @return              Integer ID of the uniform handle
-     * @since   1.0
+     * @since               1.0
      */
     public int getUniform(String uniformName)
     {
@@ -109,8 +109,8 @@ public class Shader
     /**
      * Get the position attribute handle
      *
-     * @return  Integer ID of the position attribute handle
-     * @since   1.0
+     * @return Integer ID of the position attribute handle
+     * @since 1.0
      */
     public int getPositionAttributeHandle()
     {
@@ -120,8 +120,8 @@ public class Shader
     /**
      * Get the colour uniform handle
      *
-     * @return  Integer ID of the colour uniform handle
-     * @since   1.0
+     * @return Integer ID of the colour uniform handle
+     * @since 1.0
      */
     public int getColourUniformHandle()
     {

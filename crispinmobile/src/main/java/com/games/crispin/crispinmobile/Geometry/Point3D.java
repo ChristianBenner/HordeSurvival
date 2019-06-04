@@ -11,7 +11,7 @@ public class Point3D extends Point2D {
         this.z = z;
     }
 
-    public Point3D translate(Geometry.Vector vector)
+    public Point3D translate(Vector3D vector)
     {
         return new Point3D(
                 x + vector.x,
