@@ -1,5 +1,4 @@
 package com.games.crispin.crispinmobile;
-import android.graphics.Shader;
 
 import static android.opengl.GLES20.GL_COMPILE_STATUS;
 import static android.opengl.GLES20.GL_FRAGMENT_SHADER;
@@ -10,14 +9,23 @@ import static android.opengl.GLES20.glCompileShader;
 import static android.opengl.GLES20.glCreateProgram;
 import static android.opengl.GLES20.glCreateShader;
 import static android.opengl.GLES20.glGetAttribLocation;
-import static android.opengl.GLES20.glGetIntegerv;
 import static android.opengl.GLES20.glGetShaderiv;
 import static android.opengl.GLES20.glGetUniformLocation;
 import static android.opengl.GLES20.glLinkProgram;
 import static android.opengl.GLES20.glShaderSource;
 import static android.opengl.GLES20.glUseProgram;
 
+/**
+ * GLSLShader class is used to load and compile and manage GLSL shader programs from a file or
+ * string. It can be used to load vertex/fragment shader programs. When creating custom shaders,
+ * the class should be extended.
+ *
+ * @author      Christian Benner
+ * @version     %I%, %G%
+ * @since       1.0
+ */
 public class GLSLShader {
+    // Tag for the logger
     private static final String TAG = "GLSLShader";
 
     private int programId;
