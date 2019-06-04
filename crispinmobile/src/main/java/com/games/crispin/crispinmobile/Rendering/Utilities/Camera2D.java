@@ -1,6 +1,8 @@
-package com.games.crispin.crispinmobile;
+package com.games.crispin.crispinmobile.Rendering.Utilities;
 
 import android.opengl.Matrix;
+
+import com.games.crispin.crispinmobile.Crispin;
 
 public class Camera2D
 {

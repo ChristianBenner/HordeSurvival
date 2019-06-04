@@ -1,4 +1,4 @@
-package com.games.crispin.crispinmobile;
+package com.games.crispin.crispinmobile.Geometry;
 
 import static java.lang.Math.sin;
 

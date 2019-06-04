@@ -1,6 +1,10 @@
-package com.games.crispin.crispinmobile;
+package com.games.crispin.crispinmobile.Rendering.Utilities;
 
 import android.opengl.Matrix;
+
+import com.games.crispin.crispinmobile.Geometry.Point3D;
+import com.games.crispin.crispinmobile.Utilities.Logger;
+import com.games.crispin.crispinmobile.Rendering.Shaders.ColourShader;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -19,9 +23,9 @@ public class RenderObject
 {
     private static final String TAG = "RenderObject";
 
-    static final int ELEMENTS_PER_VERTEX = 3;
-    static final int BYTES_PER_FLOAT = 4;
-    static final int VERTEX_STRIDE = ELEMENTS_PER_VERTEX * BYTES_PER_FLOAT;
+    static public final int ELEMENTS_PER_VERTEX = 3;
+    static public final int BYTES_PER_FLOAT = 4;
+    static public final int VERTEX_STRIDE = ELEMENTS_PER_VERTEX * BYTES_PER_FLOAT;
 
     static final float COLOUR[] = {0.64f, 0.77f, 0.22f, 1.0f};
 
@@ -41,7 +45,7 @@ public class RenderObject
 
     private Material material;
 
-    private GLSLShader shader;
+    private Shader shader;
     private boolean hasCustomShader;
 
     final int VERTEX_COUNT;
@@ -117,7 +121,7 @@ public class RenderObject
         }
     }
 
-    public void useCustomShader(GLSLShader customShader)
+    public void useCustomShader(Shader customShader)
     {
         if(customShader != null)
         {
@@ -126,7 +130,7 @@ public class RenderObject
         }
         else
         {
-            Log.error(TAG, "Custom shader supplied is null");
+            Logger.error(TAG, "Custom shader supplied is null");
         }
 
     }

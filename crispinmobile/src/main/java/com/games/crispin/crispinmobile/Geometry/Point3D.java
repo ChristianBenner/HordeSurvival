@@ -1,4 +1,4 @@
-package com.games.crispin.crispinmobile;
+package com.games.crispin.crispinmobile.Geometry;
 
 // Code is immutable - whenever we make a change we return a new object,
 // it may be better to mutate floating point3D arrays with statis functions for top performance

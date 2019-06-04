@@ -1,13 +1,9 @@
-package com.games.crispin.crispinmobile;
+package com.games.crispin.crispinmobile.Utilities;
 
 import android.content.Context;
 import android.opengl.GLSurfaceView;
-import android.opengl.Matrix;
-import android.support.v7.app.AppCompatActivity;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.FloatBuffer;
+import com.games.crispin.crispinmobile.Rendering.Data.Colour;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -17,18 +13,13 @@ import static android.opengl.GLES20.GL_COLOR_BUFFER_BIT;
 import static android.opengl.GLES20.GL_CULL_FACE;
 import static android.opengl.GLES20.GL_DEPTH_BUFFER_BIT;
 import static android.opengl.GLES20.GL_DEPTH_TEST;
-import static android.opengl.GLES20.GL_FLOAT;
 import static android.opengl.GLES20.GL_ONE_MINUS_SRC_ALPHA;
 import static android.opengl.GLES20.GL_SRC_ALPHA;
-import static android.opengl.GLES20.GL_TRIANGLES;
 import static android.opengl.GLES20.glBlendFunc;
 import static android.opengl.GLES20.glClear;
 import static android.opengl.GLES20.glClearColor;
 import static android.opengl.GLES20.glDisable;
-import static android.opengl.GLES20.glDisableVertexAttribArray;
-import static android.opengl.GLES20.glDrawArrays;
 import static android.opengl.GLES20.glEnable;
-import static android.opengl.GLES20.glEnableVertexAttribArray;
 import static android.opengl.GLES20.glUniform4fv;
 import static android.opengl.GLES20.glUniformMatrix4fv;
 import static android.opengl.GLES20.glVertexAttribPointer;
@@ -154,7 +145,7 @@ public class SceneManager implements GLSurfaceView.Renderer
         }
         else
         {
-            Log.error(TAG, "Failed to set start scene as one has already been specified");
+            Logger.error(TAG, "Failed to set start scene as one has already been specified");
         }
     }
 
@@ -175,7 +166,7 @@ public class SceneManager implements GLSurfaceView.Renderer
     {
         if(!startSceneSpecified)
         {
-            Log.error(TAG, "Failed to set scene because no start scene has been specified. " +
+            Logger.error(TAG, "Failed to set scene because no start scene has been specified. " +
                     "use method 'setStartScene' before set 'setScene'");
         }
         else
@@ -458,14 +449,14 @@ public class SceneManager implements GLSurfaceView.Renderer
     {
         if(currentSceneConstructor != null)
         {
-            Log.info("Constructing current scene");
+            Logger.info("Constructing current scene");
 
             // Create the scene via its constructor lambda and then set it as the current scene
             currentScene = currentSceneConstructor.init(context);
         }
         else
         {
-            Log.error(TAG, "Cannot construct the current scene because no scene " +
+            Logger.error(TAG, "Cannot construct the current scene because no scene " +
                             "constructor has been provided");
         }
     }

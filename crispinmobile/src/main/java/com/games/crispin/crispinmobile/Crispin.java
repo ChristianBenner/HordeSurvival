@@ -5,6 +5,10 @@ import android.content.Context;
 import android.opengl.GLSurfaceView;
 import android.support.v7.app.AppCompatActivity;
 
+import com.games.crispin.crispinmobile.Rendering.Data.Colour;
+import com.games.crispin.crispinmobile.Utilities.Scene;
+import com.games.crispin.crispinmobile.Utilities.SceneManager;
+
 /**
  * Crispin class provides core engine functionality. It is crucial in order to start a graphics
  * application. It can be interacted with via its static public methods, allowing users to access

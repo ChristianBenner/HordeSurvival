@@ -1,10 +1,12 @@
-package com.games.crispin.crispinmobile;
+package com.games.crispin.crispinmobile.Utilities;
+
+import com.games.crispin.crispinmobile.Rendering.Utilities.Shader;
 
 import java.util.ArrayList;
 
 public class ShaderCache {
-    private static ArrayList<GLSLShader> shaders = new ArrayList<>();
-    public static void registerShader(GLSLShader shader)
+    private static ArrayList<Shader> shaders = new ArrayList<>();
+    public static void registerShader(Shader shader)
     {
         shaders.add(shader);
     }
@@ -16,11 +18,11 @@ public class ShaderCache {
 
     public static void reinitialiseAll()
     {
-        for(GLSLShader shader : shaders)
+        for(Shader shader : shaders)
         {
             try
             {
-                shader.reinit();
+                shader.reconstruct();
             }
             catch(Exception e)
             {

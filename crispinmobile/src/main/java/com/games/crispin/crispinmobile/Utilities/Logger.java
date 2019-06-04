@@ -1,6 +1,6 @@
-package com.games.crispin.crispinmobile;
+package com.games.crispin.crispinmobile.Utilities;
 
-public class Log
+public class Logger
 {
     // Enable debug logging
     private static boolean debugLoggingEnabled = false;

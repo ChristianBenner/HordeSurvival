@@ -2,9 +2,9 @@ package com.games.crispin.hordesurvival;
 
 import android.content.Context;
 
-import com.games.crispin.crispinmobile.Colour;
+import com.games.crispin.crispinmobile.Rendering.Data.Colour;
 import com.games.crispin.crispinmobile.Crispin;
-import com.games.crispin.crispinmobile.Scene;
+import com.games.crispin.crispinmobile.Utilities.Scene;
 
 public class TestSceneTwo extends Scene {
     static Scene.Constructor TEST_SCENE_TWO_CONSTRUCTION = (context) -> new TestSceneTwo(context);

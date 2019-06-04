@@ -1,6 +1,8 @@
-package com.games.crispin.crispinmobile;
+package com.games.crispin.crispinmobile.Rendering.Shaders;
 
-public class ColourShader extends GLSLShader
+import com.games.crispin.crispinmobile.Rendering.Utilities.Shader;
+
+public class ColourShader extends Shader
 {
     // The vertex shader program
     private static final String VERTEX_SHADER_CODE =

@@ -1,11 +1,10 @@
 package com.games.crispin.hordesurvival;
 
-import com.games.crispin.crispinmobile.GLSLShader;
+import com.games.crispin.crispinmobile.Rendering.Utilities.Shader;
 
 import static android.opengl.GLES20.glUniform1f;
-import static android.opengl.GLES20.glUniform1i;
 
-public class TimeColourShader extends GLSLShader
+public class TimeColourShader extends Shader
 {
     // The vertex shader program
     private static final String VERTEX_SHADER_CODE =

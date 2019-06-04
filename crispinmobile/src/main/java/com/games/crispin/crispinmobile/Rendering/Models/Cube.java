@@ -1,4 +1,7 @@
-package com.games.crispin.crispinmobile;
+package com.games.crispin.crispinmobile.Rendering.Models;
+
+import com.games.crispin.crispinmobile.Rendering.Utilities.Material;
+import com.games.crispin.crispinmobile.Rendering.Utilities.RenderObject;
 
 // cube renderer object
 public class Cube extends RenderObject

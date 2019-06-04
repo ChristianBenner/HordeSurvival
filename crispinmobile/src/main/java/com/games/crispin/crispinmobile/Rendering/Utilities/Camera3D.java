@@ -1,7 +1,11 @@
-package com.games.crispin.crispinmobile;
+package com.games.crispin.crispinmobile.Rendering.Utilities;
 
 
 import android.opengl.Matrix;
+
+import com.games.crispin.crispinmobile.Crispin;
+import com.games.crispin.crispinmobile.Geometry.Geometry;
+import com.games.crispin.crispinmobile.Geometry.Point3D;
 
 public class Camera3D
 {
@@ -134,7 +138,7 @@ public class Camera3D
                 position.z + direction.z);
 
         // The aspect ratio of the frustrum
-        final float ASPECT_RATIO = (float)Crispin.getSurfaceWidth()/Crispin.getSurfaceHeight();
+        final float ASPECT_RATIO = (float) Crispin.getSurfaceWidth()/Crispin.getSurfaceHeight();
 
         // Set the view matrix look at
         Matrix.setLookAtM(viewMatrix,

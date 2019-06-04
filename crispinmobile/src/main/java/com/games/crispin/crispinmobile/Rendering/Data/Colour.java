@@ -1,6 +1,4 @@
-package com.games.crispin.crispinmobile;
-
-import android.graphics.Color;
+package com.games.crispin.crispinmobile.Rendering.Data;
 
 public class Colour
 {
