@@ -1,39 +1,20 @@
 package com.games.crispin.hordesurvival;
 
 import com.games.crispin.crispinmobile.Rendering.Utilities.Shader;
+import com.games.crispin.crispinmobile.Utilities.FileResourceReader;
 
 import static android.opengl.GLES20.glUniform1f;
 
 public class TimeColourShader extends Shader
 {
-    // The vertex shader program
-    private static final String VERTEX_SHADER_CODE =
-            "attribute vec4 vPosition;" +
-                    "uniform mat4 uMatrix;" +
-                    "uniform float uTime;" +
-                    "void main() {" +
-                        "gl_Position = uMatrix * vec4(vPosition.x - (vPosition.x  * (sin(uTime) / 2.0f)), vPosition.y - (vPosition.y  * (cos(uTime) / 2.0f)), vPosition.zw);" +
-                    "}";
-
-    // The fragment shader code
-    private static final String FRAGMENT_SHADER_CODE =
-            "precision mediump float;" +
-                    "uniform vec4 uColour;" +
-                    "uniform float uTime;" +
-                    "void main() {" +
-                    "vec4 colour = uColour;" +
-                    "colour.r = colour.r * sin(uTime);" +
-                    "colour.g = colour.g * cos(uTime);" +
-                    "gl_FragColor = colour;" +
-                    "}";
-
     private final int TIME_UNIFORM_HANDLE;
 
     private float time;
 
     public TimeColourShader()
     {
-        super(VERTEX_SHADER_CODE, FRAGMENT_SHADER_CODE);
+        super(R.raw.time_colour_shader_vert, R.raw.time_colour_shader_frag);
+
         positionAttributeHandle = getAttribute("vPosition");
         colourUniformHandle = getUniform("uColour");
         matrixUniformHandle = getUniform("uMatrix");

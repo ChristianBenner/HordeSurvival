@@ -3,6 +3,7 @@ package com.games.crispin.crispinmobile.Rendering.Utilities;
 import android.opengl.Matrix;
 
 import com.games.crispin.crispinmobile.Geometry.Point3D;
+import com.games.crispin.crispinmobile.Rendering.Data.Colour;
 import com.games.crispin.crispinmobile.Utilities.Logger;
 import com.games.crispin.crispinmobile.Rendering.Shaders.ColourShader;
 
@@ -19,15 +20,25 @@ import static android.opengl.GLES20.glUniform4fv;
 import static android.opengl.GLES20.glUniformMatrix4fv;
 import static android.opengl.GLES20.glVertexAttribPointer;
 
+/**
+ * Render object is a base class for any graphical object. It handles an objects shader (based on
+ * its material if a custom one isn't allocated), vertex data upload to the graphics memory and
+ * drawing of objects.
+ *
+ * @author      Christian Benner
+ * @version     %I%, %G%
+ * @since       1.0
+ */
+
 public class RenderObject
 {
+    // Tag used in logging output
     private static final String TAG = "RenderObject";
 
+    // ability to change for dimensions?
     static public final int ELEMENTS_PER_VERTEX = 3;
     static public final int BYTES_PER_FLOAT = 4;
     static public final int VERTEX_STRIDE = ELEMENTS_PER_VERTEX * BYTES_PER_FLOAT;
-
-    static final float COLOUR[] = {0.64f, 0.77f, 0.22f, 1.0f};
 
     // Float buffer that holds all the triangle co-ordinate data
     private FloatBuffer VERTEX_BUFFER;
@@ -50,7 +61,20 @@ public class RenderObject
 
     final int VERTEX_COUNT;
 
-    protected RenderObject(float[] vertexData, Material material)
+    public enum Dimensions_t
+    {
+        TWO_DIMENSIONAL,
+        THREE_DIMENSIONAL
+    }
+
+    private final Dimensions_t dimensions;
+
+    private Colour colour;
+    private float[] colourData;
+
+    protected RenderObject(float[] vertexData,
+                           Dimensions_t dimensions,
+                           Material material)
     {
         // Initialise a vertex byte buffer for the shape float array
         final ByteBuffer VERTICES_BYTE_BUFFER = ByteBuffer.allocateDirect(
@@ -71,7 +95,9 @@ public class RenderObject
         // Calculate the number of vertices in the data
         VERTEX_COUNT = vertexData.length / ELEMENTS_PER_VERTEX;
 
+        this.dimensions = dimensions;
         setMaterial(material);
+        setColour(Colour.LIGHT_GREY);
 
         position = new Point3D(0.0f, 0.0f, 0.0f);
         rotationX = 0.0f;
@@ -85,15 +111,29 @@ public class RenderObject
         hasCustomShader = false;
     }
 
-    protected RenderObject(float[] vertexData)
+    protected RenderObject(float[] vertexData, Dimensions_t dimensions)
     {
-        this(vertexData, Material.DEFAULT_MATERIAL);
+        this(vertexData,
+                dimensions,
+                Material.DEFAULT_MATERIAL);
     }
 
     public void setMaterial(Material material)
     {
         this.material = material;
         updateShader();
+    }
+
+    public void setColour(Colour colour)
+    {
+        this.colour = colour;
+
+        colourData = new float[]{
+                colour.getRed(),
+                colour.getGreen(),
+                colour.getBlue(),
+                colour.getAlpha()
+        };
     }
 
     private void updateShader()
@@ -190,7 +230,7 @@ public class RenderObject
                 VERTEX_STRIDE,
                 VERTEX_BUFFER);
 
-        glUniform4fv(shader.getColourUniformHandle(), 1, COLOUR, 0);
+        glUniform4fv(shader.getColourUniformHandle(), 1, colourData, 0);
         glDrawArrays(GL_TRIANGLES, 0, VERTEX_COUNT);
         glDisableVertexAttribArray(shader.getPositionAttributeHandle());
 

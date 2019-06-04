@@ -49,8 +49,9 @@ public class TestScene extends Scene {
 
         // Apply the custom shader to the cube
         cube.useCustomShader(customShader);
-        cubeTwo.useCustomShader(customShader);
-        cubeThree.useCustomShader(customShader);
+        cube.setColour(Colour.WHITE);
+        cubeTwo.setColour(Colour.MAGENTA);
+        cubeThree.setColour(Colour.BLUE);
     }
 
     @Override

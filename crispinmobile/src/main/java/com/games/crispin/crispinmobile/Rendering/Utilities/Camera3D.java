@@ -44,10 +44,10 @@ public class Camera3D
     private float fieldOfView = 90.0f;
 
     // The view matrix
-    private float[] viewMatrix = new float[16];
+    private float[] viewMatrix;
 
     // The perspective/frustrum matrix
-    private float[] perspectiveMatrix = new float[16];
+    private float[] perspectiveMatrix;
 
     /**
      * Construct the camera object with the default values. Then produce the frustrum/perspective
@@ -61,8 +61,11 @@ public class Camera3D
         right = new Vector3D(1.0f, 0.0f, 0.0f);
         direction = new Vector3D(0.0f, 0.0f, -1.0f);
         up = right.crossProduct(direction);
+        viewMatrix = new float[16];
+        perspectiveMatrix = new float[16];
 
         updateView();
+        updatePerspective();
     }
 
     /**

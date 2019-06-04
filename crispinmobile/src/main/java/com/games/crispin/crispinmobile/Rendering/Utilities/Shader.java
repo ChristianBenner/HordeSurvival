@@ -1,5 +1,6 @@
 package com.games.crispin.crispinmobile.Rendering.Utilities;
 
+import com.games.crispin.crispinmobile.Utilities.FileResourceReader;
 import com.games.crispin.crispinmobile.Utilities.Logger;
 import com.games.crispin.crispinmobile.Utilities.ShaderCache;
 
@@ -149,7 +150,7 @@ public class Shader
      *                              GLSL shader programming language.
      * @since                       1.0
      */
-    protected Shader(String vertexShaderCode, String fragmentShaderCode)
+    protected Shader(String vertexShaderCode,String fragmentShaderCode)
     {
         this.vertexShaderCode = vertexShaderCode;
         this.fragmentShaderCode = fragmentShaderCode;
@@ -168,6 +169,37 @@ public class Shader
         positionAttributeHandle = -1;
         colourUniformHandle = -1;
         matrixUniformHandle = -1;
+    }
+
+    /**
+     * Shader constructor. Create and compile the GLSL shader in Open GL ES memory and then register
+     * it in the shader cache.
+     *
+     * @param vertexShaderCode      The vertex shader code as a byte array. Code must be written in
+     *                              GLSL shader programming language
+     * @param fragmentShaderCode    The fragment shader code as a byte arrray. Code must be written
+     *                              in GLSL shader programming language.
+     * @since                       1.0
+     */
+    protected Shader(byte[] vertexShaderCode, byte[] fragmentShaderCode)
+    {
+        this(new String(vertexShaderCode), new String(fragmentShaderCode));
+    }
+
+    /**
+     * Shader constructor. Create and compile the GLSL shader in Open GL ES memory and then register
+     * it in the shader cache. Reads in the shader files for the given resource IDs
+     *
+     * @param vertexShaderResourceId    The vertex shader file resource ID. Code must be written in
+     *                                  GLSL shader programming language
+     * @param fragmentShaderResourceId  The fragment shader file resource ID. Code must be written
+     *                                  in GLSL shader programming language.
+     * @since                           1.0
+     */
+    protected Shader(int vertexShaderResourceId, int fragmentShaderResourceId)
+    {
+        this(FileResourceReader.readRawResource(vertexShaderResourceId),
+                FileResourceReader.readRawResource(fragmentShaderResourceId));
     }
 
     /**

@@ -6,6 +6,7 @@ import android.opengl.GLSurfaceView;
 import android.support.v7.app.AppCompatActivity;
 
 import com.games.crispin.crispinmobile.Rendering.Data.Colour;
+import com.games.crispin.crispinmobile.Utilities.Logger;
 import com.games.crispin.crispinmobile.Utilities.Scene;
 import com.games.crispin.crispinmobile.Utilities.SceneManager;
 
@@ -21,6 +22,9 @@ import com.games.crispin.crispinmobile.Utilities.SceneManager;
  */
 public class Crispin
 {
+    // Tag for the logger
+    private static final String TAG = "Crispin";
+
     // Store the static instance of the engine
     private static Crispin crispinInstance = null;
 
@@ -56,6 +60,23 @@ public class Crispin
     {
         crispinInstance = new Crispin(appCompatActivity);
         crispinInstance.sceneManager.setStartScene(startSceneConstructor);
+    }
+
+    /**
+     * Get the application context
+     *
+     * @return  The application context
+     * @see     Context
+     * @since   1.0
+     */
+    public static Context getApplicationContext()
+    {
+        if(isInit())
+        {
+            return crispinInstance.CONTEXT;
+        }
+
+        return null;
     }
 
     /**
@@ -258,7 +279,7 @@ public class Crispin
         }
         else
         {
-            System.err.println("ERROR: Crispin has not been initialised, " +
+            Logger.error(TAG, "ERROR: Crispin has not been initialised, " +
                     "use Crispin.init(AppCompatActivity)");
         }
 

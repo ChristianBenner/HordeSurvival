@@ -55,11 +55,11 @@ public class Cube extends RenderObject
 
     public Cube()
     {
-        super(CUBE_VERTEX_DATA);
+        super(CUBE_VERTEX_DATA, Dimensions_t.THREE_DIMENSIONAL);
     }
 
     public Cube(Material material)
     {
-        super(CUBE_VERTEX_DATA, material);
+        super(CUBE_VERTEX_DATA, Dimensions_t.THREE_DIMENSIONAL, material);
     }
 }
