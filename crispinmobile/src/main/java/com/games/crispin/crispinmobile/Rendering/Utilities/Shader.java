@@ -6,12 +6,15 @@ import com.games.crispin.crispinmobile.Utilities.ShaderCache;
 
 import static android.opengl.GLES20.GL_COMPILE_STATUS;
 import static android.opengl.GLES20.GL_FRAGMENT_SHADER;
+import static android.opengl.GLES20.GL_INVALID_VALUE;
 import static android.opengl.GLES20.GL_TRUE;
 import static android.opengl.GLES20.GL_VERTEX_SHADER;
 import static android.opengl.GLES20.glAttachShader;
 import static android.opengl.GLES20.glCompileShader;
 import static android.opengl.GLES20.glCreateProgram;
 import static android.opengl.GLES20.glCreateShader;
+import static android.opengl.GLES20.glDeleteProgram;
+import static android.opengl.GLES20.glDeleteShader;
 import static android.opengl.GLES20.glGetAttribLocation;
 import static android.opengl.GLES20.glGetShaderiv;
 import static android.opengl.GLES20.glGetUniformLocation;
@@ -81,6 +84,17 @@ public class Shader
     public void reconstruct()
     {
         programId = createProgram(vertexShaderCode, fragmentShaderCode);
+    }
+
+    /**
+     * Remove the program from OpenGL ES memory
+     *
+     * @since 1.0
+     */
+    public void destroy()
+    {
+        glDeleteProgram(programId);
+        programId = GL_INVALID_VALUE;
     }
 
     /**
@@ -236,6 +250,10 @@ public class Shader
 
         // Link the shaders
         glLinkProgram(PROGRAM_ID);
+
+        // Delete the vertex and fragment shaders from OpenGL ES memory
+        glDeleteShader(VERTEX_SHADER_ID);
+        glDeleteShader(FRAGMENT_SHADER_ID);
 
         return PROGRAM_ID;
     }

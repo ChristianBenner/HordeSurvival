@@ -7,6 +7,9 @@ public class Material
     //texture
     //normal map texture
 
+    // colour
+    //
+
     public Material()
     {
     }

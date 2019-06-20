@@ -13,6 +13,12 @@ public class ShaderCache {
 
     public static void removeAll()
     {
+        // Remove the shader from graphics memory
+        for(Shader shader : shaders)
+        {
+            shader.destroy();
+        }
+
         shaders.clear();
     }
 

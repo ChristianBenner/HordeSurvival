@@ -173,7 +173,11 @@ public class SceneManager implements GLSurfaceView.Renderer
         {
             currentSceneConstructor = sceneConstructor;
             currentScene = null;
+
+            // Clear the shader and texture cache. The data in the previous scene is no longer
+            // relevant so it should be freed.
             ShaderCache.removeAll();
+            TextureCache.removeAll();
         }
     }
 
@@ -318,8 +322,9 @@ public class SceneManager implements GLSurfaceView.Renderer
     {
         if(currentScene != null)
         {
-            // Re-initialise the shaders because there memory no longer exists
+            // Re-initialise the shaders and textures because there memory no longer exists
             ShaderCache.reinitialiseAll();
+            TextureCache.reinitialiseAll();
         }
     }
 

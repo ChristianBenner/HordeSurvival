@@ -51,15 +51,15 @@ public class Cube extends RenderObject
                     1.0f, -1.0f, 1.0f
             };
 
-    static final int VERTEX_COUNT = CUBE_VERTEX_DATA.length / ELEMENTS_PER_VERTEX;
-
     public Cube()
     {
-        super(CUBE_VERTEX_DATA, Dimensions_t.THREE_DIMENSIONAL);
+        super(CUBE_VERTEX_DATA, PositionDimensions_t.XYZ);
     }
 
     public Cube(Material material)
     {
-        super(CUBE_VERTEX_DATA, Dimensions_t.THREE_DIMENSIONAL, material);
+        super(CUBE_VERTEX_DATA,
+                PositionDimensions_t.XYZ,
+                material);
     }
 }
