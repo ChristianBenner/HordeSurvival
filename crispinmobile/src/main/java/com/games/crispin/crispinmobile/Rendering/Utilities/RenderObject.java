@@ -5,7 +5,7 @@ import android.opengl.Matrix;
 import com.games.crispin.crispinmobile.Geometry.Point3D;
 import com.games.crispin.crispinmobile.Rendering.Data.Colour;
 import com.games.crispin.crispinmobile.Utilities.Logger;
-import com.games.crispin.crispinmobile.Rendering.Shaders.ColourShader;
+import com.games.crispin.crispinmobile.Rendering.Shaders.UniformColourShader;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -40,10 +40,13 @@ public class RenderObject
 
     private int elementsPerPosition;
     private int positionStrideBytes;
+    private int positionDataOffset;
     private int elementsPerTexel;
     private int texelStrideBytes;
+    private int texelDataOffset;
     private int elementsPerColour;
     private int colourStrideBytes;
+    private int colourDataOffset;
     private int totalStrideBytes;
 
     // Float buffer that holds all the triangle co-ordinate data
@@ -110,15 +113,17 @@ public class RenderObject
                            AttributeOrder_t attributeOrder,
                            Material material)
     {
-        // Figure out the stride
-        resolveStride(positionDimensions,
-                texelDimensions,
-                colourDimensions);
-
         this.POSITION_DIMENSIONS = positionDimensions;
         this.TEXEL_DIMENSIONS = texelDimensions;
         this.COLOUR_DIMENSIONS = colourDimensions;
         this.ATTRIBUTE_ORDER = attributeOrder;
+
+        // Figure out the stride
+        resolveStride(POSITION_DIMENSIONS,
+                TEXEL_DIMENSIONS,
+                COLOUR_DIMENSIONS);
+
+        resolveAttributeOffsets(ATTRIBUTE_ORDER);
 
         // Initialise a vertex byte buffer for the shape float array
         final ByteBuffer VERTICES_BYTE_BUFFER = ByteBuffer.allocateDirect(
@@ -286,7 +291,7 @@ public class RenderObject
             else
             {
                 // Just use a colour shader
-                shader = new ColourShader();
+                shader = new UniformColourShader();
             }
         }
     }
@@ -340,18 +345,20 @@ public class RenderObject
 
     private void attribPositionData()
     {
+        VERTEX_BUFFER.position(positionDataOffset);
         glEnableVertexAttribArray(shader.getPositionAttributeHandle());
         glVertexAttribPointer(shader.getPositionAttributeHandle(),
                 elementsPerPosition,
                 GL_FLOAT,
-                false,
+                true,
                 totalStrideBytes,
                 VERTEX_BUFFER);
+        VERTEX_BUFFER.position(0);
     }
 
     private void attribTexelData()
     {
-        if(COLOUR_DIMENSIONS != ColourDimensions_t.NONE)
+        if(TEXEL_DIMENSIONS != TexelDimensions_t.NONE)
         {
             // Enable attrib colour data
         }
@@ -359,9 +366,18 @@ public class RenderObject
 
     private void attribColourData()
     {
-        if(TEXEL_DIMENSIONS != TexelDimensions_t.NONE)
+        if(COLOUR_DIMENSIONS != ColourDimensions_t.NONE)
         {
             // Enable attrib texel data
+            VERTEX_BUFFER.position(colourDataOffset);
+            glEnableVertexAttribArray(shader.getColourAttributeHandle());
+            glVertexAttribPointer(shader.getColourAttributeHandle(),
+                    elementsPerColour,
+                    GL_FLOAT,
+                    true,
+                    totalStrideBytes,
+                    VERTEX_BUFFER);
+            VERTEX_BUFFER.position(0);
         }
     }
 
@@ -406,16 +422,16 @@ public class RenderObject
                 break;
             case POSITION_THEN_COLOUR:
                 glDisableVertexAttribArray(shader.getPositionAttributeHandle());
-                // glDisableVertexAttribArray(shader.getColourAttributeHandle());
+                glDisableVertexAttribArray(shader.getColourAttributeHandle());
                 break;
             case POSITION_THEN_TEXEL_THEN_COLOUR:
                 glDisableVertexAttribArray(shader.getPositionAttributeHandle());
                 // glDisableVertexAttribArray(shader.getTexelAttributeHandle());
-                // glDisableVertexAttribArray(shader.getColourAttributeHandle());
+                glDisableVertexAttribArray(shader.getColourAttributeHandle());
                 break;
             case POSITION_THEN_COLOUR_THEN_TEXEL:
                 glDisableVertexAttribArray(shader.getPositionAttributeHandle());
-                // glDisableVertexAttribArray(shader.getColourAttributeHandle());
+                glDisableVertexAttribArray(shader.getColourAttributeHandle());
                 // glDisableVertexAttribArray(shader.getTexelAttributeHandle());
                 break;
         }
@@ -434,7 +450,7 @@ public class RenderObject
         Matrix.multiplyMM(modelViewProjectionMatrix, 0, camera.getPerspectiveMatrix(), 0, modelViewMatrix, 0);
 
         glUniformMatrix4fv(shader.getMatrixUniformHandle(), 1, false, modelViewProjectionMatrix, 0);
-        glUniform4fv(shader.getColourUniformHandle(), 1, colourData, 0);
+        //glUniform4fv(shader.getColourUniformHandle(), 1, colourData, 0);
 
         enableAttribs();
         glDrawArrays(GL_TRIANGLES, 0, VERTEX_COUNT);
@@ -497,5 +513,33 @@ public class RenderObject
         totalStrideBytes = positionStrideBytes +
                 texelStrideBytes +
                 colourStrideBytes;
+    }
+
+    private void resolveAttributeOffsets(AttributeOrder_t attributeOrder)
+    {
+        switch (attributeOrder)
+        {
+            case POSITION:
+                positionDataOffset = 0;
+                break;
+            case POSITION_THEN_TEXEL:
+                positionDataOffset = 0;
+                texelDataOffset = elementsPerPosition;
+                break;
+            case POSITION_THEN_COLOUR:
+                positionDataOffset = 0;
+                colourDataOffset = elementsPerPosition;
+                break;
+            case POSITION_THEN_TEXEL_THEN_COLOUR:
+                positionDataOffset = 0;
+                texelDataOffset = elementsPerPosition;
+                colourDataOffset = texelDataOffset + elementsPerTexel;
+                break;
+            case POSITION_THEN_COLOUR_THEN_TEXEL:
+                positionDataOffset = 0;
+                colourDataOffset = elementsPerPosition;
+                texelDataOffset = colourDataOffset + elementsPerColour;
+                break;
+        }
     }
 }

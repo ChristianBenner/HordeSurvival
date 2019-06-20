@@ -2,6 +2,7 @@ package com.games.crispin.hordesurvival;
 
 import android.content.Context;
 
+import com.games.crispin.crispinmobile.Rendering.Shaders.AttributeColourShader;
 import com.games.crispin.crispinmobile.Rendering.Utilities.Camera3D;
 import com.games.crispin.crispinmobile.Rendering.Data.Colour;
 import com.games.crispin.crispinmobile.Crispin;
@@ -25,6 +26,7 @@ public class TestScene extends Scene {
 
     private Camera3D camera;
     private TimeColourShader customShader;
+    private AttributeColourShader attributeColourShader;
     private float angle = 0.0f;
 
     public TestScene(Context context)
@@ -49,8 +51,12 @@ public class TestScene extends Scene {
         cubeThree = new Cube();
         cubeThree.setPosition(new Point3D(2.0f, 2.0f, 0.0f));
 
+        attributeColourShader = new AttributeColourShader();
+
         // Apply the custom shader to the cube
-        cube.useCustomShader(customShader);
+        cube.useCustomShader(attributeColourShader);
+        cubeTwo.useCustomShader(attributeColourShader);
+        cubeThree.useCustomShader(attributeColourShader);
         cube.setColour(Colour.WHITE);
         cubeTwo.setColour(Colour.MAGENTA);
         cubeThree.setColour(Colour.BLUE);

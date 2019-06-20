@@ -48,6 +48,9 @@ public class Shader
     // Position attribute handle
     protected int positionAttributeHandle;
 
+    // Colour attribute handle
+    protected int colourAttributeHandle;
+
     // Colour uniform handle
     protected int colourUniformHandle;
 
@@ -133,6 +136,17 @@ public class Shader
     }
 
     /**
+     * Get the colour attribute handle
+     *
+     * @return Integer ID of the colour attribute handle
+     * @since 1.0
+     */
+    public int getColourAttributeHandle()
+    {
+        return colourAttributeHandle;
+    }
+
+    /**
      * Get the colour uniform handle
      *
      * @return Integer ID of the colour uniform handle
@@ -181,6 +195,7 @@ public class Shader
         ShaderCache.registerShader(this);
 
         positionAttributeHandle = -1;
+        colourAttributeHandle = -1;
         colourUniformHandle = -1;
         matrixUniformHandle = -1;
     }

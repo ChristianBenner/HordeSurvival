@@ -6,60 +6,143 @@ import com.games.crispin.crispinmobile.Rendering.Utilities.RenderObject;
 // cube renderer object
 public class Cube extends RenderObject
 {
+//    static final float CUBE_VERTEX_DATA[] =
+//            {
+//                    -1.0f, -1.0f, -1.0f,
+//                    -1.0f, -1.0f, 1.0f,
+//                    -1.0f, 1.0f, 1.0f,
+//                    1.0f, 1.0f, -1.0f,
+//                    -1.0f, -1.0f, -1.0f,
+//                    -1.0f, 1.0f, -1.0f,
+//
+//                    1.0f, -1.0f, 1.0f,
+//                    -1.0f, -1.0f, -1.0f,
+//                    1.0f, -1.0f, -1.0f,
+//                    1.0f, 1.0f, -1.0f,
+//                    1.0f, -1.0f, -1.0f,
+//                    -1.0f, -1.0f, -1.0f,
+//
+//                    -1.0f, -1.0f, -1.0f,
+//                    -1.0f, 1.0f, 1.0f,
+//                    -1.0f, 1.0f, -1.0f,
+//                    1.0f, -1.0f, 1.0f,
+//                    -1.0f, -1.0f, 1.0f,
+//                    -1.0f, -1.0f, -1.0f,
+//
+//                    -1.0f, 1.0f, 1.0f,
+//                    -1.0f, -1.0f, 1.0f,
+//                    1.0f, -1.0f, 1.0f,
+//                    1.0f, 1.0f, 1.0f,
+//                    1.0f, -1.0f, -1.0f,
+//                    1.0f, 1.0f, -1.0f,
+//
+//                    1.0f, -1.0f, -1.0f,
+//                    1.0f, 1.0f, 1.0f,
+//                    1.0f, -1.0f, 1.0f,
+//                    1.0f, 1.0f, 1.0f,
+//                    1.0f, 1.0f, -1.0f,
+//                    -1.0f, 1.0f, -1.0f,
+//
+//                    1.0f, 1.0f, 1.0f,
+//                    -1.0f, 1.0f, -1.0f,
+//                    -1.0f, 1.0f, 1.0f,
+//                    1.0f, 1.0f, 1.0f,
+//                    -1.0f, 1.0f, 1.0f,
+//                    1.0f, -1.0f, 1.0f
+//            };
+
     static final float CUBE_VERTEX_DATA[] =
             {
                     -1.0f, -1.0f, -1.0f,
+                    1.0f, 0.0f, 0.0f, 1.0f, // rgb
                     -1.0f, -1.0f, 1.0f,
+                    0.0f, 1.0f, 0.0f, 1.0f, // rgb
                     -1.0f, 1.0f, 1.0f,
+                    0.0f, 0.0f, 1.0f, 1.0f, // rgb
                     1.0f, 1.0f, -1.0f,
+                    1.0f, 0.0f, 1.0f, 1.0f, // rgb
                     -1.0f, -1.0f, -1.0f,
+                    1.0f, 0.0f, 0.0f, 1.0f, // rgb
                     -1.0f, 1.0f, -1.0f,
+                    1.0f, 1.0f, 0.0f, 1.0f, // rgb
 
                     1.0f, -1.0f, 1.0f,
+                    0.0f, 1.0f, 0.0f, 1.0f, // rgb
                     -1.0f, -1.0f, -1.0f,
+                    1.0f, 0.0f, 0.0f, 1.0f, // rgb
                     1.0f, -1.0f, -1.0f,
+                    0.0f, 1.0f, 0.0f, 1.0f, // rgb
                     1.0f, 1.0f, -1.0f,
+                    1.0f, 0.0f, 1.0f, 1.0f, // rgb
                     1.0f, -1.0f, -1.0f,
+                    0.0f, 1.0f, 0.0f, 1.0f, // rgb
                     -1.0f, -1.0f, -1.0f,
+                    1.0f, 0.0f, 0.0f, 1.0f, // rgb
 
                     -1.0f, -1.0f, -1.0f,
+                    1.0f, 0.0f, 0.0f, 1.0f, // rgb
                     -1.0f, 1.0f, 1.0f,
+                    0.0f, 0.0f, 1.0f, 1.0f, // rgb
                     -1.0f, 1.0f, -1.0f,
+                    1.0f, 1.0f, 0.0f, 1.0f, // rgb
                     1.0f, -1.0f, 1.0f,
+                    1.0f, 0.0f, 0.0f, 1.0f, // rgb
                     -1.0f, -1.0f, 1.0f,
+                    0.0f, 1.0f, 0.0f, 1.0f, // rgb
                     -1.0f, -1.0f, -1.0f,
+                    1.0f, 0.0f, 0.0f, 1.0f, // rgb
 
                     -1.0f, 1.0f, 1.0f,
+                    0.0f, 0.0f, 1.0f, 1.0f, // rgb
                     -1.0f, -1.0f, 1.0f,
+                    0.0f, 1.0f, 0.0f, 1.0f, // rgb
                     1.0f, -1.0f, 1.0f,
+                    0.0f, 1.0f, 0.0f, 1.0f, // rgb
                     1.0f, 1.0f, 1.0f,
+                    0.0f, 1.0f, 0.0f, 1.0f, // rgb
                     1.0f, -1.0f, -1.0f,
+                    0.0f, 1.0f, 0.0f, 1.0f, // rgb
                     1.0f, 1.0f, -1.0f,
+                    1.0f, 0.0f, 1.0f, 1.0f, // rgb
 
                     1.0f, -1.0f, -1.0f,
+                    1.0f, 0.0f, 0.0f, 1.0f, // rgb
                     1.0f, 1.0f, 1.0f,
+                    1.0f, 0.0f, 0.0f, 1.0f, // rgb
                     1.0f, -1.0f, 1.0f,
+                    1.0f, 0.0f, 0.0f, 1.0f, // rgb
                     1.0f, 1.0f, 1.0f,
+                    1.0f, 0.0f, 0.0f, 1.0f, // rgb
                     1.0f, 1.0f, -1.0f,
+                    1.0f, 0.0f, 1.0f, 1.0f, // rgb
                     -1.0f, 1.0f, -1.0f,
+                    1.0f, 1.0f, 0.0f, 1.0f, // rgb
 
                     1.0f, 1.0f, 1.0f,
+                    0.0f, 1.0f, 0.0f, 1.0f, // rgb
                     -1.0f, 1.0f, -1.0f,
+                    1.0f, 1.0f, 0.0f, 1.0f, // rgb
                     -1.0f, 1.0f, 1.0f,
+                    0.0f, 0.0f, 1.0f, 1.0f, // rgb
                     1.0f, 1.0f, 1.0f,
+                    0.0f, 1.0f, 0.0f, 1.0f, // rgb
                     -1.0f, 1.0f, 1.0f,
-                    1.0f, -1.0f, 1.0f
+                    0.0f, 0.0f, 1.0f, 1.0f, // rgb
+                    1.0f, -1.0f, 1.0f,
+                    0.0f, 1.0f, 0.0f, 1.0f, // rgb
             };
 
     public Cube()
     {
-        super(CUBE_VERTEX_DATA, PositionDimensions_t.XYZ);
+        super(CUBE_VERTEX_DATA, PositionDimensions_t.XYZ, ColourDimensions_t.RGBA, AttributeOrder_t.POSITION_THEN_COLOUR);
     }
 
     public Cube(Material material)
     {
         super(CUBE_VERTEX_DATA,
                 PositionDimensions_t.XYZ,
+                ColourDimensions_t.RGBA,
+                AttributeOrder_t.POSITION_THEN_COLOUR,
                 material);
     }
 }
