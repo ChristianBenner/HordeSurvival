@@ -3,6 +3,7 @@ package com.games.crispin.hordesurvival;
 import android.content.Context;
 
 import com.games.crispin.crispinmobile.Rendering.Shaders.AttributeColourShader;
+import com.games.crispin.crispinmobile.Rendering.Shaders.TextShader;
 import com.games.crispin.crispinmobile.Rendering.Shaders.TextureShader;
 import com.games.crispin.crispinmobile.Rendering.Utilities.Camera3D;
 import com.games.crispin.crispinmobile.Rendering.Data.Colour;
@@ -33,7 +34,7 @@ public class TestScene extends Scene {
 
     private Camera3D camera;
     private TimeColourShader customShader;
-    private TextureShader textureShader;
+    private TextShader textShader;
     private float angle = 0.0f;
 
     public static byte[] convertStreamToByteArray(InputStream is) throws IOException
@@ -114,12 +115,12 @@ public class TestScene extends Scene {
         cubeThree = new Cube(material3);
         cubeThree.setPosition(new Point3D(2.0f, 2.0f, 0.0f));
 
-        textureShader = new TextureShader();
+        textShader = new TextShader();
 
         // Apply the custom shader to the cube
-        cube.useCustomShader(textureShader);
-        cubeTwo.useCustomShader(textureShader);
-        cubeThree.useCustomShader(textureShader);
+        cube.useCustomShader(textShader);
+        cubeTwo.useCustomShader(textShader);
+        cubeThree.useCustomShader(textShader);
 
         cube.setColour(Colour.WHITE);
         cubeTwo.setColour(Colour.MAGENTA);

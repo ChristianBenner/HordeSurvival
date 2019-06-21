@@ -9,3 +9,5 @@
 /build
 /captures
 .externalNativeBuild
+app/src/main/res/drawable/brick.png
+app/src/main/res/raw/sixty.TTF
