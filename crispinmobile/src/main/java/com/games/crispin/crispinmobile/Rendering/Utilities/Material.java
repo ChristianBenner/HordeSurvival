@@ -10,8 +10,21 @@ public class Material
     // colour
     //
 
+    private Texture texture;
+
     public Material()
     {
+        texture = null;
+    }
+
+    public Material(Texture texture)
+    {
+        this.texture = texture;
+    }
+
+    public Texture getTexture()
+    {
+        return this.texture;
     }
 
     public boolean isLightingEnabled()
@@ -21,7 +34,7 @@ public class Material
 
     public boolean hasTexture()
     {
-        return false;
+        return texture != null;
     }
 
     public boolean hasNormalMap()

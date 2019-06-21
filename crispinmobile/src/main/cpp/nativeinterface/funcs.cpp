@@ -23,7 +23,7 @@
 FT_Library freetype;
 
 extern "C" JNIEXPORT jboolean JNICALL
-Java_com_example_nativelibrarytest_LessonFourRenderer_initFreeType(
+Java_com_games_crispin_crispinmobile_Crispin_initFreeType(
         JNIEnv* env,
         jobject)
 {
@@ -85,25 +85,27 @@ FT_Face face;
 
 extern "C"
 JNIEXPORT jint JNICALL
-Java_com_example_nativelibrarytest_LessonFourRenderer_getWidth(JNIEnv* env, jobject instance)
+Java_com_games_crispin_crispinmobile_Crispin_getFaceWidth(JNIEnv* env, jobject instance)
 {
     return face->glyph->bitmap.width;
 }
 
 extern "C"
 JNIEXPORT jint JNICALL
-Java_com_example_nativelibrarytest_LessonFourRenderer_getHeight(JNIEnv* env, jobject instance)
+Java_com_games_crispin_crispinmobile_Crispin_getFaceHeight(JNIEnv* env, jobject instance)
 {
     return face->glyph->bitmap.rows;
 }
 
 extern "C"
 JNIEXPORT jbyteArray JNICALL
-Java_com_example_nativelibrarytest_LessonFourRenderer_loadGlyph(JNIEnv *env, jobject instance,
-                                                          jbyteArray bytes_) {
+Java_com_games_crispin_crispinmobile_Crispin_loadGlyph(JNIEnv *env, jobject instance,
+                                                          jbyteArray bytes_, jbyte thechar_) {
     // determine the needed length and allocate a buffer for it
     jsize num_bytes = env->GetArrayLength(bytes_);
     char *buffer = static_cast<char *>(malloc(num_bytes + 1));
+
+    char thechar = thechar_;
 
     if (!buffer) {
         // handle allocation failure ...
@@ -125,7 +127,7 @@ Java_com_example_nativelibrarytest_LessonFourRenderer_loadGlyph(JNIEnv *env, job
     {
         FT_Set_Pixel_Sizes(face, 0, 96);
 
-        if(FT_Load_Char(face, 'q', FT_LOAD_RENDER) == 0)
+        if(FT_Load_Char(face, thechar, FT_LOAD_RENDER) == 0)
         {
            // env->ReleaseByteArrayElements(bytes_, bytes_, 0);
 

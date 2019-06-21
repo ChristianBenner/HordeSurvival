@@ -12,10 +12,15 @@ import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 
 import static android.opengl.GLES20.GL_FLOAT;
+import static android.opengl.GLES20.GL_TEXTURE0;
+import static android.opengl.GLES20.GL_TEXTURE_2D;
 import static android.opengl.GLES20.GL_TRIANGLES;
+import static android.opengl.GLES20.glActiveTexture;
+import static android.opengl.GLES20.glBindTexture;
 import static android.opengl.GLES20.glDisableVertexAttribArray;
 import static android.opengl.GLES20.glDrawArrays;
 import static android.opengl.GLES20.glEnableVertexAttribArray;
+import static android.opengl.GLES20.glUniform1i;
 import static android.opengl.GLES20.glUniform4fv;
 import static android.opengl.GLES20.glUniformMatrix4fv;
 import static android.opengl.GLES20.glVertexAttribPointer;
@@ -117,6 +122,14 @@ public class RenderObject
         this.TEXEL_DIMENSIONS = texelDimensions;
         this.COLOUR_DIMENSIONS = colourDimensions;
         this.ATTRIBUTE_ORDER = attributeOrder;
+        this.rotationX = 0.0f;
+        this.rotationY = 0.0f;
+        this.rotationZ = 0.0f;
+        this.angle = 0.0f;
+        this.scaleX = 1.0f;
+        this.scaleY = 1.0f;
+        this.scaleZ = 1.0f;
+        this.position = new Point3D(0.0f, 0.0f, 0.0f);
 
         // Figure out the stride
         resolveStride(POSITION_DIMENSIONS,
@@ -149,15 +162,6 @@ public class RenderObject
 
         setMaterial(material);
         setColour(Colour.LIGHT_GREY);
-
-        position = new Point3D(0.0f, 0.0f, 0.0f);
-        rotationX = 0.0f;
-        rotationY = 0.0f;
-        rotationZ = 0.0f;
-        angle = 0.0f;
-        scaleX = 1.0f;
-        scaleY = 1.0f;
-        scaleZ = 1.0f;
 
         hasCustomShader = false;
     }
@@ -340,7 +344,10 @@ public class RenderObject
         Matrix.setIdentityM(modelMatrix, 0);
         Matrix.scaleM(modelMatrix, 0, scaleX, scaleY, scaleZ);
         Matrix.translateM(modelMatrix, 0, position.x, position.y, position.z);
-        Matrix.rotateM(modelMatrix, 0, angle, rotationX, rotationY, rotationZ);
+        if(angle != 0.0f)
+        {
+            Matrix.rotateM(modelMatrix, 0, angle, rotationX, rotationY, rotationZ);
+        }
     }
 
     private void attribPositionData()
@@ -360,7 +367,16 @@ public class RenderObject
     {
         if(TEXEL_DIMENSIONS != TexelDimensions_t.NONE)
         {
-            // Enable attrib colour data
+            // Enable attrib texture data
+            VERTEX_BUFFER.position(texelDataOffset);
+            glEnableVertexAttribArray(shader.getTextureAttributeHandle());
+            glVertexAttribPointer(shader.getTextureAttributeHandle(),
+                    elementsPerTexel,
+                    GL_FLOAT,
+                    true,
+                    totalStrideBytes,
+                    VERTEX_BUFFER);
+            VERTEX_BUFFER.position(0);
         }
     }
 
@@ -368,7 +384,7 @@ public class RenderObject
     {
         if(COLOUR_DIMENSIONS != ColourDimensions_t.NONE)
         {
-            // Enable attrib texel data
+            // Enable attrib colour data
             VERTEX_BUFFER.position(colourDataOffset);
             glEnableVertexAttribArray(shader.getColourAttributeHandle());
             glVertexAttribPointer(shader.getColourAttributeHandle(),
@@ -418,7 +434,7 @@ public class RenderObject
                 break;
             case POSITION_THEN_TEXEL:
                 glDisableVertexAttribArray(shader.getPositionAttributeHandle());
-               // glDisableVertexAttribArray(shader.getTexelAttributeHandle());
+                glDisableVertexAttribArray(shader.getTextureAttributeHandle());
                 break;
             case POSITION_THEN_COLOUR:
                 glDisableVertexAttribArray(shader.getPositionAttributeHandle());
@@ -426,13 +442,13 @@ public class RenderObject
                 break;
             case POSITION_THEN_TEXEL_THEN_COLOUR:
                 glDisableVertexAttribArray(shader.getPositionAttributeHandle());
-                // glDisableVertexAttribArray(shader.getTexelAttributeHandle());
+                glDisableVertexAttribArray(shader.getTextureAttributeHandle());
                 glDisableVertexAttribArray(shader.getColourAttributeHandle());
                 break;
             case POSITION_THEN_COLOUR_THEN_TEXEL:
                 glDisableVertexAttribArray(shader.getPositionAttributeHandle());
                 glDisableVertexAttribArray(shader.getColourAttributeHandle());
-                // glDisableVertexAttribArray(shader.getTexelAttributeHandle());
+                glDisableVertexAttribArray(shader.getTextureAttributeHandle());
                 break;
         }
     }
@@ -450,7 +466,18 @@ public class RenderObject
         Matrix.multiplyMM(modelViewProjectionMatrix, 0, camera.getPerspectiveMatrix(), 0, modelViewMatrix, 0);
 
         glUniformMatrix4fv(shader.getMatrixUniformHandle(), 1, false, modelViewProjectionMatrix, 0);
-        //glUniform4fv(shader.getColourUniformHandle(), 1, colourData, 0);
+
+        if(shader.getColourUniformHandle() != -1)
+        {
+            glUniform4fv(shader.getColourUniformHandle(), 1, colourData, 0);
+        }
+
+        if(shader.getTextureUniformHandle() != -1 && material.hasTexture())
+        {
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, material.getTexture().getId());
+            glUniform1i(shader.getTextureUniformHandle(), 0);
+        }
 
         enableAttribs();
         glDrawArrays(GL_TRIANGLES, 0, VERTEX_COUNT);

@@ -62,6 +62,16 @@ public class Crispin
         crispinInstance.sceneManager.setStartScene(startSceneConstructor);
     }
 
+    static
+    {
+        System.loadLibrary("crispinni");
+    }
+
+    public static native boolean initFreeType();
+    public static native byte[] loadGlyph(byte[] bytes, byte thechar);
+    public static native int getFaceWidth();
+    public static native int getFaceHeight();
+
     /**
      * Get the application context
      *

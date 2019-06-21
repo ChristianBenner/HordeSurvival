@@ -51,8 +51,14 @@ public class Shader
     // Colour attribute handle
     protected int colourAttributeHandle;
 
+    // Texture attribute handle
+    protected int textureAttributeHandle;
+
     // Colour uniform handle
     protected int colourUniformHandle;
+
+    // Texture uniform handle
+    protected int textureUniformHandle;
 
     // Matrix uniform handle
     protected int matrixUniformHandle;
@@ -147,6 +153,17 @@ public class Shader
     }
 
     /**
+     * Get the texture attribute handle
+     *
+     * @return Integer ID of the texture attribute handle
+     * @since 1.0
+     */
+    public int getTextureAttributeHandle()
+    {
+        return textureAttributeHandle;
+    }
+
+    /**
      * Get the colour uniform handle
      *
      * @return Integer ID of the colour uniform handle
@@ -155,6 +172,17 @@ public class Shader
     public int getColourUniformHandle()
     {
         return colourUniformHandle;
+    }
+
+    /**
+     * Get the texture uniform handle
+     *
+     * @return Integer ID of the texture uniform handle
+     * @since 1.0
+     */
+    public int getTextureUniformHandle()
+    {
+        return textureUniformHandle;
     }
 
     /**
@@ -196,7 +224,9 @@ public class Shader
 
         positionAttributeHandle = -1;
         colourAttributeHandle = -1;
+        textureAttributeHandle = -1;
         colourUniformHandle = -1;
+        textureUniformHandle = -1;
         matrixUniformHandle = -1;
     }
 

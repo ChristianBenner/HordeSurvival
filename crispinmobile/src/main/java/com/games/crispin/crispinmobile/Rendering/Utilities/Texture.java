@@ -28,27 +28,6 @@ import static android.opengl.GLES20.glPixelStorei;
 import static android.opengl.GLES20.glTexImage2D;
 import static android.opengl.GLES20.glTexParameteri;
 
-class TextureOptions
-{
-    private static final int DEFAULT_MIN_FILTER = GL_NEAREST;
-    private static final int DEFAULT_MAG_FILTER = GL_NEAREST;
-    private static final int DEFAULT_INTERNAL_FORMAT = GL_RGBA;
-    private static final int DEFAULT_FORMAT = GL_RGBA;
-    private static final int DEFAULT_TEXTURE_WRAP_S = GL_REPEAT;
-    private static final int DEFAULT_TEXTURE_WRAP_T = GL_REPEAT;
-    private static final int DEFAULT_TYPE = GL_UNSIGNED_BYTE;
-    private static final boolean DEFAULT_MONOCHROME = false;
-
-    public int minFilter = DEFAULT_MIN_FILTER;
-    public int magFilter = DEFAULT_MAG_FILTER;
-    public int internalFormat = DEFAULT_INTERNAL_FORMAT;
-    public int format = DEFAULT_FORMAT;
-    public int textureWrapS = DEFAULT_TEXTURE_WRAP_S;
-    public int textureWrapT = DEFAULT_TEXTURE_WRAP_T;
-    public int type = DEFAULT_TYPE;
-    public boolean monochrome = DEFAULT_MONOCHROME;
-}
-
 public class Texture
 {
     // TODO: MAKE CRISPIN ENGINE RELOAD ALL OF THE TEXTURES IN THE TEXTURE CACHE
@@ -121,10 +100,15 @@ public class Texture
         this.width = width;
         this.height = height;
         resourceId = NO_RESOURCE_ID;
-        this.options = options;
+        this.options = textureOptions;
         buffer = arrayToBuffer(bytes);
 
         loadTexture(buffer);
+    }
+
+    public int getId()
+    {
+        return textureId;
     }
 
     public int getWidth()
