@@ -2,9 +2,12 @@ package com.games.crispin.hordesurvival;
 
 import android.content.Context;
 
-import com.games.crispin.crispinmobile.Rendering.Shaders.AttributeColourShader;
+import com.games.crispin.crispinmobile.Geometry.Scale2D;
+import com.games.crispin.crispinmobile.Rendering.Data.FreeTypeCharacter;
+import com.games.crispin.crispinmobile.Rendering.Models.Square;
 import com.games.crispin.crispinmobile.Rendering.Shaders.TextShader;
-import com.games.crispin.crispinmobile.Rendering.Shaders.TextureShader;
+import com.games.crispin.crispinmobile.Rendering.Shaders.TextureAttributeColourShader;
+import com.games.crispin.crispinmobile.Rendering.Utilities.Camera2D;
 import com.games.crispin.crispinmobile.Rendering.Utilities.Camera3D;
 import com.games.crispin.crispinmobile.Rendering.Data.Colour;
 import com.games.crispin.crispinmobile.Crispin;
@@ -13,33 +16,24 @@ import com.games.crispin.crispinmobile.Geometry.Point3D;
 import com.games.crispin.crispinmobile.Rendering.Utilities.Font;
 import com.games.crispin.crispinmobile.Rendering.Utilities.Material;
 import com.games.crispin.crispinmobile.Rendering.Utilities.Texture;
-import com.games.crispin.crispinmobile.Rendering.Utilities.TextureOptions;
 import com.games.crispin.crispinmobile.Utilities.Scene;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
-import static android.opengl.GLES20.GL_LUMINANCE;
-import static android.opengl.GLES20.glGetShaderiv;
-import static android.opengl.GLES20.glUniform4fv;
-import static android.opengl.GLES20.glUniformMatrix4fv;
-import static android.opengl.GLES20.glVertexAttribPointer;
 
 public class TestScene extends Scene {
     static Scene.Constructor TEST_SCENE_CONSTRUCTION = (context) -> new TestScene(context);
 
-    private Cube cube;
+    private Square square;
     private Cube cubeTwo;
     private Cube cubeThree;
 
     private Camera3D camera;
+    private Camera2D camera2D;
+
     private TimeColourShader customShader;
     private TextShader textShader;
+    private TextureAttributeColourShader textureAttributeColourShader;
     private float angle = 0.0f;
+
+    private FreeTypeCharacter character;
 
     public TestScene(Context context)
     {
@@ -50,32 +44,39 @@ public class TestScene extends Scene {
         camera = new Camera3D();
         camera.setPosition(new Point3D(0.0f, 0.0f, 7.0f));
 
+        camera2D = new Camera2D();
+
         // Create the custom shader object
         customShader = new TimeColourShader();
 
-        Font f = new Font(R.raw.sixty, 20);
-        Material material = new Material(f.getCharacterTexture('a'));
-        Material material2 = new Material(f.getCharacterTexture('b'));
-        Material material3 = new Material(f.getCharacterTexture('c'));
+        Font f = new Font(R.raw.sixty, 128);
+        character = f.getCharacter('a');
+
+        Material material = new Material(character.texture);
+
+        Material brickMaterial = new Material(new Texture(R.drawable.brick));
 
         // Create a cube object
-        cube = new Cube(material);
-        cube.setPosition(new Point3D(0.0f, -2.0f, 0.0f));
+        square = new Square(material);
+        square.setPosition(new Point3D(0.0f, 000.0f, 0.0f));
 
-        cubeTwo = new Cube(material2);
+        cubeTwo = new Cube(brickMaterial);
         cubeTwo.setPosition(new Point3D(-2.0f, 2.0f, 0.0f));
 
-        cubeThree = new Cube(material3);
+        cubeThree = new Cube(brickMaterial);
         cubeThree.setPosition(new Point3D(2.0f, 2.0f, 0.0f));
 
         textShader = new TextShader();
+        textureAttributeColourShader = new TextureAttributeColourShader();
 
         // Apply the custom shader to the cube
-        cube.useCustomShader(textShader);
-        cubeTwo.useCustomShader(textShader);
-        cubeThree.useCustomShader(textShader);
+        square.useCustomShader(textShader);
+        cubeTwo.useCustomShader(textureAttributeColourShader);
+        cubeThree.useCustomShader(textureAttributeColourShader);
 
-        cube.setColour(Colour.WHITE);
+        square.setColour(Colour.RED);
+        square.setScale(new Scale2D(character.width, character.height));
+
         cubeTwo.setColour(Colour.MAGENTA);
         cubeThree.setColour(Colour.BLUE);
     }
@@ -87,7 +88,7 @@ public class TestScene extends Scene {
         customShader.update(deltaTime);
 
         angle += 1f;
-        cube.setRotation(angle, 1.0f, 1.0f, 0.0f);
+        square.setRotation(angle, 1.0f, 1.0f, 0.0f);
         cubeTwo.setRotation(angle, 0.0f, 1.0f, 1.0f);
         cubeThree.setRotation(angle, 1.0f, 0.0f, 1.0f);
     }
@@ -96,7 +97,7 @@ public class TestScene extends Scene {
     public void render()
     {
         // Draw the cube
-        cube.draw(camera);
+        square.draw(camera2D);
         cubeThree.draw(camera);
         cubeTwo.draw(camera);
     }

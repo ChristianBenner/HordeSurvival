@@ -5,6 +5,12 @@ package com.games.crispin.crispinmobile.Geometry;
 public class Point3D extends Point2D {
     public float z;
 
+    public Point3D()
+    {
+        super();
+        this.z = 0.0f;
+    }
+
     public Point3D(float x, float y, float z) {
         this.x = x;
         this.y = y;

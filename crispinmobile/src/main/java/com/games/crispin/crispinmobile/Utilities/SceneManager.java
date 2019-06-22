@@ -412,7 +412,8 @@ public class SceneManager implements GLSurfaceView.Renderer
         }
 
         // If the current scene exists, render it
-        if (currentScene != null) {
+        if (currentScene != null)
+        {
             currentScene.render();
         }
     }

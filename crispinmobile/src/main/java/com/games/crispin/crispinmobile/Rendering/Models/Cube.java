@@ -51,86 +51,203 @@ public class Cube extends RenderObject
 //                    1.0f, -1.0f, 1.0f
 //            };
 
-        static final float CUBE_VERTEX_DATA[] =
-            {
-                    -1.0f, -1.0f, -1.0f,
-                    0.0f, 1.0f, //st
-                    -1.0f, -1.0f, 1.0f,
-                    1.0f, 1.0f, //st
-                    -1.0f, 1.0f, 1.0f,
-                    1.0f, 0.0f, //st
-                    1.0f, 1.0f, -1.0f,
-                    0.0f, 0.0f, //st
-                    -1.0f, -1.0f, -1.0f,
-                    1.0f, 1.0f, //st
-                    -1.0f, 1.0f, -1.0f,
-                    1.0f, 0.0f, //st
+//        static final float CUBE_VERTEX_DATA[] =
+//            {
+//                    -1.0f, -1.0f, -1.0f,
+//                    0.0f, 1.0f, //st
+//                    -1.0f, -1.0f, 1.0f,
+//                    1.0f, 1.0f, //st
+//                    -1.0f, 1.0f, 1.0f,
+//                    1.0f, 0.0f, //st
+//                    1.0f, 1.0f, -1.0f,
+//                    0.0f, 0.0f, //st
+//                    -1.0f, -1.0f, -1.0f,
+//                    1.0f, 1.0f, //st
+//                    -1.0f, 1.0f, -1.0f,
+//                    1.0f, 0.0f, //st
+//
+//                    1.0f, -1.0f, 1.0f,
+//                    0.0f, 1.0f, //st
+//                    -1.0f, -1.0f, -1.0f,
+//                    1.0f, 0.0f, //st
+//                    1.0f, -1.0f, -1.0f,
+//                    1.0f, 1.0f, //st
+//                    1.0f, 1.0f, -1.0f,
+//                    0.0f, 0.0f, //st
+//                    1.0f, -1.0f, -1.0f,
+//                    0.0f, 1.0f, //st
+//                    -1.0f, -1.0f, -1.0f,
+//                    1.0f, 1.0f, //st
+//
+//                    -1.0f, -1.0f, -1.0f,
+//                    0.0f, 1.0f, //st
+//                    -1.0f, 1.0f, 1.0f,
+//                    1.0f, 0.0f, //st
+//                    -1.0f, 1.0f, -1.0f,
+//                    0.0f, 0.0f, //st
+//                    1.0f, -1.0f, 1.0f,
+//                    0.0f, 1.0f, //st
+//                    -1.0f, -1.0f, 1.0f,
+//                    0.0f, 0.0f, //st
+//                    -1.0f, -1.0f, -1.0f,
+//                    1.0f, 0.0f, //st
+//
+//                    -1.0f, 1.0f, 1.0f,
+//                    0.0f, 0.0f, //st
+//                    -1.0f, -1.0f, 1.0f,
+//                    0.0f, 1.0f, //st
+//                    1.0f, -1.0f, 1.0f,
+//                    1.0f, 1.0f, //st
+//                    1.0f, 1.0f, 1.0f,
+//                    0.0f, 0.0f, //st
+//                    1.0f, -1.0f, -1.0f,
+//                    1.0f, 1.0f, //st
+//                    1.0f, 1.0f, -1.0f,
+//                    1.0f, 0.0f, //st
+//
+//                    1.0f, -1.0f, -1.0f,
+//                    1.0f, 1.0f, //st
+//                    1.0f, 1.0f, 1.0f,
+//                    0.0f, 0.0f, //st
+//                    1.0f, -1.0f, 1.0f,
+//                    0.0f, 1.0f, //st
+//                    1.0f, 1.0f, 1.0f,
+//                    1.0f, 0.0f, //st
+//                    1.0f, 1.0f, -1.0f,
+//                    0.0f, 0.0f, //st
+//                    -1.0f, 1.0f, -1.0f,
+//                    0.0f, 1.0f, //st
+//
+//                    1.0f, 1.0f, 1.0f,
+//                    1.0f, 0.0f, //st
+//                    -1.0f, 1.0f, -1.0f,
+//                    0.0f, 1.0f, //st
+//                    -1.0f, 1.0f, 1.0f,
+//                    1.0f, 1.0f, //st
+//                    1.0f, 1.0f, 1.0f,
+//                    1.0f, 0.0f, //st
+//                    -1.0f, 1.0f, 1.0f,
+//                    0.0f, 0.0f, //st
+//                    1.0f, -1.0f, 1.0f,
+//                    1.0f, 1.0f, //st
+//            };
 
-                    1.0f, -1.0f, 1.0f,
-                    0.0f, 1.0f, //st
-                    -1.0f, -1.0f, -1.0f,
-                    1.0f, 0.0f, //st
-                    1.0f, -1.0f, -1.0f,
-                    1.0f, 1.0f, //st
-                    1.0f, 1.0f, -1.0f,
-                    0.0f, 0.0f, //st
-                    1.0f, -1.0f, -1.0f,
-                    0.0f, 1.0f, //st
-                    -1.0f, -1.0f, -1.0f,
-                    1.0f, 1.0f, //st
+    static final float CUBE_VERTEX_DATA[] =
+    {
+            -1.0f, -1.0f, -1.0f,
+            1.0f, 0.0f, 0.0f, 1.0f, //rgb
+            0.0f, 1.0f, //st
+            -1.0f, -1.0f, 1.0f,
+            1.0f, 0.0f, 0.0f, 1.0f, //rgb
+            1.0f, 1.0f, //st
+            -1.0f, 1.0f, 1.0f,
+            1.0f, 0.0f, 0.0f, 1.0f, //rgb
+            1.0f, 0.0f, //st
+            1.0f, 1.0f, -1.0f,
+            1.0f, 1.0f, 0.0f, 1.0f, //rgb
+            0.0f, 0.0f, //st
+            -1.0f, -1.0f, -1.0f,
+            1.0f, 1.0f, 0.0f, 1.0f, //rgb
+            1.0f, 1.0f, //st
+            -1.0f, 1.0f, -1.0f,
+            1.0f, 1.0f, 0.0f, 1.0f, //rgb
+            1.0f, 0.0f, //st
 
-                    -1.0f, -1.0f, -1.0f,
-                    0.0f, 1.0f, //st
-                    -1.0f, 1.0f, 1.0f,
-                    1.0f, 0.0f, //st
-                    -1.0f, 1.0f, -1.0f,
-                    0.0f, 0.0f, //st
-                    1.0f, -1.0f, 1.0f,
-                    0.0f, 1.0f, //st
-                    -1.0f, -1.0f, 1.0f,
-                    0.0f, 0.0f, //st
-                    -1.0f, -1.0f, -1.0f,
-                    1.0f, 0.0f, //st
+            1.0f, -1.0f, 1.0f,
+            0.0f, 1.0f, 1.0f, 1.0f, //rgb
+            0.0f, 1.0f, //st
+            -1.0f, -1.0f, -1.0f,
+            0.0f, 1.0f, 1.0f, 1.0f, //rgb
+            1.0f, 0.0f, //st
+            1.0f, -1.0f, -1.0f,
+            0.0f, 1.0f, 1.0f, 1.0f, //rgb
+            1.0f, 1.0f, //st
+            1.0f, 1.0f, -1.0f,
+            1.0f, 1.0f, 0.0f, 1.0f, //rgb
+            0.0f, 0.0f, //st
+            1.0f, -1.0f, -1.0f,
+            1.0f, 1.0f, 0.0f, 1.0f, //rgb
+            0.0f, 1.0f, //st
+            -1.0f, -1.0f, -1.0f,
+            1.0f, 1.0f, 0.0f, 1.0f, //rgb
+            1.0f, 1.0f, //st
 
-                    -1.0f, 1.0f, 1.0f,
-                    0.0f, 0.0f, //st
-                    -1.0f, -1.0f, 1.0f,
-                    0.0f, 1.0f, //st
-                    1.0f, -1.0f, 1.0f,
-                    1.0f, 1.0f, //st
-                    1.0f, 1.0f, 1.0f,
-                    0.0f, 0.0f, //st
-                    1.0f, -1.0f, -1.0f,
-                    1.0f, 1.0f, //st
-                    1.0f, 1.0f, -1.0f,
-                    1.0f, 0.0f, //st
+            -1.0f, -1.0f, -1.0f,
+            1.0f, 0.0f, 0.0f, 1.0f, //rgb
+            0.0f, 1.0f, //st
+            -1.0f, 1.0f, 1.0f,
+            1.0f, 0.0f, 0.0f, 1.0f, //rgb
+            1.0f, 0.0f, //st
+            -1.0f, 1.0f, -1.0f,
+            1.0f, 0.0f, 0.0f, 1.0f, //rgb
+            0.0f, 0.0f, //st
+            1.0f, -1.0f, 1.0f,
+            0.0f, 1.0f, 1.0f, 1.0f, //rgb
+            0.0f, 1.0f, //st
+            -1.0f, -1.0f, 1.0f,
+            0.0f, 1.0f, 1.0f, 1.0f, //rgb
+            0.0f, 0.0f, //st
+            -1.0f, -1.0f, -1.0f,
+            0.0f, 1.0f, 1.0f, 1.0f, //rgb
+            1.0f, 0.0f, //st
 
-                    1.0f, -1.0f, -1.0f,
-                    1.0f, 1.0f, //st
-                    1.0f, 1.0f, 1.0f,
-                    0.0f, 0.0f, //st
-                    1.0f, -1.0f, 1.0f,
-                    0.0f, 1.0f, //st
-                    1.0f, 1.0f, 1.0f,
-                    1.0f, 0.0f, //st
-                    1.0f, 1.0f, -1.0f,
-                    0.0f, 0.0f, //st
-                    -1.0f, 1.0f, -1.0f,
-                    0.0f, 1.0f, //st
+            -1.0f, 1.0f, 1.0f,
+            1.0f, 0.0f, 1.0f, 1.0f, //rgb
+            0.0f, 0.0f, //st
+            -1.0f, -1.0f, 1.0f,
+            1.0f, 0.0f, 1.0f, 1.0f, //rgb
+            0.0f, 1.0f, //st
+            1.0f, -1.0f, 1.0f,
+            1.0f, 0.0f, 1.0f, 1.0f, //rgb
+            1.0f, 1.0f, //st
+            1.0f, 1.0f, 1.0f,
+            0.0f, 1.0f, 0.0f, 1.0f, //rgb
+            0.0f, 0.0f, //st
+            1.0f, -1.0f, -1.0f,
+            0.0f, 1.0f, 0.0f, 1.0f, //rgb
+            1.0f, 1.0f, //st
+            1.0f, 1.0f, -1.0f,
+            0.0f, 1.0f, 0.0f, 1.0f, //rgb
+            1.0f, 0.0f, //st
 
-                    1.0f, 1.0f, 1.0f,
-                    1.0f, 0.0f, //st
-                    -1.0f, 1.0f, -1.0f,
-                    0.0f, 1.0f, //st
-                    -1.0f, 1.0f, 1.0f,
-                    1.0f, 1.0f, //st
-                    1.0f, 1.0f, 1.0f,
-                    1.0f, 0.0f, //st
-                    -1.0f, 1.0f, 1.0f,
-                    0.0f, 0.0f, //st
-                    1.0f, -1.0f, 1.0f,
-                    1.0f, 1.0f, //st
-            };
+            1.0f, -1.0f, -1.0f,
+            0.0f, 1.0f, 0.0f, 1.0f, //rgb
+            1.0f, 1.0f, //st
+            1.0f, 1.0f, 1.0f,
+            0.0f, 1.0f, 0.0f, 1.0f, //rgb
+            0.0f, 0.0f, //st
+            1.0f, -1.0f, 1.0f,
+            0.0f, 1.0f, 0.0f, 1.0f, //rgb
+            0.0f, 1.0f, //st
+            1.0f, 1.0f, 1.0f,
+            0.0f, 0.0f, 1.0f, 1.0f, //rgb
+            1.0f, 0.0f, //st
+            1.0f, 1.0f, -1.0f,
+            0.0f, 0.0f, 1.0f, 1.0f, //rgb
+            0.0f, 0.0f, //st
+            -1.0f, 1.0f, -1.0f,
+            0.0f, 0.0f, 1.0f, 1.0f, //rgb
+            0.0f, 1.0f, //st
+
+            1.0f, 1.0f, 1.0f,
+            0.0f, 0.0f, 1.0f, 1.0f, //rgb
+            1.0f, 0.0f, //st
+            -1.0f, 1.0f, -1.0f,
+            0.0f, 0.0f, 1.0f, 1.0f, //rgb
+            0.0f, 1.0f, //st
+            -1.0f, 1.0f, 1.0f,
+            0.0f, 0.0f, 1.0f, 1.0f, //rgb
+            1.0f, 1.0f, //st
+            1.0f, 1.0f, 1.0f,
+            1.0f, 0.0f, 1.0f, 1.0f, //rgb
+            1.0f, 0.0f, //st
+            -1.0f, 1.0f, 1.0f,
+            1.0f, 0.0f, 1.0f, 1.0f, //rgb
+            0.0f, 0.0f, //st
+            1.0f, -1.0f, 1.0f,
+            1.0f, 0.0f, 1.0f, 1.0f, //rgb
+            1.0f, 1.0f, //st
+    };
 
 //    static final float CUBE_VERTEX_DATA[] =
 //            {
@@ -215,7 +332,7 @@ public class Cube extends RenderObject
 
     public Cube()
     {
-        super(CUBE_VERTEX_DATA, PositionDimensions_t.XYZ, TexelDimensions_t.ST, AttributeOrder_t.POSITION_THEN_TEXEL);
+        super(CUBE_VERTEX_DATA, PositionDimensions_t.XYZ, TexelDimensions_t.ST, ColourDimensions_t.RGBA, AttributeOrder_t.POSITION_THEN_COLOUR_THEN_TEXEL);
     }
 
     public Cube(Material material)
@@ -223,7 +340,8 @@ public class Cube extends RenderObject
         super(CUBE_VERTEX_DATA,
                 PositionDimensions_t.XYZ,
                 TexelDimensions_t.ST,
-                AttributeOrder_t.POSITION_THEN_TEXEL,
+                ColourDimensions_t.RGBA,
+                AttributeOrder_t.POSITION_THEN_COLOUR_THEN_TEXEL,
                 material);
     }
 }

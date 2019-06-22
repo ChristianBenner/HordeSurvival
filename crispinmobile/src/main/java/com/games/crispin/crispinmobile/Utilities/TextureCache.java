@@ -25,11 +25,11 @@ public class TextureCache
 
     public static void reinitialiseAll()
     {
-        for(Texture texture : textures)
+        for(int i = 0; i < textures.size(); i++)
         {
             try
             {
-                texture.reconstruct();
+                textures.get(i).reconstruct();
             }
             catch(Exception e)
             {

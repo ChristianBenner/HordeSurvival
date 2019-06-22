@@ -6,7 +6,7 @@ import com.games.crispin.crispinmobile.Crispin;
 
 public class Camera2D
 {
-    private static float DEFAULT_NEAR = 0.1f;
+    private static float DEFAULT_NEAR = -5.0f;
     private static float DEFAULT_FAR = 5.0f;
 
     private float left;
@@ -27,6 +27,7 @@ public class Camera2D
         near = DEFAULT_NEAR;
         far = DEFAULT_FAR;
         orthoMatrix = new float[16];
+        
         updateView();
     }
 

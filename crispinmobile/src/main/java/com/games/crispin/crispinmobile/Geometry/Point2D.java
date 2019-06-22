@@ -6,8 +6,8 @@ public class Point2D
 
     public Point2D()
     {
-        this.x = x;
-        this.y = y;
+        this.x = 0.0f;
+        this.y = 0.0f;
     }
 
     public Point2D(float x, float y)

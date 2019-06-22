@@ -128,7 +128,7 @@ Java_com_games_crispin_crispinmobile_Crispin_freeFace(JNIEnv* env, jobject insta
 extern "C"
 JNIEXPORT jbyteArray JNICALL
 Java_com_games_crispin_crispinmobile_Crispin_loadGlyph(JNIEnv *env, jobject instance,
-                                                          jbyteArray bytes_, jbyte thechar_) {
+                                                          jbyteArray bytes_, jbyte thechar_, jint size) {
     // determine the needed length and allocate a buffer for it
     jsize num_bytes = env->GetArrayLength(bytes_);
     char *buffer = static_cast<char *>(malloc(num_bytes + 1));
@@ -153,7 +153,7 @@ Java_com_games_crispin_crispinmobile_Crispin_loadGlyph(JNIEnv *env, jobject inst
     // convert jbytearray to bytes[]
     if(FT_New_Memory_Face(freetype, (FT_Byte*)buffer, num_bytes, 0, &face) == 0)
     {
-        FT_Set_Pixel_Sizes(face, 0, 96);
+        FT_Set_Pixel_Sizes(face, 0, size);
 
         if(FT_Load_Char(face, thechar, FT_LOAD_RENDER) == 0)
         {

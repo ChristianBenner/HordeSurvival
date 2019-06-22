@@ -2,7 +2,10 @@ package com.games.crispin.crispinmobile.Rendering.Utilities;
 
 import android.opengl.Matrix;
 
+import com.games.crispin.crispinmobile.Geometry.Point2D;
 import com.games.crispin.crispinmobile.Geometry.Point3D;
+import com.games.crispin.crispinmobile.Geometry.Scale2D;
+import com.games.crispin.crispinmobile.Geometry.Scale3D;
 import com.games.crispin.crispinmobile.Rendering.Data.Colour;
 import com.games.crispin.crispinmobile.Utilities.Logger;
 import com.games.crispin.crispinmobile.Rendering.Shaders.UniformColourShader;
@@ -57,9 +60,7 @@ public class RenderObject
     // Float buffer that holds all the triangle co-ordinate data
     private FloatBuffer VERTEX_BUFFER;
 
-    private float scaleX;
-    private float scaleY;
-    private float scaleZ;
+    private Scale3D scale;
     private Point3D position;
     private float angle;
     private float rotationX;
@@ -126,10 +127,8 @@ public class RenderObject
         this.rotationY = 0.0f;
         this.rotationZ = 0.0f;
         this.angle = 0.0f;
-        this.scaleX = 1.0f;
-        this.scaleY = 1.0f;
-        this.scaleZ = 1.0f;
-        this.position = new Point3D(0.0f, 0.0f, 0.0f);
+        this.scale = new Scale3D();
+        this.position = new Point3D();
 
         // Figure out the stride
         resolveStride(POSITION_DIMENSIONS,
@@ -319,11 +318,15 @@ public class RenderObject
         return this.material;
     }
 
-    public void setScale(float x, float y, float z)
+    public void setScale(Scale2D scale)
     {
-        this.scaleX = x;
-        this.scaleY = y;
-        this.scaleZ = z;
+        this.scale.x = scale.x;
+        this.scale.y = scale.y;
+    }
+
+    public void setScale(Scale3D scale)
+    {
+        this.scale = scale;
     }
 
     public void setPosition(Point3D position)
@@ -342,7 +345,7 @@ public class RenderObject
     private void updateModelMatrix()
     {
         Matrix.setIdentityM(modelMatrix, 0);
-        Matrix.scaleM(modelMatrix, 0, scaleX, scaleY, scaleZ);
+        Matrix.scaleM(modelMatrix, 0, scale.x, scale.y, scale.z);
         Matrix.translateM(modelMatrix, 0, position.x, position.y, position.z);
         if(angle != 0.0f)
         {
@@ -453,6 +456,48 @@ public class RenderObject
         }
     }
 
+    public void draw(Camera2D camera)
+    {
+        updateModelMatrix();
+
+        shader.enableIt();
+
+ //       float[] modelViewMatrix = new float[16];
+ //      Matrix.multiplyMM(modelViewMatrix, 0, camera.getOrthoMatrix(), 0, modelMatrix, 0);
+
+        final float[] ortho =
+                {
+                        1.0f, 0.0f, 0.0f, 0.0f,
+                        0.0f, 1.0f, 0.0f, 0.0f,
+                        0.0f, 0.0f, 1.0f, 0.0f,
+                        0.0f, 0.0f, 0.0f, 1.0f
+                };
+        float[] modelViewMatrix = new float[16];
+        Matrix.multiplyMM(modelViewMatrix, 0, camera.getOrthoMatrix(), 0, modelMatrix, 0);
+
+        glUniformMatrix4fv(shader.getMatrixUniformHandle(), 1, false, modelViewMatrix, 0);
+
+        if(shader.getColourUniformHandle() != -1)
+        {
+            glUniform4fv(shader.getColourUniformHandle(), 1, colourData, 0);
+        }
+
+        if(shader.getTextureUniformHandle() != -1 && material.hasTexture())
+        {
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, material.getTexture().getId());
+            glUniform1i(shader.getTextureUniformHandle(), 0);
+        }
+
+        enableAttribs();
+        glDrawArrays(GL_TRIANGLES, 0, VERTEX_COUNT);
+        disableAttribs();
+
+        glBindTexture(GL_TEXTURE_2D, 0);
+
+        shader.disableIt();
+    }
+
     public void draw(Camera3D camera)
     {
         updateModelMatrix();
@@ -482,6 +527,8 @@ public class RenderObject
         enableAttribs();
         glDrawArrays(GL_TRIANGLES, 0, VERTEX_COUNT);
         disableAttribs();
+
+        glBindTexture(GL_TEXTURE_2D, 0);
 
         shader.disableIt();
     }

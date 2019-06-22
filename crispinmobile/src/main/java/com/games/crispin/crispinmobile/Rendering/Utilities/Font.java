@@ -1,6 +1,7 @@
 package com.games.crispin.crispinmobile.Rendering.Utilities;
 
 import com.games.crispin.crispinmobile.Crispin;
+import com.games.crispin.crispinmobile.Rendering.Data.FreeTypeCharacter;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -12,17 +13,8 @@ import static android.opengl.GLES30.GL_LUMINANCE;
 
 public class Font
 {
-    class FreeTypeCharacter
-    {
-        public Texture texture;
-        public int width;
-        public int height;
-        public int bearingX;
-        public int bearingY;
-        public int advance;
-    }
-
     private Map<Character, FreeTypeCharacter> characters;
+    private int size;
 
     public static byte[] convertStreamToByteArray(InputStream is) throws IOException
     {
@@ -39,6 +31,7 @@ public class Font
     public Font(int resourceId, int size)
     {
         characters = new HashMap<>();
+        this.size = size;
 
         InputStream inStream = Crispin.getApplicationContext().getResources().openRawResource(resourceId);
         try
@@ -56,7 +49,7 @@ public class Font
             {
                 System.out.println("Loading glyph: " + i);
                 // load character, apply texture
-                byte[] glyphBmp2 = Crispin.loadGlyph(sixtyTest, (byte)i);
+                byte[] glyphBmp2 = Crispin.loadGlyph(sixtyTest, (byte)i, size);
                 int width = Crispin.getFaceWidth();
                 int height = Crispin.getFaceHeight();
                 FreeTypeCharacter character = new FreeTypeCharacter();
@@ -76,8 +69,8 @@ public class Font
         }
     }
 
-    public Texture getCharacterTexture(char character)
+    public FreeTypeCharacter getCharacter(char character)
     {
-        return characters.get(character).texture;
+        return characters.get(character);
     }
 }
