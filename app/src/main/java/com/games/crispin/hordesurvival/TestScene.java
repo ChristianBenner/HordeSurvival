@@ -10,6 +10,7 @@ import com.games.crispin.crispinmobile.Rendering.Data.Colour;
 import com.games.crispin.crispinmobile.Crispin;
 import com.games.crispin.crispinmobile.Rendering.Models.Cube;
 import com.games.crispin.crispinmobile.Geometry.Point3D;
+import com.games.crispin.crispinmobile.Rendering.Utilities.Font;
 import com.games.crispin.crispinmobile.Rendering.Utilities.Material;
 import com.games.crispin.crispinmobile.Rendering.Utilities.Texture;
 import com.games.crispin.crispinmobile.Rendering.Utilities.TextureOptions;
@@ -18,6 +19,9 @@ import com.games.crispin.crispinmobile.Utilities.Scene;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import static android.opengl.GLES20.GL_LUMINANCE;
 import static android.opengl.GLES20.glGetShaderiv;
@@ -37,18 +41,6 @@ public class TestScene extends Scene {
     private TextShader textShader;
     private float angle = 0.0f;
 
-    public static byte[] convertStreamToByteArray(InputStream is) throws IOException
-    {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        byte[] buff = new byte[10240];
-        int i = Integer.MAX_VALUE;
-        while ((i = is.read(buff, 0, buff.length)) > 0) {
-            baos.write(buff, 0, i);
-        }
-
-        return baos.toByteArray(); // be sure to close InputStream in calling function
-    }
-
     public TestScene(Context context)
     {
         // Set the background colour to yellow
@@ -61,49 +53,10 @@ public class TestScene extends Scene {
         // Create the custom shader object
         customShader = new TimeColourShader();
 
-        Material material;
-        Material material2;
-        Material material3;
-
-        InputStream inStream = Crispin.getApplicationContext().getResources().openRawResource(R.raw.sixty);
-        try
-        {
-            byte[] sixtyTest = new byte[inStream.available()];
-            sixtyTest = convertStreamToByteArray(inStream);
-            Crispin.initFreeType();
-            byte[] glyphBmp = Crispin.loadGlyph(sixtyTest, (byte)'a');
-
-            TextureOptions textureOptions = new TextureOptions();
-            textureOptions.internalFormat = GL_LUMINANCE;
-            textureOptions.monochrome = true;
-            textureOptions.format = GL_LUMINANCE;
-
-            material = new Material(new Texture(glyphBmp,
-                    Crispin.getFaceWidth(),
-                    Crispin.getFaceHeight(),
-                    textureOptions));
-
-            glyphBmp = Crispin.loadGlyph(sixtyTest, (byte)'b');
-
-            material2 = new Material(new Texture(glyphBmp,
-                    Crispin.getFaceWidth(),
-                    Crispin.getFaceHeight(),
-                    textureOptions));
-
-            glyphBmp = Crispin.loadGlyph(sixtyTest, (byte)'c');
-
-            material3 = new Material(new Texture(glyphBmp,
-                    Crispin.getFaceWidth(),
-                    Crispin.getFaceHeight(),
-                    textureOptions));
-        }
-        catch(Exception e)
-        {
-            material = new Material(new Texture(R.drawable.brick));
-            material2 = new Material(new Texture(R.drawable.brick));
-            material3 = new Material(new Texture(R.drawable.brick));
-            e.printStackTrace();
-        }
+        Font f = new Font(R.raw.sixty, 20);
+        Material material = new Material(f.getCharacterTexture('a'));
+        Material material2 = new Material(f.getCharacterTexture('b'));
+        Material material3 = new Material(f.getCharacterTexture('c'));
 
         // Create a cube object
         cube = new Cube(material);

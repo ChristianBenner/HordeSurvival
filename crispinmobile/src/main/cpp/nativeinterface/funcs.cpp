@@ -85,6 +85,27 @@ FT_Face face;
 
 extern "C"
 JNIEXPORT jint JNICALL
+Java_com_games_crispin_crispinmobile_Crispin_getFaceBearingX(JNIEnv* env, jobject instance)
+{
+    return face->glyph->bitmap_left;
+}
+
+extern "C"
+JNIEXPORT jint JNICALL
+Java_com_games_crispin_crispinmobile_Crispin_getFaceBearingY(JNIEnv* env, jobject instance)
+{
+    return face->glyph->bitmap_top;
+}
+
+extern "C"
+JNIEXPORT jint JNICALL
+Java_com_games_crispin_crispinmobile_Crispin_getFaceAdvance(JNIEnv* env, jobject instance)
+{
+    return face->glyph->advance.x;
+}
+
+extern "C"
+JNIEXPORT jint JNICALL
 Java_com_games_crispin_crispinmobile_Crispin_getFaceWidth(JNIEnv* env, jobject instance)
 {
     return face->glyph->bitmap.width;
@@ -95,6 +116,13 @@ JNIEXPORT jint JNICALL
 Java_com_games_crispin_crispinmobile_Crispin_getFaceHeight(JNIEnv* env, jobject instance)
 {
     return face->glyph->bitmap.rows;
+}
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_games_crispin_crispinmobile_Crispin_freeFace(JNIEnv* env, jobject instance)
+{
+    FT_Done_Face(face);
 }
 
 extern "C"
@@ -171,69 +199,4 @@ Java_com_games_crispin_crispinmobile_Crispin_loadGlyph(JNIEnv *env, jobject inst
                             reinterpret_cast<jbyte*>(err));
 
     return array;
-
-//    int len = env->GetArrayLength(bytes_);
-//    char* buf = new char[len];
-//    env->GetByteArrayRegion(bytes_, 0, len, reinterpret_cast<jbyte*>(buf));
-//
-//    std::stringstream ss;
-//    for(int i = 0; i < len; i++)
-//    {
-//        ss << buf[i];
-//    }
-//
-//    return env->NewStringUTF(ss.str().c_str());
-
-
-//    // TODO
-//
-//    std::string returnString;
-//
-//    std::ofstream file("crispininfo.txt");
-//    file << "testing\n";
-//    file.close();
-//
-//    std::string line;
-//    std::ifstream read("crispininfo.txt");
-//    if(read.is_open())
-//    {
-//        getline(read, line);
-//        read.close();
-//    }
-//
-//    // use
-//    FT_Face face;
-//
-//    // convert jbytearray to bytes[]
-//    if(FT_New_Memory_Face(freetype, (FT_Byte*)buf, len, 0, &face) == 0)
-//    {
-//        FT_Set_Pixel_Sizes(face, 0, 48);
-//
-//        if(FT_Load_Char(face, 'a', FT_LOAD_RENDER) == 0)
-//        {
-//           // env->ReleaseByteArrayElements(bytes_, bytes_, 0);
-//
-//            std::stringstream ss;
-//            ss << "W[" << face->glyph->bitmap.width << "], R[" << face->glyph->bitmap.rows << "], Data: ";
-//            ss << face->glyph->bitmap.buffer;
-//            ss << ", S[" << sizeof(face->glyph->bitmap_left) << ']';
-//
-//            //(char*)face->glyph->bitmap.buffer
-//            return env->NewStringUTF(buf);
-//        }
-//        else
-//        {
-//            // error occurred: failed to load glyph
-//            returnString = "failed to load glyph";
-//        }
-//    }
-//    else
-//    {
-//        // error occurred: failed to load font
-//        returnString = "failed to load font";
-//    }
-//
-//  //  env->ReleaseByteArrayElements(bytes_, bytes, 0);
-//
-//    return env->NewStringUTF(returnString.c_str());
 }

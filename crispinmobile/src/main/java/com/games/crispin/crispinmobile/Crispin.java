@@ -71,6 +71,10 @@ public class Crispin
     public static native byte[] loadGlyph(byte[] bytes, byte thechar);
     public static native int getFaceWidth();
     public static native int getFaceHeight();
+    public static native int getFaceBearingX();
+    public static native int getFaceBearingY();
+    public static native int getFaceAdvance();
+    public static native void freeFace();
 
     /**
      * Get the application context

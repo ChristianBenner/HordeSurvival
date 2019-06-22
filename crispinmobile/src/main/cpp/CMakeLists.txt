@@ -8,7 +8,7 @@ project(CrispinMobile)
 
 # Add the library sub directories (each have their own CMakeLists.txt)
 message("Adding freetype library")
-add_subdirectory(freetype29)
+add_subdirectory(freetype-2.9)
 message("Added freetype library")
 message("Finished CMake Setup")
 message("Adding Crispin Native Interface library")
