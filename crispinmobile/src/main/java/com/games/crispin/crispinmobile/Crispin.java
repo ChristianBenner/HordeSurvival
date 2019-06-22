@@ -327,8 +327,8 @@ public class Crispin
             // Use context to initialise a GLSurfaceView
             glSurfaceView = new GLSurfaceView(CONTEXT);
 
-            // Tell the application to use OpenGL ES 2.0
-            glSurfaceView.setEGLContextClientVersion(2);
+            // Tell the application to use OpenGL ES 3.0
+            glSurfaceView.setEGLContextClientVersion(3);
 
             // Get the scene manager instance
             sceneManager = SceneManager.getInstance(CONTEXT);
@@ -356,6 +356,6 @@ public class Crispin
     private boolean isOpenGLESSupported()
     {
         return ((ActivityManager) CONTEXT.getSystemService(Context.ACTIVITY_SERVICE))
-                .getDeviceConfigurationInfo().reqGlEsVersion >= 0x20000;
+                .getDeviceConfigurationInfo().reqGlEsVersion >= 0x30000;
     }
 }

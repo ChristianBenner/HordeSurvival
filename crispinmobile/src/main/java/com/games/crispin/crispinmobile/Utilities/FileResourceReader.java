@@ -1,6 +1,5 @@
 package com.games.crispin.crispinmobile.Utilities;
 
-import android.content.Context;
 import android.content.res.Resources;
 
 import com.games.crispin.crispinmobile.Crispin;

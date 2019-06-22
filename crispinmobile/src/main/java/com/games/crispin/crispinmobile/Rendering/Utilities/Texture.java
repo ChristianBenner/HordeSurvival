@@ -9,24 +9,20 @@ import com.games.crispin.crispinmobile.Utilities.TextureCache;
 
 import java.nio.ByteBuffer;
 
-import static android.opengl.GLES20.GL_INVALID_VALUE;
-import static android.opengl.GLES20.GL_NEAREST;
-import static android.opengl.GLES20.GL_REPEAT;
-import static android.opengl.GLES20.GL_RGBA;
-import static android.opengl.GLES20.GL_TEXTURE_2D;
-import static android.opengl.GLES20.GL_TEXTURE_MAG_FILTER;
-import static android.opengl.GLES20.GL_TEXTURE_MIN_FILTER;
-import static android.opengl.GLES20.GL_TEXTURE_WRAP_S;
-import static android.opengl.GLES20.GL_TEXTURE_WRAP_T;
-import static android.opengl.GLES20.GL_UNPACK_ALIGNMENT;
-import static android.opengl.GLES20.GL_UNSIGNED_BYTE;
-import static android.opengl.GLES20.glBindTexture;
-import static android.opengl.GLES20.glDeleteTextures;
-import static android.opengl.GLES20.glGenTextures;
-import static android.opengl.GLES20.glGenerateMipmap;
-import static android.opengl.GLES20.glPixelStorei;
-import static android.opengl.GLES20.glTexImage2D;
-import static android.opengl.GLES20.glTexParameteri;
+import static android.opengl.GLES30.GL_INVALID_VALUE;
+import static android.opengl.GLES30.GL_TEXTURE_2D;
+import static android.opengl.GLES30.GL_TEXTURE_MAG_FILTER;
+import static android.opengl.GLES30.GL_TEXTURE_MIN_FILTER;
+import static android.opengl.GLES30.GL_TEXTURE_WRAP_S;
+import static android.opengl.GLES30.GL_TEXTURE_WRAP_T;
+import static android.opengl.GLES30.GL_UNPACK_ALIGNMENT;
+import static android.opengl.GLES30.glBindTexture;
+import static android.opengl.GLES30.glDeleteTextures;
+import static android.opengl.GLES30.glGenTextures;
+import static android.opengl.GLES30.glGenerateMipmap;
+import static android.opengl.GLES30.glPixelStorei;
+import static android.opengl.GLES30.glTexImage2D;
+import static android.opengl.GLES30.glTexParameteri;
 
 public class Texture
 {

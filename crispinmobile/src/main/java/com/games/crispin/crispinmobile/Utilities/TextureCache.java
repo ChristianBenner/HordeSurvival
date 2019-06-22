@@ -1,6 +1,5 @@
 package com.games.crispin.crispinmobile.Utilities;
 
-import com.games.crispin.crispinmobile.Rendering.Utilities.Shader;
 import com.games.crispin.crispinmobile.Rendering.Utilities.Texture;
 
 import java.util.ArrayList;

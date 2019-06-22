@@ -11,19 +11,19 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 
-import static android.opengl.GLES20.GL_FLOAT;
-import static android.opengl.GLES20.GL_TEXTURE0;
-import static android.opengl.GLES20.GL_TEXTURE_2D;
-import static android.opengl.GLES20.GL_TRIANGLES;
-import static android.opengl.GLES20.glActiveTexture;
-import static android.opengl.GLES20.glBindTexture;
-import static android.opengl.GLES20.glDisableVertexAttribArray;
-import static android.opengl.GLES20.glDrawArrays;
-import static android.opengl.GLES20.glEnableVertexAttribArray;
-import static android.opengl.GLES20.glUniform1i;
-import static android.opengl.GLES20.glUniform4fv;
-import static android.opengl.GLES20.glUniformMatrix4fv;
-import static android.opengl.GLES20.glVertexAttribPointer;
+import static android.opengl.GLES30.GL_FLOAT;
+import static android.opengl.GLES30.GL_TEXTURE0;
+import static android.opengl.GLES30.GL_TEXTURE_2D;
+import static android.opengl.GLES30.GL_TRIANGLES;
+import static android.opengl.GLES30.glActiveTexture;
+import static android.opengl.GLES30.glBindTexture;
+import static android.opengl.GLES30.glDisableVertexAttribArray;
+import static android.opengl.GLES30.glDrawArrays;
+import static android.opengl.GLES30.glEnableVertexAttribArray;
+import static android.opengl.GLES30.glUniform1i;
+import static android.opengl.GLES30.glUniform4fv;
+import static android.opengl.GLES30.glUniformMatrix4fv;
+import static android.opengl.GLES30.glVertexAttribPointer;
 
 /**
  * Render object is a base class for any graphical object. It handles an objects shader (based on

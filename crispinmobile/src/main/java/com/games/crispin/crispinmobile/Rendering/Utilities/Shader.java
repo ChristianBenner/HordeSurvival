@@ -4,23 +4,23 @@ import com.games.crispin.crispinmobile.Utilities.FileResourceReader;
 import com.games.crispin.crispinmobile.Utilities.Logger;
 import com.games.crispin.crispinmobile.Utilities.ShaderCache;
 
-import static android.opengl.GLES20.GL_COMPILE_STATUS;
-import static android.opengl.GLES20.GL_FRAGMENT_SHADER;
-import static android.opengl.GLES20.GL_INVALID_VALUE;
-import static android.opengl.GLES20.GL_TRUE;
-import static android.opengl.GLES20.GL_VERTEX_SHADER;
-import static android.opengl.GLES20.glAttachShader;
-import static android.opengl.GLES20.glCompileShader;
-import static android.opengl.GLES20.glCreateProgram;
-import static android.opengl.GLES20.glCreateShader;
-import static android.opengl.GLES20.glDeleteProgram;
-import static android.opengl.GLES20.glDeleteShader;
-import static android.opengl.GLES20.glGetAttribLocation;
-import static android.opengl.GLES20.glGetShaderiv;
-import static android.opengl.GLES20.glGetUniformLocation;
-import static android.opengl.GLES20.glLinkProgram;
-import static android.opengl.GLES20.glShaderSource;
-import static android.opengl.GLES20.glUseProgram;
+import static android.opengl.GLES30.GL_COMPILE_STATUS;
+import static android.opengl.GLES30.GL_FRAGMENT_SHADER;
+import static android.opengl.GLES30.GL_INVALID_VALUE;
+import static android.opengl.GLES30.GL_TRUE;
+import static android.opengl.GLES30.GL_VERTEX_SHADER;
+import static android.opengl.GLES30.glAttachShader;
+import static android.opengl.GLES30.glCompileShader;
+import static android.opengl.GLES30.glCreateProgram;
+import static android.opengl.GLES30.glCreateShader;
+import static android.opengl.GLES30.glDeleteProgram;
+import static android.opengl.GLES30.glDeleteShader;
+import static android.opengl.GLES30.glGetAttribLocation;
+import static android.opengl.GLES30.glGetShaderiv;
+import static android.opengl.GLES30.glGetUniformLocation;
+import static android.opengl.GLES30.glLinkProgram;
+import static android.opengl.GLES30.glShaderSource;
+import static android.opengl.GLES30.glUseProgram;
 
 /**
  * Shader class is used to load and compile and manage GLSL shader programs from a file or

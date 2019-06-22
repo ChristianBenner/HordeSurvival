@@ -8,7 +8,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import static android.opengl.GLES20.GL_LUMINANCE;
+import static android.opengl.GLES30.GL_LUMINANCE;
 
 public class Font
 {

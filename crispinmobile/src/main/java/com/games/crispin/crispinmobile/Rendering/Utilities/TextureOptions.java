@@ -1,9 +1,9 @@
 package com.games.crispin.crispinmobile.Rendering.Utilities;
 
-import static android.opengl.GLES20.GL_NEAREST;
-import static android.opengl.GLES20.GL_REPEAT;
-import static android.opengl.GLES20.GL_RGBA;
-import static android.opengl.GLES20.GL_UNSIGNED_BYTE;
+import static android.opengl.GLES30.GL_NEAREST;
+import static android.opengl.GLES30.GL_REPEAT;
+import static android.opengl.GLES30.GL_RGBA;
+import static android.opengl.GLES30.GL_UNSIGNED_BYTE;
 
 public class TextureOptions
 {
