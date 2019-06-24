@@ -45,7 +45,7 @@ public class Font
             textureOptions.monochrome = true;
             textureOptions.format = GL_LUMINANCE;
 
-            for(char i = 'a'; i < 'z'; i++)
+            for(char i = 0; i < 128; i++)
             {
                 System.out.println("Loading glyph: " + i);
                 // load character, apply texture

@@ -7,6 +7,9 @@ import com.games.crispin.crispinmobile.Geometry.Point3D;
 import com.games.crispin.crispinmobile.Geometry.Scale2D;
 import com.games.crispin.crispinmobile.Geometry.Scale3D;
 import com.games.crispin.crispinmobile.Rendering.Data.Colour;
+import com.games.crispin.crispinmobile.Rendering.Shaders.AttributeColourShader;
+import com.games.crispin.crispinmobile.Rendering.Shaders.TextureAttributeColourShader;
+import com.games.crispin.crispinmobile.Rendering.Shaders.TextureShader;
 import com.games.crispin.crispinmobile.Utilities.Logger;
 import com.games.crispin.crispinmobile.Rendering.Shaders.UniformColourShader;
 
@@ -278,18 +281,39 @@ public class RenderObject
     {
         if(!hasCustomShader)
         {
-            // Determine the best shader to used depending on the material
-            if(material.isLightingEnabled() && material.hasTexture() && material.hasNormalMap())
+            final boolean SUPPORTS_TEXTURE = material.hasTexture() &&
+                    TEXEL_DIMENSIONS != TexelDimensions_t.NONE;
+            final boolean SUPPORTS_COLOUR_PER_ATTRIB = COLOUR_DIMENSIONS != ColourDimensions_t.NONE;
+
+//            // Determine the best shader to used depending on the material
+//            if(material.isLightingEnabled() && material.hasTexture() && material.hasNormalMap())
+//            {
+//                // Use lighting, texture/normal map supporting shader
+//            }
+//            else if(material.isLightingEnabled() && material.hasTexture())
+//            {
+//                // Use lighting, texture supporting shader
+//            }
+//            else if(material.isLightingEnabled())
+//            {
+//                // Use lighting supporting shader
+//            }
+//            else
+
+            if(SUPPORTS_COLOUR_PER_ATTRIB && SUPPORTS_TEXTURE)
             {
-                // Use lighting, texture/normal map supporting shader
+                // A colour attribute and texture shader
+                shader = new TextureAttributeColourShader();
             }
-            else if(material.isLightingEnabled() && material.hasTexture())
+            else if(SUPPORTS_TEXTURE)
             {
-                // Use lighting, texture supporting shader
+                // Just a texture shader
+                shader = new TextureShader();
             }
-            else if(material.isLightingEnabled())
+            else if(SUPPORTS_COLOUR_PER_ATTRIB)
             {
-                // Use lighting supporting shader
+                // Just a colour attribute shader
+                shader = new AttributeColourShader();
             }
             else
             {
@@ -324,14 +348,46 @@ public class RenderObject
         this.scale.y = scale.y;
     }
 
+    public void setScale(float w, float h)
+    {
+        this.scale.x = w;
+        this.scale.y = h;
+    }
+
     public void setScale(Scale3D scale)
     {
         this.scale = scale;
     }
 
+    public void setScale(float w, float h, float l)
+    {
+        this.scale.x = w;
+        this.scale.y = h;
+        this.scale.z = l;
+    }
+
+    public void setPosition(Point2D position)
+    {
+        this.position.x = position.x;
+        this.position.y = position.y;
+    }
+
+    public void setPosition(float x, float y)
+    {
+        this.position.x = x;
+        this.position.y = y;
+    }
+
     public void setPosition(Point3D position)
     {
         this.position = position;
+    }
+
+    public void setPosition(float x, float y, float z)
+    {
+        this.position.x = x;
+        this.position.y = y;
+        this.position.z = z;
     }
 
     public void setRotation(float angle, float x, float y, float z)
@@ -345,8 +401,8 @@ public class RenderObject
     private void updateModelMatrix()
     {
         Matrix.setIdentityM(modelMatrix, 0);
-        Matrix.scaleM(modelMatrix, 0, scale.x, scale.y, scale.z);
         Matrix.translateM(modelMatrix, 0, position.x, position.y, position.z);
+        Matrix.scaleM(modelMatrix, 0, scale.x, scale.y, scale.z);
         if(angle != 0.0f)
         {
             Matrix.rotateM(modelMatrix, 0, angle, rotationX, rotationY, rotationZ);

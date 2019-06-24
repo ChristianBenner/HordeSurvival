@@ -15,6 +15,7 @@ import com.games.crispin.crispinmobile.Rendering.Models.Cube;
 import com.games.crispin.crispinmobile.Geometry.Point3D;
 import com.games.crispin.crispinmobile.Rendering.Utilities.Font;
 import com.games.crispin.crispinmobile.Rendering.Utilities.Material;
+import com.games.crispin.crispinmobile.Rendering.Utilities.Text;
 import com.games.crispin.crispinmobile.Rendering.Utilities.Texture;
 import com.games.crispin.crispinmobile.Utilities.Scene;
 
@@ -28,12 +29,12 @@ public class TestScene extends Scene {
     private Camera3D camera;
     private Camera2D camera2D;
 
-    private TimeColourShader customShader;
     private TextShader textShader;
-    private TextureAttributeColourShader textureAttributeColourShader;
     private float angle = 0.0f;
 
     private FreeTypeCharacter character;
+
+    private Text text;
 
     public TestScene(Context context)
     {
@@ -46,18 +47,15 @@ public class TestScene extends Scene {
 
         camera2D = new Camera2D();
 
-        // Create the custom shader object
-        customShader = new TimeColourShader();
-
-        Font f = new Font(R.raw.sixty, 128);
+        Font f = new Font(R.raw.opensans, 64);
         character = f.getCharacter('a');
 
-        Material material = new Material(character.texture);
+        Material t = new Material(character.texture);
 
         Material brickMaterial = new Material(new Texture(R.drawable.brick));
 
         // Create a cube object
-        square = new Square(material);
+        square = new Square(t);
         square.setPosition(new Point3D(0.0f, 000.0f, 0.0f));
 
         cubeTwo = new Cube(brickMaterial);
@@ -67,26 +65,22 @@ public class TestScene extends Scene {
         cubeThree.setPosition(new Point3D(2.0f, 2.0f, 0.0f));
 
         textShader = new TextShader();
-        textureAttributeColourShader = new TextureAttributeColourShader();
 
         // Apply the custom shader to the cube
         square.useCustomShader(textShader);
-        cubeTwo.useCustomShader(textureAttributeColourShader);
-        cubeThree.useCustomShader(textureAttributeColourShader);
 
         square.setColour(Colour.RED);
         square.setScale(new Scale2D(character.width, character.height));
 
         cubeTwo.setColour(Colour.MAGENTA);
         cubeThree.setColour(Colour.BLUE);
+
+        text = new Text(f, "Created by Christian Benner");
     }
 
     @Override
     public void update(float deltaTime)
     {
-        // Update the custom shader
-        customShader.update(deltaTime);
-
         angle += 1f;
         square.setRotation(angle, 1.0f, 1.0f, 0.0f);
         cubeTwo.setRotation(angle, 0.0f, 1.0f, 1.0f);
@@ -97,8 +91,10 @@ public class TestScene extends Scene {
     public void render()
     {
         // Draw the cube
-        square.draw(camera2D);
+      //kl  square.draw(camera2D);
         cubeThree.draw(camera);
         cubeTwo.draw(camera);
+
+        text.renderText(camera2D);
     }
 }

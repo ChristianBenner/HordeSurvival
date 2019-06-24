@@ -27,7 +27,7 @@ public class Camera2D
         near = DEFAULT_NEAR;
         far = DEFAULT_FAR;
         orthoMatrix = new float[16];
-        
+
         updateView();
     }
 
