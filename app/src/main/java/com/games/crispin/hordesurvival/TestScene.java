@@ -22,17 +22,12 @@ import com.games.crispin.crispinmobile.Utilities.Scene;
 public class TestScene extends Scene {
     static Scene.Constructor TEST_SCENE_CONSTRUCTION = (context) -> new TestScene(context);
 
-    private Square square;
     private Cube cubeTwo;
     private Cube cubeThree;
 
     private Camera3D camera;
     private Camera2D camera2D;
-
-    private TextShader textShader;
     private float angle = 0.0f;
-
-    private FreeTypeCharacter character;
 
     private Text text;
 
@@ -47,16 +42,9 @@ public class TestScene extends Scene {
 
         camera2D = new Camera2D();
 
-        Font f = new Font(R.raw.opensans, 64);
-        character = f.getCharacter('a');
-
-        Material t = new Material(character.texture);
+        Font f = new Font(R.raw.amatic, 64);
 
         Material brickMaterial = new Material(new Texture(R.drawable.brick));
-
-        // Create a cube object
-        square = new Square(t);
-        square.setPosition(new Point3D(0.0f, 000.0f, 0.0f));
 
         cubeTwo = new Cube(brickMaterial);
         cubeTwo.setPosition(new Point3D(-2.0f, 2.0f, 0.0f));
@@ -64,25 +52,17 @@ public class TestScene extends Scene {
         cubeThree = new Cube(brickMaterial);
         cubeThree.setPosition(new Point3D(2.0f, 2.0f, 0.0f));
 
-        textShader = new TextShader();
-
-        // Apply the custom shader to the cube
-        square.useCustomShader(textShader);
-
-        square.setColour(Colour.RED);
-        square.setScale(new Scale2D(character.width, character.height));
-
         cubeTwo.setColour(Colour.MAGENTA);
         cubeThree.setColour(Colour.BLUE);
 
-        text = new Text(f, "Created by Christian Benner");
+        text = new Text(f, "Created by Christian Benner as a demo program. The texts should " +
+                "wrap onto the next line");
     }
 
     @Override
     public void update(float deltaTime)
     {
-        angle += 1f;
-        square.setRotation(angle, 1.0f, 1.0f, 0.0f);
+        angle += 1.0f;
         cubeTwo.setRotation(angle, 0.0f, 1.0f, 1.0f);
         cubeThree.setRotation(angle, 1.0f, 0.0f, 1.0f);
     }
@@ -91,7 +71,6 @@ public class TestScene extends Scene {
     public void render()
     {
         // Draw the cube
-      //kl  square.draw(camera2D);
         cubeThree.draw(camera);
         cubeTwo.draw(camera);
 

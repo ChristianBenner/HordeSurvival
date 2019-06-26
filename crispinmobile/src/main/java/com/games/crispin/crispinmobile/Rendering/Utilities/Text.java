@@ -1,52 +1,19 @@
 package com.games.crispin.crispinmobile.Rendering.Utilities;
 
+import com.games.crispin.crispinmobile.Crispin;
 import com.games.crispin.crispinmobile.Geometry.Point2D;
-import com.games.crispin.crispinmobile.Geometry.Point3D;
 import com.games.crispin.crispinmobile.Geometry.Scale2D;
-import com.games.crispin.crispinmobile.R;
 import com.games.crispin.crispinmobile.Rendering.Data.Colour;
 import com.games.crispin.crispinmobile.Rendering.Data.FreeTypeCharacter;
 import com.games.crispin.crispinmobile.Rendering.Models.Square;
 import com.games.crispin.crispinmobile.Rendering.Shaders.TextShader;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.FloatBuffer;
 import java.util.ArrayList;
-
-import static android.opengl.GLES30.GL_ARRAY_BUFFER;
-import static android.opengl.GLES30.GL_DYNAMIC_DRAW;
-import static android.opengl.GLES30.GL_FLOAT;
-import static android.opengl.GLES30.GL_TEXTURE0;
-import static android.opengl.GLES30.GL_TEXTURE_2D;
-import static android.opengl.GLES30.GL_TRIANGLES;
-import static android.opengl.GLES30.glActiveTexture;
-import static android.opengl.GLES30.glBindBuffer;
-import static android.opengl.GLES30.glBindTexture;
-import static android.opengl.GLES30.glBufferData;
-import static android.opengl.GLES30.glBufferSubData;
-import static android.opengl.GLES30.glDisableVertexAttribArray;
-import static android.opengl.GLES30.glDrawArrays;
-import static android.opengl.GLES30.glEnableVertexAttribArray;
-import static android.opengl.GLES30.glUniform1i;
-import static android.opengl.GLES30.glUniform4f;
-import static android.opengl.GLES30.glBindVertexArray;
-import static android.opengl.GLES30.glVertexAttribPointer;
-import static android.opengl.GLES30.glGenBuffers;
-import static android.opengl.GLES30.glGenVertexArrays;
-import static android.opengl.GLES30.glUniformMatrix4fv;
-import static com.games.crispin.crispinmobile.Rendering.Utilities.RenderObject.BYTES_PER_FLOAT;
 
 public class Text
 {
-    private static final int VERTICES_PER_GLPYH = 6;
-    private static final int NUM_ELEMENTS_PER_VERTEX = 4; // xy and st
-
     private Font font;
     private String textString;
-
-    private int vao;
-    private int vbo;
 
     class Glyph extends RenderObject
     {
@@ -67,89 +34,264 @@ public class Text
 
     private Camera2D camera;
 
-    private ArrayList<Square> squares;
-
     private TextShader textShader;
 
-//    private Square square;
- //   private FreeTypeCharacter freeTypeCharacter;
+
+//    class Line
+//    {
+//        public Line(float maxLineWidth)
+//        {
+//            this.maxLineWidth = maxLineWidth;
+//
+//            squares = new ArrayList<>();
+//            lineWidth = 0;
+//            lineHeight = 0;
+//        }
+//
+//        public boolean inLine(float endX)
+//        {
+//            if(endX )
+//        }
+//
+//        public void addChar(Square square)
+//        {
+//            squares.add(square);
+//        }
+//
+//        public float maxLineWidth;
+//
+//        public ArrayList<Square> squares;
+//        public float lineWidth;
+//        public float lineHeight;
+//    }
+
+//    class Line
+//    {
+//        public Line()
+//        {
+//            // Add the text to the current line
+//        }
+//
+//        // Keep track of the current length of the line, if it is less than the specified line length
+//        // then attempt to add another char
+//        public Line addText(String text)
+//        {
+//            // Set the text for this line, return the
+//        }
+//
+//        private Line nextLine;
+//    }
+
+   // private ArrayList<Line> lines;
+
+    private ArrayList<Square> squares;
 
     public Text(Font font, String textString)
     {
         this.font = font;
         textShader = new TextShader();
 
-        position = new Point2D(0.0f, 0.0f);
+        position = new Point2D(0.0f, 000.0f);
         scale = 1.0f;
 
         camera = new Camera2D();
         squares = new ArrayList<>();
         setText(textString);
-
-//        // Create VAO
-//        int[] tempVAO = new int[1];
-//        glGenVertexArrays(1, tempVAO, 0);
-//        vao = tempVAO[0];
-//
-//        // Create VBO
-//        int[] tempVBO = new int[1];
-//        glGenBuffers(1, tempVBO, 0);
-//        vbo = tempVBO[0];
-//
-//        glBindVertexArray(vbo);
-//        glBindBuffer(GL_ARRAY_BUFFER, vbo);
-//        glBufferData(GL_ARRAY_BUFFER,
-//                BYTES_PER_FLOAT * VERTICES_PER_GLPYH * NUM_ELEMENTS_PER_VERTEX,
-//                null,
-//                GL_DYNAMIC_DRAW);
-//        glEnableVertexAttribArray(0);
-//        glVertexAttribPointer(0,
-//                NUM_ELEMENTS_PER_VERTEX,
-//                GL_FLOAT,
-//                false,
-//                NUM_ELEMENTS_PER_VERTEX * BYTES_PER_FLOAT,
-//                0);
-//        glBindBuffer(GL_ARRAY_BUFFER, 0);
-//        glBindVertexArray(0);
-
-
     }
 
     public void setText(String text)
     {
         this.textString = text;
-        constructText(position.x, position.y, scale);
+        constructText(position.x, position.y, Crispin.getSurfaceWidth(), true, scale);
     }
 
-    private void constructText(float x, float y, float scale)
+    private void constructText(float x, float y, float maxLineWidth, boolean wordWrap, float scale)
     {
+//        // For word wrap enabled, create an array of words. The word class should contain data such
+//        // as width
+//        class Word
+//        {
+//            class CharData
+//            {
+//                public CharData(float x,
+//                                float y,
+//                                float w,
+//                                float h,
+//                                int textureId)
+//                {
+//                    this.x = x;
+//                    this.y = y;
+//                    this.w = w;
+//                    this.h = h;
+//                    this.textureId = textureId;
+//                }
+//
+//                public float x, y, w, h;
+//                public int textureId;
+//            }
+//
+//            public Word()
+//            {
+//                characters = new ArrayList<>();
+//            }
+//
+//            public void addCharacter(FreeTypeCharacter character, float scale)
+//            {
+//                // Calculate the total width of the word
+//                CharData charData = new CharData(
+//                        character.bearingX * scale,
+//                        (character.height - character.bearingY) * scale,
+//                        character.width * scale,
+//                        character.height * scale,
+//                        character.texture
+//            }
+//
+//            public void offset(float x, float y)
+//            {
+//                for(int i = 0; i < characters.size(); i++)
+//                {
+//                    characters.get(i).x += x;
+//                    characters.get(i).y += y;
+//                }
+//            }
+//
+//            public ArrayList<CharData> getCharacters()
+//            {
+//                return this.characters;
+//            }
+//
+//            private ArrayList<CharData> characters;
+//        }
+//
+//        ArrayList<ArrayList<CharData>> lines;
+//
+//        int currentLine = 0;
+//        for(int i = 0; i < textString.length(); i++)
+//        {
+//            FreeTypeCharacter freeTypeCharacter = font.getCharacter(textString.charAt(i));
+//            float xpos = x + (freeTypeCharacter.bearingX * scale);
+//            float width = freeTypeCharacter.width * scale;
+//
+//            if(xpos + width >= x + maxLineWidth)
+//            {
+//                // Reset the xpos to 0
+//                lines.get(0).remove(20);
+//            }
+//        }
+//
+
+
+
+        // The start x position for the current line
+        float theX = x;
+        float startX = 0;
+        float currentY = y;
+
+        // Have we started writing to the current line
+        boolean started = false;
+
+        int lastSpaceIndex = 0;
+
         for(int i = 0; i < textString.length(); i++)
         {
-            FreeTypeCharacter freeTypeCharacter = font.getCharacter(textString.charAt(i));
-            Square square = new Square(new Material(freeTypeCharacter.texture));
+            if(textString.charAt(i) == ' ')
+            {
+                lastSpaceIndex = i;
+            }
 
-            float xpos = x + freeTypeCharacter.bearingX * scale;
-            float ypos = y - (freeTypeCharacter.height - freeTypeCharacter.bearingY) * scale;
+            FreeTypeCharacter freeTypeCharacter = font.getCharacter(textString.charAt(i));
+            float xpos = theX + freeTypeCharacter.bearingX * scale;
+            float ypos = currentY - (freeTypeCharacter.height - freeTypeCharacter.bearingY) * scale;
             float width = freeTypeCharacter.width * scale;
             float height = freeTypeCharacter.height * scale;
 
+            if (!started)
+            {
+                started = true;
+                startX = xpos;
+
+                // We can't even put the first character on the line because the max line width
+                // is too small. Don't go any further
+                if (xpos + width > startX + maxLineWidth)
+                {
+                    break;
+                }
+            }
+
+            if (xpos + width > startX + maxLineWidth)
+            {
+                // Create a new line
+                started = false;
+                theX = x;
+
+                for(int n = 0; n < i; n++)
+                {
+                    // If word wrap is enabled and we are looking at the word that should be wrapped
+                    // on the next line, instead of pushing it up, re-calculate its position
+                    if(wordWrap && n >= lastSpaceIndex + 1)
+                    {
+                        // Re-calculate position
+                        FreeTypeCharacter temp = font.getCharacter(textString.charAt(n));
+                        squares.get(n).setPosition(theX + temp.bearingX * scale,
+                                currentY - (temp.height - temp.bearingY) * scale);
+                        theX += (temp.advance >> 6) * scale;
+                    }
+                    else
+                    {
+                        // Push up all of the old chars
+                        squares.get(n).offset(0.0f, height);
+                    }
+
+                    // Re-calculate the x position of the current char (as it has changed from
+                    // wrapping the last word or char
+                    xpos = theX + freeTypeCharacter.bearingX * scale;
+                }
+
+                System.out.println("*************** NEW LINE **********************");
+            }
+
+            Square square = new Square(new Material(freeTypeCharacter.texture));
             square.setPosition(new Point2D(xpos, ypos));
             square.useCustomShader(textShader);
             square.setColour(Colour.RED);
             square.setScale(new Scale2D(width, height));
             squares.add(square);
-        //    theX += freeTypeCharacter.width;
-            x += (freeTypeCharacter.advance >> 6) * scale;
-
-//            Square square = new Square(new Material(ch.texture));
-//            square.setPosition(x + ch.width * scale, y - (ch.height - ch.bearingY) * scale);
-//            square.setScale(ch.width * scale, ch.height * scale);
-//            square.setColour(Colour.BLACK);
-//            square.setRotation(0.0f, 1.0f, 1.0f, 1.0f);
-//            square.useCustomShader(textShader);
-//            squares.add(square);
-//            x += (ch.advance >> 6) * scale;
+            theX += (freeTypeCharacter.advance >> 6) * scale;
+            System.out.println("*************** PLACED: " + textString.charAt(i) + "**********************");
         }
+//
+//        for(int i = 0; i < textString.length(); i++)
+//        {
+//
+//        }
+//
+//        for(int i = 0; i < textString.length(); i++)
+//        {
+//            FreeTypeCharacter freeTypeCharacter = font.getCharacter(textString.charAt(i));
+//            Square square = new Square(new Material(freeTypeCharacter.texture));
+//
+//            float xpos = x + freeTypeCharacter.bearingX * scale;
+//            float ypos = y - (freeTypeCharacter.height - freeTypeCharacter.bearingY) * scale;
+//            float width = freeTypeCharacter.width * scale;
+//            float height = freeTypeCharacter.height * scale;
+//
+//            square.setPosition(new Point2D(xpos, ypos));
+//            square.useCustomShader(textShader);
+//            square.setColour(Colour.RED);
+//            square.setScale(new Scale2D(width, height));
+//            squares.add(square);
+//        //    theX += freeTypeCharacter.width;
+//            x += (freeTypeCharacter.advance >> 6) * scale;
+//
+////            Square square = new Square(new Material(ch.texture));
+////            square.setPosition(x + ch.width * scale, y - (ch.height - ch.bearingY) * scale);
+////            square.setScale(ch.width * scale, ch.height * scale);
+////            square.setColour(Colour.BLACK);
+////            square.setRotation(0.0f, 1.0f, 1.0f, 1.0f);
+////            square.useCustomShader(textShader);
+////            squares.add(square);
+////            x += (ch.advance >> 6) * scale;
+//        }
     }
 
     public void renderText(Camera2D camera)

@@ -390,6 +390,32 @@ public class RenderObject
         this.position.z = z;
     }
 
+    public void offset(float x, float y)
+    {
+        this.position.x += x;
+        this.position.y += y;
+    }
+
+    public void offset(float x, float y, float z)
+    {
+        this.position.x += x;
+        this.position.y += y;
+        this.position.z += z;
+    }
+
+    public void offset(Point2D point2D)
+    {
+        this.position.x += point2D.x;
+        this.position.y += point2D.y;
+    }
+
+    public void offset(Point3D point3D)
+    {
+        this.position.x += point3D.x;
+        this.position.y += point3D.y;
+        this.position.z += point3D.z;
+    }
+
     public void setRotation(float angle, float x, float y, float z)
     {
         this.angle = angle;
