@@ -262,7 +262,6 @@ public class RenderObject
     public void setMaterial(Material material)
     {
         this.material = material;
-        updateShader();
     }
 
     public void setColour(Colour colour)
@@ -540,6 +539,11 @@ public class RenderObject
 
     public void draw(Camera2D camera)
     {
+        if(shader == null)
+        {
+            updateShader();
+        }
+
         updateModelMatrix();
 
         shader.enableIt();
@@ -582,6 +586,11 @@ public class RenderObject
 
     public void draw(Camera3D camera)
     {
+        if(shader == null)
+        {
+            updateShader();
+        }
+
         updateModelMatrix();
 
         shader.enableIt();

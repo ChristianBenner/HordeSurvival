@@ -42,7 +42,7 @@ public class TestScene extends Scene {
 
         camera2D = new Camera2D();
 
-        Font f = new Font(R.raw.amatic, 64);
+        Font f = new Font(R.raw.opensans, 64);
 
         Material brickMaterial = new Material(new Texture(R.drawable.brick));
 
@@ -55,8 +55,8 @@ public class TestScene extends Scene {
         cubeTwo.setColour(Colour.MAGENTA);
         cubeThree.setColour(Colour.BLUE);
 
-        text = new Text(f, "Created by Christian Benner as a demo program. The texts should " +
-                "wrap onto the next line");
+       // text = new Text(f, "testcxxxxxxxxxxxxxxxxxx234567890");
+        text = new Text(f, "A paragraph is a series of sentencez that are organized and coherent, and are all related to a single topic. Almost every piece of writing you do that is longer than a few sentences should be organized into paragraphs.");
     }
 
     @Override

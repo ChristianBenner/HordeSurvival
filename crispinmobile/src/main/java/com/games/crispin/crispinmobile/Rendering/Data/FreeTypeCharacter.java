@@ -10,4 +10,5 @@ public class FreeTypeCharacter
     public int bearingX;
     public int bearingY;
     public int advance;
+    public byte ascii;
 }

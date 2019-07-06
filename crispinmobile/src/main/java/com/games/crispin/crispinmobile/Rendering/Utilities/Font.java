@@ -59,6 +59,7 @@ public class Font
                 character.bearingX = Crispin.getFaceBearingX();
                 character.bearingY = Crispin.getFaceBearingY();
                 character.advance = Crispin.getFaceAdvance();
+                character.ascii = (byte)i;
                 characters.put(i, character);
                 Crispin.freeFace();
             }
@@ -67,6 +68,11 @@ public class Font
         {
             e.printStackTrace();
         }
+    }
+
+    public int getSize()
+    {
+        return size;
     }
 
     public FreeTypeCharacter getCharacter(char character)
