@@ -389,6 +389,11 @@ public class RenderObject
         this.position.z = z;
     }
 
+    public Point3D getPosition()
+    {
+        return position;
+    }
+
     public void offset(float x, float y)
     {
         this.position.x += x;

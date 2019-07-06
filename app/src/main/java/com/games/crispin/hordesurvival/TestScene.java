@@ -42,7 +42,7 @@ public class TestScene extends Scene {
 
         camera2D = new Camera2D();
 
-        Font f = new Font(R.raw.opensans, 32);
+        Font font = new Font(R.raw.opensans, 32);
 
         Material brickMaterial = new Material(new Texture(R.drawable.brick));
 
@@ -55,8 +55,19 @@ public class TestScene extends Scene {
         cubeTwo.setColour(Colour.MAGENTA);
         cubeThree.setColour(Colour.BLUE);
 
-        //text = new Text(f, "a b c d e f g h i j k l m n o p q r s t u v w x y z 0 1 2 3 4 5 6 7 8 9 a b c d e f g h i j k l m n o p q r s t u v w x y z 0 1 2 3 4 5 6 7 8 9");
-        text = new Text(f, "A paragraph is a series of sentencez that are organized and coherent, and are all related to a single topic. Almost every piece of writing you do that is longer than a few sentences should be organized into paragraphs. A paragraph is a series of sentencez that are organized and coherent, and are all related to a single topic. Almost every piece of writing you do that is longer than a few sentences should be organized into paragraphs. A paragraph is a series of sentencez that are organized and coherent, and are all related to a single topic. Almost every piece of writing you do that is longer than a few sentences should be organized into paragraphs.");
+        text = new Text(font,
+                "A paragraph is a series of sentences that are organized and " +
+                "coherent, and are all related to a single topic. Almost every piece of writing" +
+                "you do that is longer than a few sentences should be organized into paragraphs." +
+                "A paragraph is a series of sentences that are organized and coherent, and are" +
+                "all related to a single topic. Almost every piece of writing you do that is" +
+                "longer than a few sentences should be organized into paragraphs. A paragraph is" +
+                "a series of sentences that are organized and coherent, and are all related to a" +
+                "single topic. Almost every piece of writing you do that is longer than a few" +
+                "sentences should be organized into paragraphs.",
+                false,
+                false,
+                Crispin.getSurfaceWidth());
     }
 
     @Override
