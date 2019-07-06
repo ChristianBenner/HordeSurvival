@@ -128,16 +128,12 @@ public class Text
         {
             characters.add(character);
 
-            float xPos = startX + (character.bearingX * scale);
-            float width = character.width * scale;
-            length = xPos + width;
+            final float X_POS = startX + (character.bearingX * scale);
+            final float WIDTH = character.width * scale;
+            length = X_POS + WIDTH;
+
+            // The advance for the next character
             startX += (character.advance >> 6) * scale;
-
-
-           // length += character.bearingX * scale;
-           // length += character.width * scale;
-          //  length += (character.advance >> 6) * scale;
-
 
             // Return the last x advance so we can consider where the next word starts
             return (character.advance >> 6) * scale;
@@ -249,13 +245,16 @@ public class Text
             }
         }
 
+        final boolean centered = false;
+
         squares = new ArrayList<>();
         System.out.println("PRINTING WORD WRAPPED TEXT OUTPUT!****");
         float theY = 0.0f;
         for(int pLine = lines.size() - 1; pLine >= 0; pLine--)
         {
             System.out.println("Line length: " + lines.get(pLine).length);
-            float theX = 0.0f;
+            float theX = centered ? (lineWidth - lines.get(pLine).length) / 2.0f : 0.0f;
+
             ArrayList<Word> pWords = lines.get(pLine).getWords();
             for(int pWord = 0; pWord < pWords.size(); pWord++)
             {
@@ -271,17 +270,13 @@ public class Text
                     float width = theChar.width * scale;
                     float height = theChar.height * scale;
 
-                    if((char)pCharacters.get(pCharacter).ascii == 'z')
-                    {
-                        System.out.println("xpos: " + xpos);
-                    }
-
                     Square square = new Square(new Material(theChar.texture));
                     square.setPosition(new Point2D(xpos, ypos));
                     square.useCustomShader(textShader);
                     square.setColour(Colour.RED);
                     square.setScale(new Scale2D(width, height));
                     squares.add(square);
+
                     theX += (theChar.advance >> 6) * scale;
                 }
             }
