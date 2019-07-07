@@ -45,6 +45,17 @@ public class Text
     private boolean centerText;
     private float maxLineWidth;
     private float height;
+    private float wiggleAmountPixels;
+    private boolean wiggle;
+
+    public enum WiggleSpeed_E
+    {
+        VERY_FAST,
+        FAST,
+        MEDIUM,
+        SLOW,
+        VERY_SLOW
+    }
 
     public Text(Font font, String textString, boolean wrapWords, boolean centerText, float maxLineWidth)
     {
@@ -53,6 +64,8 @@ public class Text
         this.centerText = centerText;
         this.maxLineWidth = maxLineWidth;
         this.height = 0.0f;
+        this.wiggleAmountPixels = 0.0f;
+        this.wiggle = false;
 
         textShader = new TextShader();
 
@@ -334,169 +347,60 @@ public class Text
         return this.height;
     }
 
-    float angle = 0.0f;
     float time = 0.0f;
+    float wiggleSpeed = 0.0f;
+
+    public void enableWiggle(float amountPixels, WiggleSpeed_E wiggleSpeed)
+    {
+        this.wiggleAmountPixels = amountPixels;
+        this.wiggle = true;
+
+        switch (wiggleSpeed)
+        {
+            case VERY_FAST:
+                this.wiggleSpeed = 50.0f;
+                break;
+            case FAST:
+                this.wiggleSpeed = 40.0f;
+                break;
+            case MEDIUM:
+                this.wiggleSpeed = 30.0f;
+                break;
+            case SLOW:
+                this.wiggleSpeed = 20.0f;
+                break;
+            case VERY_SLOW:
+                this.wiggleSpeed = 10.0f;
+                break;
+        }
+    }
+
+    public void disableWiggle()
+    {
+        this.wiggle = false;
+    }
 
     public void renderText(Camera2D camera)
     {
-        time += 50f;
-        //square.draw(camera);
-        for(FontSquare square : squares)
+        if(wiggle)
         {
-            float sinVal = (square.getPosition().x + time) / Crispin.getSurfaceWidth();
-            float height = -180f * (((float)Math.sin((double)sinVal) + 1.0f) / 2.0f);
+            time += wiggleSpeed;
 
-            square.setCharacterOffset(square.getCharacterOffset().x, square.getCharacterOffset().y + height);
-           // square.setRotation(angle, 0.0f, 0.0f, 1.0f);
-            square.draw(camera);
-            square.setCharacterOffset(square.getCharacterOffset().x, square.getCharacterOffset().y - height);
+            for(FontSquare square : squares)
+            {
+                final float sinVal = (square.getPosition().x + time) / maxLineWidth;
+                final float height = wiggleAmountPixels * (((float)Math.sin((double)sinVal) + 1.0f) / 2.0f);
+                square.setCharacterOffset(square.getCharacterOffset().x, square.getCharacterOffset().y + height);
+                square.draw(camera);
+                square.setCharacterOffset(square.getCharacterOffset().x, square.getCharacterOffset().y - height);
+            }
         }
-
-        angle += 1f;
-//
-//        for(Glyph renderObject : glyphs)
-//        {
-//          //  renderObject.draw();
-//        }
-
-//        textShader.enableIt();
-//        glUniform4f(textShader.getColourUniformHandle(),
-//                colour.getRed(),
-//                colour.getGreen(),
-//                colour.getBlue(),
-//                colour.getAlpha());
-//
-//        glUniformMatrix4fv(textShader.getMatrixUniformHandle(), 1, false, camera.getOrthoMatrix(), 0);
-//
-//        glActiveTexture(GL_TEXTURE0);
-//        glBindVertexArray(vao);
-//
-//        for(int i = 0; i < textString.length(); i++)
-//        {
-//            FreeTypeCharacter ch = font.getCharacter(textString.charAt(i));
-//
-//            float xpos = x + ch.width * scale;
-//            float ypos = y - (ch.height - ch.bearingY) * scale;
-//
-//            float w = ch.width * scale;
-//            float h = ch.height * scale;
-//
-//            final float[] vertices =
-//            {
-//                    xpos, ypos + h, 0.0f, 0.0f,
-//                    xpos, ypos, 0.0f, 1.0f,
-//                    xpos + w, ypos, 1.0f, 1.0f,
-//                    xpos, ypos + h, 0.0f, 0.0f,
-//                    xpos + w, ypos, 1.0f, 1.0f,
-//                    xpos + w, ypos + h, 1.0f, 0.0f
-//            };
-//
-//            // Initialise a vertex byte buffer for the shape float array
-//            final ByteBuffer VERTICES_BYTE_BUFFER = ByteBuffer.allocateDirect(
-//                    vertices.length * BYTES_PER_FLOAT);
-//
-//            // Use the devices hardware's native byte order
-//            VERTICES_BYTE_BUFFER.order(ByteOrder.nativeOrder());
-//
-//            // Create a Float buffer from the ByteBuffer
-//            final FloatBuffer VERTEX_BUFFER = VERTICES_BYTE_BUFFER.asFloatBuffer();
-//
-//            // Add the array of floats to the buffer
-//            VERTEX_BUFFER.put(vertices);
-//
-//            // Set buffer to read the first co-ordinate
-//            VERTEX_BUFFER.position(0);
-//
-//            glBindTexture(GL_TEXTURE_2D, ch.texture.getId());
-//            glUniform1i(textShader.getTextureUniformHandle(), 0);
-//            glBindBuffer(GL_ARRAY_BUFFER, vbo);
-//            glBufferSubData(GL_ARRAY_BUFFER,
-//                    0,
-//                    vertices.length * BYTES_PER_FLOAT,
-//                    VERTEX_BUFFER);
-//            glBindBuffer(GL_ARRAY_BUFFER, 0);
-//
-//            VERTEX_BUFFER.position(0);
-//            glEnableVertexAttribArray(textShader.getPositionAttributeHandle());
-//            glVertexAttribPointer(textShader.getPositionAttributeHandle(),
-//                    2,
-//                    GL_FLOAT,
-//                    true,
-//                    16,
-//                    VERTEX_BUFFER);
-//            VERTEX_BUFFER.position(0);
-//
-//            // Enable attrib texture data
-//            VERTEX_BUFFER.position(2);
-//            glEnableVertexAttribArray(textShader.getTextureAttributeHandle());
-//            glVertexAttribPointer(textShader.getTextureAttributeHandle(),
-//                    2,
-//                    GL_FLOAT,
-//                    true,
-//                    16,
-//                    VERTEX_BUFFER);
-//            VERTEX_BUFFER.position(0);
-//
-//            glDrawArrays(GL_TRIANGLES, 0, 6);
-//
-//            glDisableVertexAttribArray(textShader.getPositionAttributeHandle());
-//            glDisableVertexAttribArray(textShader.getTextureAttributeHandle());
-//            x += (ch.advance >> 6) * scale;
-//        }
-//        glBindVertexArray(0);
-//        glBindTexture(GL_TEXTURE_2D, 0);
-
-
-
-
-
-
-
-
-//        for(int i = 0; i < textString.length(); i++)
-//        {
-//          //  Font.FreeTypeCharacter character = font.getCharacter()
-//        }
-//
-//        textShader.enableIt();
-//        glUniform4f(textShader.getColourUniformHandle(),
-//                colour.getRed(),
-//                colour.getGreen(),
-//                colour.getBlue(),
-//                colour.getAlpha());
-//
-//        glActiveTexture(GL_TEXTURE0);
-//        glBindVertexArray();
-//
-//
-//        glBindVertexArray()
-//
-//        textShader.enableIt();
-//
-//        float[] modelViewMatrix = new float[16];
-//        Matrix.multiplyMM(modelViewMatrix, 0, camera.getViewMatrix(), 0, modelMatrix, 0);
-//
-//        float[] modelViewProjectionMatrix = new float[16];
-//        Matrix.multiplyMM(modelViewProjectionMatrix, 0, camera.getPerspectiveMatrix(), 0, modelViewMatrix, 0);
-//
-//        glUniformMatrix4fv(shader.getMatrixUniformHandle(), 1, false, modelViewProjectionMatrix, 0);
-//
-//        if(shader.getColourUniformHandle() != -1)
-//        {
-//            glUniform4fv(shader.getColourUniformHandle(), 1, colourData, 0);
-//        }
-//
-//        if(shader.getTextureUniformHandle() != -1 && material.hasTexture())
-//        {
-//            glActiveTexture(GL_TEXTURE0);
-//            glBindTexture(GL_TEXTURE_2D, material.getTexture().getId());
-//            glUniform1i(shader.getTextureUniformHandle(), 0);
-//        }
-//
-//        enableAttribs();
-//        glDrawArrays(GL_TRIANGLES, 0, VERTEX_COUNT);
-//        disableAttribs();
-//
-//        textShader.disableIt();
+        else
+        {
+            for(FontSquare square : squares)
+            {
+                square.draw(camera);
+            }
+        }
     }
 }
