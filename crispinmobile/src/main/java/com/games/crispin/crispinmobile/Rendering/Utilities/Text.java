@@ -281,6 +281,22 @@ public class Text
         }
     }
 
+    public void setPosition(Point3D position)
+    {
+        for(int i = 0; i < squares.size(); i++)
+        {
+            squares.get(i).setPosition(position);
+        }
+    }
+
+    public void setPosition(Point2D position)
+    {
+        for(int i = 0; i < squares.size(); i++)
+        {
+            squares.get(i).setPosition(position);
+        }
+    }
+
     float angle = 0.0f;
     float time = 0.0f;
 

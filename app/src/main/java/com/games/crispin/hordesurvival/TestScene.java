@@ -15,6 +15,7 @@ import com.games.crispin.crispinmobile.Rendering.Models.Cube;
 import com.games.crispin.crispinmobile.Geometry.Point3D;
 import com.games.crispin.crispinmobile.Rendering.Utilities.Font;
 import com.games.crispin.crispinmobile.Rendering.Utilities.Material;
+import com.games.crispin.crispinmobile.Rendering.Utilities.RenderObject;
 import com.games.crispin.crispinmobile.Rendering.Utilities.Text;
 import com.games.crispin.crispinmobile.Rendering.Utilities.Texture;
 import com.games.crispin.crispinmobile.Utilities.Scene;
@@ -48,6 +49,8 @@ public class TestScene extends Scene {
 
         cubeTwo = new Cube(brickMaterial);
         cubeTwo.setPosition(new Point3D(-2.0f, 2.0f, 0.0f));
+        cubeTwo.ignoreData(RenderObject.IGNORE_TEXEL_DATA_FLAG |
+                RenderObject.IGNORE_COLOUR_DATA_FLAG);
 
         cubeThree = new Cube(brickMaterial);
         cubeThree.setPosition(new Point3D(2.0f, 2.0f, 0.0f));
@@ -65,7 +68,7 @@ public class TestScene extends Scene {
                 "a series of sentences that are organized and coherent, and are all related to a" +
                 "single topic. Almost every piece of writing you do that is longer than a few" +
                 "sentences should be organized into paragraphs.",
-                false,
+                true,
                 false,
                 Crispin.getSurfaceWidth());
     }

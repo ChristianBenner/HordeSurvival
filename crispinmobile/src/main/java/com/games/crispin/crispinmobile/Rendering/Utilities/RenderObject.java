@@ -49,6 +49,10 @@ public class RenderObject
     // ability to change for dimensions?
     static public final int BYTES_PER_FLOAT = 4;
 
+    public static final int IGNORE_POSITION_DATA_FLAG = 1;
+    public static final int IGNORE_TEXEL_DATA_FLAG = 2;
+    public static final int IGNORE_COLOUR_DATA_FLAG = 4;
+
     private int elementsPerPosition;
     private int positionStrideBytes;
     private int positionDataOffset;
@@ -72,20 +76,24 @@ public class RenderObject
 
     float[] modelMatrix = new float[16];
 
-    private Material material;
+    protected Material material;
 
-    private Shader shader;
+    protected Shader shader;
     private boolean hasCustomShader;
 
     final int VERTEX_COUNT;
 
     private Colour colour;
-    private float[] colourData;
+    protected float[] colourData;
 
     private final AttributeOrder_t ATTRIBUTE_ORDER;
     private final PositionDimensions_t POSITION_DIMENSIONS;
     private final TexelDimensions_t TEXEL_DIMENSIONS;
     private final ColourDimensions_t COLOUR_DIMENSIONS;
+
+    private boolean ignorePositionData;
+    private boolean ignoreTexelData;
+    private boolean ignoreColourData;
 
     public enum AttributeOrder_t
     {
@@ -132,6 +140,9 @@ public class RenderObject
         this.angle = 0.0f;
         this.scale = new Scale3D();
         this.position = new Point3D();
+        this.ignorePositionData = false;
+        this.ignoreTexelData = false;
+        this.ignoreColourData = false;
 
         // Figure out the stride
         resolveStride(POSITION_DIMENSIONS,
@@ -259,6 +270,54 @@ public class RenderObject
                 material);
     }
 
+    public void ignoreData(final int dataFlags)
+    {
+        if((dataFlags & IGNORE_POSITION_DATA_FLAG) == IGNORE_POSITION_DATA_FLAG)
+        {
+            setIgnorePositionData(true);
+        }
+
+        if((dataFlags & IGNORE_TEXEL_DATA_FLAG) == IGNORE_TEXEL_DATA_FLAG)
+        {
+            setIgnoreTexelData(true);
+        }
+
+        if((dataFlags & IGNORE_COLOUR_DATA_FLAG) == IGNORE_COLOUR_DATA_FLAG)
+        {
+            setIgnoreColourData(true);
+        }
+    }
+
+    public void setIgnorePositionData(boolean state)
+    {
+        ignorePositionData = state;
+    }
+
+    public boolean isIgnoringPositionData()
+    {
+        return ignorePositionData;
+    }
+
+    public void setIgnoreTexelData(boolean state)
+    {
+        ignoreTexelData = state;
+    }
+
+    public boolean isIgnoringTexelData()
+    {
+        return ignoreTexelData;
+    }
+
+    public void setIgnoreColourData(boolean state)
+    {
+        ignoreColourData = state;
+    }
+
+    public boolean isIgnoringColourData()
+    {
+        return ignoreColourData;
+    }
+
     public void setMaterial(Material material)
     {
         this.material = material;
@@ -276,13 +335,19 @@ public class RenderObject
         };
     }
 
-    private void updateShader()
+    protected void updateShader()
     {
         if(!hasCustomShader)
         {
+            // Check that the object has all of the components required to render a texture
             final boolean SUPPORTS_TEXTURE = material.hasTexture() &&
-                    TEXEL_DIMENSIONS != TexelDimensions_t.NONE;
-            final boolean SUPPORTS_COLOUR_PER_ATTRIB = COLOUR_DIMENSIONS != ColourDimensions_t.NONE;
+                    TEXEL_DIMENSIONS != TexelDimensions_t.NONE &&
+                    !ignoreTexelData;
+
+            // Check if the object has all of the components required to render per vertex colour
+            final boolean SUPPORTS_COLOUR_PER_ATTRIB =
+                    COLOUR_DIMENSIONS != ColourDimensions_t.NONE &&
+                    !ignoreColourData;
 
 //            // Determine the best shader to used depending on the material
 //            if(material.isLightingEnabled() && material.hasTexture() && material.hasNormalMap())
@@ -428,7 +493,7 @@ public class RenderObject
         this.rotationZ = z;
     }
 
-    private void updateModelMatrix()
+    protected void updateModelMatrix()
     {
         Matrix.setIdentityM(modelMatrix, 0);
         Matrix.translateM(modelMatrix, 0, position.x, position.y, position.z);
@@ -439,22 +504,30 @@ public class RenderObject
         }
     }
 
-    private void attribPositionData()
+    // Enable set to true will enable the vertex attributes, disable will disable the vertex attrib
+    private void handlePositionDataAttribute(boolean enable)
     {
-        VERTEX_BUFFER.position(positionDataOffset);
-        glEnableVertexAttribArray(shader.getPositionAttributeHandle());
-        glVertexAttribPointer(shader.getPositionAttributeHandle(),
-                elementsPerPosition,
-                GL_FLOAT,
-                true,
-                totalStrideBytes,
-                VERTEX_BUFFER);
-        VERTEX_BUFFER.position(0);
+        if(enable)
+        {
+            VERTEX_BUFFER.position(positionDataOffset);
+            glEnableVertexAttribArray(shader.getPositionAttributeHandle());
+            glVertexAttribPointer(shader.getPositionAttributeHandle(),
+                    elementsPerPosition,
+                    GL_FLOAT,
+                    true,
+                    totalStrideBytes,
+                    VERTEX_BUFFER);
+            VERTEX_BUFFER.position(0);
+        }
+        else
+        {
+            glDisableVertexAttribArray(shader.getPositionAttributeHandle());
+        }
     }
 
-    private void attribTexelData()
+    private void handleTexelDataAttribute(boolean enable)
     {
-        if(TEXEL_DIMENSIONS != TexelDimensions_t.NONE)
+        if(enable)
         {
             // Enable attrib texture data
             VERTEX_BUFFER.position(texelDataOffset);
@@ -467,11 +540,15 @@ public class RenderObject
                     VERTEX_BUFFER);
             VERTEX_BUFFER.position(0);
         }
+        else
+        {
+            glDisableVertexAttribArray(shader.getTextureAttributeHandle());
+        }
     }
 
-    private void attribColourData()
+    private void handleColourDataAttribute(boolean enable)
     {
-        if(COLOUR_DIMENSIONS != ColourDimensions_t.NONE)
+        if(enable)
         {
             // Enable attrib colour data
             VERTEX_BUFFER.position(colourDataOffset);
@@ -484,61 +561,28 @@ public class RenderObject
                     VERTEX_BUFFER);
             VERTEX_BUFFER.position(0);
         }
-    }
-
-    private void enableAttribs()
-    {
-        switch (ATTRIBUTE_ORDER)
+        else
         {
-            case POSITION:
-                attribPositionData();
-                break;
-            case POSITION_THEN_TEXEL:
-                attribPositionData();
-                attribTexelData();
-                break;
-            case POSITION_THEN_COLOUR:
-                attribPositionData();
-                attribColourData();
-                break;
-            case POSITION_THEN_TEXEL_THEN_COLOUR:
-                attribPositionData();
-                attribTexelData();
-                attribColourData();
-                break;
-            case POSITION_THEN_COLOUR_THEN_TEXEL:
-                attribPositionData();
-                attribColourData();
-                attribTexelData();
-                break;
+            glDisableVertexAttribArray(shader.getColourAttributeHandle());
         }
     }
 
-    private void disableAttribs()
+    // check if the data provided contains the data necessary for disable or enable an attribute
+    protected void handleAttributes(boolean enable)
     {
-        switch (ATTRIBUTE_ORDER)
+        if(!ignorePositionData)
         {
-            case POSITION:
-                glDisableVertexAttribArray(shader.getPositionAttributeHandle());
-                break;
-            case POSITION_THEN_TEXEL:
-                glDisableVertexAttribArray(shader.getPositionAttributeHandle());
-                glDisableVertexAttribArray(shader.getTextureAttributeHandle());
-                break;
-            case POSITION_THEN_COLOUR:
-                glDisableVertexAttribArray(shader.getPositionAttributeHandle());
-                glDisableVertexAttribArray(shader.getColourAttributeHandle());
-                break;
-            case POSITION_THEN_TEXEL_THEN_COLOUR:
-                glDisableVertexAttribArray(shader.getPositionAttributeHandle());
-                glDisableVertexAttribArray(shader.getTextureAttributeHandle());
-                glDisableVertexAttribArray(shader.getColourAttributeHandle());
-                break;
-            case POSITION_THEN_COLOUR_THEN_TEXEL:
-                glDisableVertexAttribArray(shader.getPositionAttributeHandle());
-                glDisableVertexAttribArray(shader.getColourAttributeHandle());
-                glDisableVertexAttribArray(shader.getTextureAttributeHandle());
-                break;
+            handlePositionDataAttribute(enable);
+        }
+
+        if(!ignoreTexelData && TEXEL_DIMENSIONS != TexelDimensions_t.NONE)
+        {
+            handleTexelDataAttribute(enable);
+        }
+
+        if(!ignoreColourData && COLOUR_DIMENSIONS != ColourDimensions_t.NONE)
+        {
+            handleColourDataAttribute(enable);
         }
     }
 
@@ -580,9 +624,9 @@ public class RenderObject
             glUniform1i(shader.getTextureUniformHandle(), 0);
         }
 
-        enableAttribs();
+        handleAttributes(true);
         glDrawArrays(GL_TRIANGLES, 0, VERTEX_COUNT);
-        disableAttribs();
+        handleAttributes(false);
 
         glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -620,9 +664,9 @@ public class RenderObject
             glUniform1i(shader.getTextureUniformHandle(), 0);
         }
 
-        enableAttribs();
+        handleAttributes(true);
         glDrawArrays(GL_TRIANGLES, 0, VERTEX_COUNT);
-        disableAttribs();
+        handleAttributes(false);
 
         glBindTexture(GL_TEXTURE_2D, 0);
 
