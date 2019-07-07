@@ -6,6 +6,7 @@ import com.games.crispin.crispinmobile.Geometry.Point3D;
 import com.games.crispin.crispinmobile.Geometry.Scale2D;
 import com.games.crispin.crispinmobile.Rendering.Data.Colour;
 import com.games.crispin.crispinmobile.Rendering.Data.FreeTypeCharacter;
+import com.games.crispin.crispinmobile.Rendering.Models.FontSquare;
 import com.games.crispin.crispinmobile.Rendering.Models.Square;
 import com.games.crispin.crispinmobile.Rendering.Shaders.TextShader;
 
@@ -32,14 +33,14 @@ public class Text
 
     private ArrayList<Glyph> glyphs;
 
-    private Point2D position;
+    private Point3D position;
     private float scale;
 
     private Camera2D camera;
 
     private TextShader textShader;
 
-    private ArrayList<Square> squares;
+    private ArrayList<FontSquare> squares;
     private boolean wrapWords;
     private boolean centerText;
     private float maxLineWidth;
@@ -53,7 +54,7 @@ public class Text
 
         textShader = new TextShader();
 
-        position = new Point2D(0.0f, 000.0f);
+        position = new Point3D();
         scale = 1.0f;
 
         camera = new Camera2D();
@@ -230,8 +231,8 @@ public class Text
                         float width = theChar.width * scale;
                         float height = theChar.height * scale;
 
-                        Square square = new Square(new Material(theChar.texture));
-                        square.setPosition(new Point2D(xpos, ypos));
+                        FontSquare square = new FontSquare(new Material(theChar.texture));
+                        square.setCharacterOffset(new Point2D(xpos, ypos));
                         square.useCustomShader(textShader);
                         square.setColour(Colour.RED);
                         square.setScale(new Scale2D(width, height));
@@ -262,8 +263,8 @@ public class Text
                     float width = freeTypeCharacter.width * scale;
                     float height = freeTypeCharacter.height * scale;
 
-                    Square square = new Square(new Material(freeTypeCharacter.texture));
-                    square.setPosition(new Point2D(xpos, ypos));
+                    FontSquare square = new FontSquare(new Material(freeTypeCharacter.texture));
+                    square.setCharacterOffset(new Point2D(xpos, ypos));
                     square.useCustomShader(textShader);
                     square.setColour(Colour.RED);
                     square.setScale(new Scale2D(width, height));
@@ -281,20 +282,41 @@ public class Text
         }
     }
 
-    public void setPosition(Point3D position)
+    private void updateSquarePositions()
     {
         for(int i = 0; i < squares.size(); i++)
         {
-            squares.get(i).setPosition(position);
+            squares.get(i).setTextPosition(this.position);
         }
+    }
+
+    // Sets position of all characters and doesn't work
+    public void setPosition(Point3D position)
+    {
+        this.position = position;
+        updateSquarePositions();
+    }
+
+    public void setPosition(float x, float y, float z)
+    {
+        this.position.x = x;
+        this.position.y = y;
+        this.position.z = z;
+        updateSquarePositions();
     }
 
     public void setPosition(Point2D position)
     {
-        for(int i = 0; i < squares.size(); i++)
-        {
-            squares.get(i).setPosition(position);
-        }
+        this.position.x = position.x;
+        this.position.y = position.y;
+        updateSquarePositions();
+    }
+
+    public void setPosition(float x, float y)
+    {
+        this.position.x = x;
+        this.position.y = y;
+        updateSquarePositions();
     }
 
     float angle = 0.0f;
@@ -304,15 +326,15 @@ public class Text
     {
         time += 50f;
         //square.draw(camera);
-        for(Square square : squares)
+        for(FontSquare square : squares)
         {
             float sinVal = (square.getPosition().x + time) / Crispin.getSurfaceWidth();
             float height = 180f * (((float)Math.sin((double)sinVal) + 1.0f) / 2.0f);
 
-            square.setPosition(square.getPosition().x, square.getPosition().y + height);
+            square.setCharacterOffset(square.getCharacterOffset().x, square.getCharacterOffset().y + height);
            // square.setRotation(angle, 0.0f, 0.0f, 1.0f);
             square.draw(camera);
-            square.setPosition(square.getPosition().x, square.getPosition().y - height);
+            square.setCharacterOffset(square.getCharacterOffset().x, square.getCharacterOffset().y - height);
         }
 
         angle += 1f;

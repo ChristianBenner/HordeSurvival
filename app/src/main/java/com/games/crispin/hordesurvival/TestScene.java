@@ -64,6 +64,7 @@ public class TestScene extends Scene {
                 true,
                 false,
                 Crispin.getSurfaceWidth());
+        text.setPosition(0.0f, Crispin.getSurfaceHeight()/4.0f);
     }
 
     @Override
