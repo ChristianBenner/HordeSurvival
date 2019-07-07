@@ -44,6 +44,7 @@ public class Text
     private boolean wrapWords;
     private boolean centerText;
     private float maxLineWidth;
+    private float height;
 
     public Text(Font font, String textString, boolean wrapWords, boolean centerText, float maxLineWidth)
     {
@@ -51,6 +52,7 @@ public class Text
         this.wrapWords = wrapWords;
         this.centerText = centerText;
         this.maxLineWidth = maxLineWidth;
+        this.height = 0.0f;
 
         textShader = new TextShader();
 
@@ -245,6 +247,11 @@ public class Text
                 theY += font.getSize();
                 System.out.println();
             }
+
+            // The height of the text is the number of lines * the height of one line (the font
+            // size)
+            height = lines.size() * font.getSize();
+
             System.out.println("WORD WRAPPED OUTPUT FINISHED!****");
         }
         else
@@ -272,6 +279,9 @@ public class Text
                     theX += (freeTypeCharacter.advance >> 6) * scale;
                     System.out.println("*************** PLACED: " + textString.charAt(i) + "**********************");
                 }
+
+                // The height of the text (one line)
+                height = font.getSize();
             }
             else
             {
@@ -319,6 +329,11 @@ public class Text
         updateSquarePositions();
     }
 
+    public float getHeight()
+    {
+        return this.height;
+    }
+
     float angle = 0.0f;
     float time = 0.0f;
 
@@ -329,7 +344,7 @@ public class Text
         for(FontSquare square : squares)
         {
             float sinVal = (square.getPosition().x + time) / Crispin.getSurfaceWidth();
-            float height = 180f * (((float)Math.sin((double)sinVal) + 1.0f) / 2.0f);
+            float height = -180f * (((float)Math.sin((double)sinVal) + 1.0f) / 2.0f);
 
             square.setCharacterOffset(square.getCharacterOffset().x, square.getCharacterOffset().y + height);
            // square.setRotation(angle, 0.0f, 0.0f, 1.0f);

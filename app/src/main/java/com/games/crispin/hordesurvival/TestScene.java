@@ -63,8 +63,11 @@ public class TestScene extends Scene {
                 "sentences should be organized into paragraphs.",
                 true,
                 false,
-                Crispin.getSurfaceWidth());
-        text.setPosition(0.0f, Crispin.getSurfaceHeight()/4.0f);
+                Crispin.getSurfaceWidth() / 2.0f);
+
+        // Position the text to the top right corner
+        text.setPosition(Crispin.getSurfaceWidth() / 2.0f,
+                Crispin.getSurfaceHeight() - text.getHeight());
     }
 
     @Override
