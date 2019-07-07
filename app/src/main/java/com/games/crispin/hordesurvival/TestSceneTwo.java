@@ -7,9 +7,9 @@ import com.games.crispin.crispinmobile.Crispin;
 import com.games.crispin.crispinmobile.Utilities.Scene;
 
 public class TestSceneTwo extends Scene {
-    static Scene.Constructor TEST_SCENE_TWO_CONSTRUCTION = (context) -> new TestSceneTwo(context);
+    static Scene.Constructor TEST_SCENE_TWO_CONSTRUCTION = () -> new TestSceneTwo();
 
-    public TestSceneTwo(Context context)
+    public TestSceneTwo()
     {
         System.out.println("CONSTRUCTED TEST SCENE 2");
     }

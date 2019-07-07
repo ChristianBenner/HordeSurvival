@@ -455,7 +455,7 @@ public class SceneManager implements GLSurfaceView.Renderer
             Logger.info("Constructing current scene");
 
             // Create the scene via its constructor lambda and then set it as the current scene
-            currentScene = currentSceneConstructor.init(context);
+            currentScene = currentSceneConstructor.init();
         }
         else
         {

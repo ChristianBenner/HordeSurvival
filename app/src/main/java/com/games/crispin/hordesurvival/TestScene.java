@@ -1,12 +1,5 @@
 package com.games.crispin.hordesurvival;
 
-import android.content.Context;
-
-import com.games.crispin.crispinmobile.Geometry.Scale2D;
-import com.games.crispin.crispinmobile.Rendering.Data.FreeTypeCharacter;
-import com.games.crispin.crispinmobile.Rendering.Models.Square;
-import com.games.crispin.crispinmobile.Rendering.Shaders.TextShader;
-import com.games.crispin.crispinmobile.Rendering.Shaders.TextureAttributeColourShader;
 import com.games.crispin.crispinmobile.Rendering.Utilities.Camera2D;
 import com.games.crispin.crispinmobile.Rendering.Utilities.Camera3D;
 import com.games.crispin.crispinmobile.Rendering.Data.Colour;
@@ -21,7 +14,7 @@ import com.games.crispin.crispinmobile.Rendering.Utilities.Texture;
 import com.games.crispin.crispinmobile.Utilities.Scene;
 
 public class TestScene extends Scene {
-    static Scene.Constructor TEST_SCENE_CONSTRUCTION = (context) -> new TestScene(context);
+    static Scene.Constructor TEST_SCENE_CONSTRUCTION = () -> new TestScene();
 
     private Cube cubeTwo;
     private Cube cubeThree;
@@ -32,7 +25,7 @@ public class TestScene extends Scene {
 
     private Text text;
 
-    public TestScene(Context context)
+    public TestScene()
     {
         // Set the background colour to yellow
         Crispin.setBackgroundColour(Colour.YELLOW);

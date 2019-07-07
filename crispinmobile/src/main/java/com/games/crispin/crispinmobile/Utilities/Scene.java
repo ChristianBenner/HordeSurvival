@@ -1,10 +1,8 @@
 package com.games.crispin.crispinmobile.Utilities;
 
-import android.content.Context;
-
 public abstract class Scene {
     public interface Constructor {
-        Scene init(Context context);
+        Scene init();
     }
 
     public abstract void update(float deltaTime);
