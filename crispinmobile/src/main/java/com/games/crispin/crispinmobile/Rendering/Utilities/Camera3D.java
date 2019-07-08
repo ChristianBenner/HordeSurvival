@@ -21,6 +21,9 @@ import com.games.crispin.crispinmobile.Geometry.Vector3D;
  */
 public class Camera3D
 {
+    // Tag used in logging output
+    private static final String TAG = "Camera3D";
+
     // The position of the camera
     private Point3D position;
 

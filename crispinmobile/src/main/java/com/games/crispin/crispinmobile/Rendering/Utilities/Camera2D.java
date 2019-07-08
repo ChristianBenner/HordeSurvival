@@ -19,6 +19,9 @@ import com.games.crispin.crispinmobile.Geometry.Point3D;
  */
 public class Camera2D
 {
+    // Tag used in logging output
+    private static final String TAG = "Camera2D";
+
     // This is the default near range of the orthographic matrix
     private static float DEFAULT_NEAR = -5.0f;
 

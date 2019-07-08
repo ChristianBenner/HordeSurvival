@@ -25,6 +25,12 @@ public class Crispin
     // Tag for the logger
     private static final String TAG = "Crispin";
 
+    // The target version of OpenGL ES
+    public static final int OPENGL_ES_TARGET_VERSION = 3;
+
+    // Required OpenGL ES Version to run the engine
+    public static final int REQUIRED_OPENGL_ES_VERSION = 0x30000;
+
     // Store the static instance of the engine
     private static Crispin crispinInstance = null;
 
@@ -68,7 +74,9 @@ public class Crispin
     }
 
     public static native boolean initFreeType();
-    public static native byte[] loadGlyph(byte[] fontBytes, byte thechar, int size);
+    public static native byte[] loadGlyph(byte[] fontBytes,
+                                          byte thechar,
+                                          int size);
     public static native int getFaceWidth();
     public static native int getFaceHeight();
     public static native int getFaceBearingX();
@@ -85,6 +93,7 @@ public class Crispin
      */
     public static Context getApplicationContext()
     {
+        // Check if the engine is initialised before accessing the context
         if(isInit())
         {
             return crispinInstance.CONTEXT;
@@ -103,6 +112,7 @@ public class Crispin
      */
     public static void setScene(Scene.Constructor sceneConstructor)
     {
+        // Check if the engine is initialised before accessing the scene manager
         if(isInit())
         {
             crispinInstance.sceneManager.setScene(sceneConstructor);
@@ -118,6 +128,7 @@ public class Crispin
      */
     public static void setBackgroundColour(Colour backgroundColour)
     {
+        // Check if the engine is initialised before accessing the scene manager
         if(isInit())
         {
             crispinInstance.sceneManager.setBackgroundColour(backgroundColour);
@@ -133,6 +144,7 @@ public class Crispin
      */
     public static Colour getBackgroundColour()
     {
+        // Check if the engine is initialised before accessing the scene manager
         if(isInit())
         {
             return crispinInstance.sceneManager.getBackgroundColour();
@@ -154,7 +166,9 @@ public class Crispin
      */
     public static void setDepthState(boolean depthState)
     {
-        if(isInit()) {
+        // Check if the engine is initialised before accessing the scene manager
+        if(isInit())
+        {
             crispinInstance.sceneManager.setDepthState(depthState);
         }
     }
@@ -167,6 +181,7 @@ public class Crispin
      */
     public static boolean isDepthEnabled()
     {
+        // Check if the engine is initialised before accessing the scene manager
         if(isInit())
         {
             return crispinInstance.sceneManager.isDepthEnabled();
@@ -186,6 +201,7 @@ public class Crispin
      */
     public static void setAlphaState(boolean alphaState)
     {
+        // Check if the engine is initialised before accessing the scene manager
         if(isInit())
         {
             crispinInstance.sceneManager.setAlphaState(alphaState);
@@ -200,6 +216,7 @@ public class Crispin
      */
     public static boolean isAlphaEnabled()
     {
+        // Check if the engine is initialised before accessing the scene manager
         if(isInit())
         {
             return crispinInstance.sceneManager.isAlphaEnabled();
@@ -221,6 +238,7 @@ public class Crispin
      */
     public static void setCullFaceState(boolean cullFaceState)
     {
+        // Check if the engine is initialised before accessing the scene manager
         if(isInit())
         {
             crispinInstance.sceneManager.setCullFaceState(cullFaceState);
@@ -235,6 +253,7 @@ public class Crispin
      */
     public static boolean isCullFaceEnabled()
     {
+        // Check if the engine is initialised before accessing the scene manager
         if(isInit())
         {
             return crispinInstance.sceneManager.isCullFaceEnabled();
@@ -251,6 +270,7 @@ public class Crispin
      */
     public static int getSurfaceWidth()
     {
+        // Check if the engine is initialised before accessing the scene manager
         if(isInit())
         {
             return crispinInstance.sceneManager.getSurfaceWidth();
@@ -267,6 +287,7 @@ public class Crispin
      */
     public static int getSurfaceHeight()
     {
+        // Check if the engine is initialised before accessing the scene manager
         if(isInit())
         {
             return crispinInstance.sceneManager.getSurfaceHeight();
@@ -287,6 +308,7 @@ public class Crispin
         // Initialised state
         boolean initialised = false;
 
+        // Check if the engine scene manager objects have been created, if they have, return true
         if(crispinInstance != null && crispinInstance.sceneManager != null)
         {
             initialised = true;
@@ -322,13 +344,14 @@ public class Crispin
         // Get the application context
         this.CONTEXT = appCompatActivity.getApplicationContext();
 
+        // Check if OpenGL ES is supported before continuing
         if(isOpenGLESSupported())
         {
             // Use context to initialise a GLSurfaceView
             glSurfaceView = new GLSurfaceView(CONTEXT);
 
             // Tell the application to use OpenGL ES 3.0
-            glSurfaceView.setEGLContextClientVersion(3);
+            glSurfaceView.setEGLContextClientVersion(OPENGL_ES_TARGET_VERSION);
 
             // Get the scene manager instance
             sceneManager = SceneManager.getInstance(CONTEXT);
@@ -356,6 +379,6 @@ public class Crispin
     private boolean isOpenGLESSupported()
     {
         return ((ActivityManager) CONTEXT.getSystemService(Context.ACTIVITY_SERVICE))
-                .getDeviceConfigurationInfo().reqGlEsVersion >= 0x30000;
+                .getDeviceConfigurationInfo().reqGlEsVersion >= REQUIRED_OPENGL_ES_VERSION;
     }
 }
