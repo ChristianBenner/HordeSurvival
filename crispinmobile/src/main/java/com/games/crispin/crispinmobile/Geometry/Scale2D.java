@@ -15,4 +15,10 @@ public class Scale2D
         this.x = x;
         this.y = y;
     }
+
+    @Override
+    public String toString()
+    {
+        return "Scale2D[x:" + x + ",y:" + y + "]";
+    }
 }

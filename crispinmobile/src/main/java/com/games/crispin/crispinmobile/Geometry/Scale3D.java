@@ -15,4 +15,10 @@ public class Scale3D extends Scale2D
         super(x, y);
         this.z = z;
     }
+
+    @Override
+    public String toString()
+    {
+        return "Scale3D[x:" + x + ",y:" + y + ",z:" + z + "]";
+    }
 }

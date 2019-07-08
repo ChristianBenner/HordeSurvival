@@ -1,4 +1,4 @@
-package com.games.crispin.crispinmobile.Rendering.Utilities;
+package com.games.crispin.crispinmobile.Rendering.UserInterface;
 
 import com.games.crispin.crispinmobile.Crispin;
 import com.games.crispin.crispinmobile.Geometry.Point2D;
@@ -7,14 +7,17 @@ import com.games.crispin.crispinmobile.Geometry.Scale2D;
 import com.games.crispin.crispinmobile.Rendering.Data.Colour;
 import com.games.crispin.crispinmobile.Rendering.Data.FreeTypeCharacter;
 import com.games.crispin.crispinmobile.Rendering.Models.FontSquare;
-import com.games.crispin.crispinmobile.Rendering.Models.Square;
 import com.games.crispin.crispinmobile.Rendering.Shaders.TextShader;
+import com.games.crispin.crispinmobile.Rendering.Utilities.Camera2D;
+import com.games.crispin.crispinmobile.Rendering.Utilities.Font;
+import com.games.crispin.crispinmobile.Rendering.Utilities.Material;
+import com.games.crispin.crispinmobile.Rendering.Utilities.RenderObject;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
 
-public class Text
+public class Text extends UIObject
 {
     private Font font;
     private String textString;
@@ -33,7 +36,6 @@ public class Text
 
     private ArrayList<Glyph> glyphs;
 
-    private Point3D position;
     private float scale;
 
     private Camera2D camera;
@@ -314,12 +316,15 @@ public class Text
     }
 
     // Sets position of all characters and doesn't work
+
+    @Override
     public void setPosition(Point3D position)
     {
         this.position = position;
         updateSquarePositions();
     }
 
+    @Override
     public void setPosition(float x, float y, float z)
     {
         this.position.x = x;
@@ -328,6 +333,7 @@ public class Text
         updateSquarePositions();
     }
 
+    @Override
     public void setPosition(Point2D position)
     {
         this.position.x = position.x;
@@ -335,6 +341,7 @@ public class Text
         updateSquarePositions();
     }
 
+    @Override
     public void setPosition(float x, float y)
     {
         this.position.x = x;

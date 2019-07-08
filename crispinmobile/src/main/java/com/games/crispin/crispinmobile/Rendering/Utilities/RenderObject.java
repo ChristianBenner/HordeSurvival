@@ -69,6 +69,7 @@ public class RenderObject
 
     private Scale3D scale;
     private Point3D position;
+
     private float angle;
     private float rotationX;
     private float rotationY;

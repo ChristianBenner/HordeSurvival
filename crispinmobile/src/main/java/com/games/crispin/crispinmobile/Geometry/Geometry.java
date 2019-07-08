@@ -7,40 +7,6 @@ import static java.lang.Math.sin;
  */
 
 public class Geometry {
-   /* public static class Hitbox3D
-    {
-    }*/
-
-    public static class Quaternion
-    {
-        private float[] rotationMatrix = new float[16];
-        private Point3D rotation;
-        public Quaternion(Point3D rotationAxis, Point3D rotationAngles)
-        {
-            this.rotation = new Point3D(rotationAxis.x * (float)sin(rotationAngles.x / 2.0f),
-                    rotationAxis.y * (float)sin(rotationAngles.y / 2.0f),
-                    rotationAxis.z * (float)sin(rotationAngles.z / 2.0f));
-        }
-
- /*       // Returns a 16 float array
-        float[] createRotation()
-        {
-            float[] m1 = {
-            };
-            float[] m2 = {
-            };
-            Matrix m;
-            m = new Matrix();
-            Matrix.
-        }*/
-
-        @Override
-        public String toString()
-        {
-            return "Quat[x:" + rotation.x + ",y:" + rotation.y + ",z:" + rotation.z + "]";
-        }
-    }
-
     public static class Cuboid {
         public final Point3D center;
         public float height;

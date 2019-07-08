@@ -38,6 +38,6 @@ public class Vector3D
     @Override
     public String toString()
     {
-        return "x: " + x + ", y: " + y + ", z: " + y;
+        return "Vector3D[x: " + x + ", y: " + y + ", z: " + y + "]";
     }
 }
