@@ -28,7 +28,7 @@ public class TestScene extends Scene {
     public TestScene()
     {
         // Set the background colour to yellow
-        Crispin.setBackgroundColour(Colour.YELLOW);
+        Crispin.setBackgroundColour(Colour.LIGHT_GREY);
 
         // Create the camera
         camera = new Camera3D();
@@ -73,8 +73,8 @@ public class TestScene extends Scene {
     public void update(float deltaTime)
     {
         angle += 1.0f;
-        cubeTwo.setRotation(angle, 0.0f, 1.0f, 1.0f);
-        cubeThree.setRotation(angle, 1.0f, 0.0f, 1.0f);
+        cubeTwo.setRotation(0.0f, angle, angle);
+        cubeThree.setRotation( angle, 0.0f, angle);
     }
 
     @Override

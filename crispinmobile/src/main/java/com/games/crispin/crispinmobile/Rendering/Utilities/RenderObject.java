@@ -4,6 +4,8 @@ import android.opengl.Matrix;
 
 import com.games.crispin.crispinmobile.Geometry.Point2D;
 import com.games.crispin.crispinmobile.Geometry.Point3D;
+import com.games.crispin.crispinmobile.Geometry.Rotation2D;
+import com.games.crispin.crispinmobile.Geometry.Rotation3D;
 import com.games.crispin.crispinmobile.Geometry.Scale2D;
 import com.games.crispin.crispinmobile.Geometry.Scale3D;
 import com.games.crispin.crispinmobile.Rendering.Data.Colour;
@@ -69,11 +71,7 @@ public class RenderObject
 
     private Scale3D scale;
     private Point3D position;
-
-    private float angle;
-    private float rotationX;
-    private float rotationY;
-    private float rotationZ;
+    private Rotation3D rotation;
 
     float[] modelMatrix = new float[16];
 
@@ -135,12 +133,9 @@ public class RenderObject
         this.TEXEL_DIMENSIONS = texelDimensions;
         this.COLOUR_DIMENSIONS = colourDimensions;
         this.ATTRIBUTE_ORDER = attributeOrder;
-        this.rotationX = 0.0f;
-        this.rotationY = 0.0f;
-        this.rotationZ = 0.0f;
-        this.angle = 0.0f;
         this.scale = new Scale3D();
         this.position = new Point3D();
+        this.rotation = new Rotation3D();
         this.ignorePositionData = false;
         this.ignoreTexelData = false;
         this.ignoreColourData = false;
@@ -486,12 +481,32 @@ public class RenderObject
         this.position.z += point3D.z;
     }
 
-    public void setRotation(float angle, float x, float y, float z)
+    public void setRotation(Rotation3D rotation)
     {
-        this.angle = angle;
-        this.rotationX = x;
-        this.rotationY = y;
-        this.rotationZ = z;
+        this.rotation = rotation;
+    }
+
+    public void setRotation(float x, float y, float z)
+    {
+        setRotation(x, y);
+        this.rotation.z = z;
+    }
+
+    public void setRotation(Rotation2D rotation)
+    {
+        this.rotation.x = rotation.x;
+        this.rotation.y = rotation.y;
+    }
+
+    public void setRotation(float x, float y)
+    {
+        this.rotation.x = x;
+        this.rotation.y = y;
+    }
+
+    public Rotation3D getRotation()
+    {
+        return this.rotation;
     }
 
     protected void updateModelMatrix()
@@ -499,9 +514,18 @@ public class RenderObject
         Matrix.setIdentityM(modelMatrix, 0);
         Matrix.translateM(modelMatrix, 0, position.x, position.y, position.z);
         Matrix.scaleM(modelMatrix, 0, scale.x, scale.y, scale.z);
-        if(angle != 0.0f)
+
+        if(rotation.x != 0.0f)
         {
-            Matrix.rotateM(modelMatrix, 0, angle, rotationX, rotationY, rotationZ);
+            Matrix.rotateM(modelMatrix, 0, rotation.x, 1.0f, 0.0f, 0.0f);
+        }
+        if(rotation.y != 0.0f)
+        {
+            Matrix.rotateM(modelMatrix, 0, rotation.y, 0.0f, 1.0f, 0.0f);
+        }
+        if(rotation.z != 0.0f)
+        {
+            Matrix.rotateM(modelMatrix, 0, rotation.z, 0.0f, 0.0f, 1.0f);
         }
     }
 
