@@ -514,7 +514,7 @@ public class RenderObject
         Matrix.setIdentityM(modelMatrix, 0);
         Matrix.translateM(modelMatrix, 0, position.x, position.y, position.z);
         Matrix.scaleM(modelMatrix, 0, scale.x, scale.y, scale.z);
-
+        
         if(rotation.x != 0.0f)
         {
             Matrix.rotateM(modelMatrix, 0, rotation.x, 1.0f, 0.0f, 0.0f);
