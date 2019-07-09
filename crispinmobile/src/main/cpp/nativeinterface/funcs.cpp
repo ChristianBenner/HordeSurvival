@@ -1,18 +1,3 @@
-//#include FT_FREETYPE_H
-//#include "../psaux/pstypes.h"
-//#include "../../include/freetype/tttags.h"
-//#include "../../include/freetype/freetype.h"
-
-//FT_Library freetype;
-//static bool init()
-//{
-//    return
-//    if(FT_Init_FreeType(&freetype))
-//    {
-//
-//    }
-//}
-
 #include <jni.h>
 #include <string>
 #include <freetype/tttags.h>
@@ -31,7 +16,7 @@ void log(int level, const char* message)
 }
 
 extern "C" JNIEXPORT jboolean JNICALL
-Java_com_games_crispin_crispinmobile_Crispin_initFreeType(
+Java_com_games_crispin_crispinmobile_Native_FreeTypeMethods_initFreeType(
         JNIEnv* env,
         jobject)
 {
@@ -42,49 +27,49 @@ FT_Face face;
 
 extern "C"
 JNIEXPORT jint JNICALL
-Java_com_games_crispin_crispinmobile_Crispin_getFaceBearingX(JNIEnv* env, jobject instance)
+Java_com_games_crispin_crispinmobile_Native_FreeTypeMethods_getFaceBearingX(JNIEnv* env, jobject instance)
 {
     return face->glyph->bitmap_left;
 }
 
 extern "C"
 JNIEXPORT jint JNICALL
-Java_com_games_crispin_crispinmobile_Crispin_getFaceBearingY(JNIEnv* env, jobject instance)
+Java_com_games_crispin_crispinmobile_Native_FreeTypeMethods_getFaceBearingY(JNIEnv* env, jobject instance)
 {
     return face->glyph->bitmap_top;
 }
 
 extern "C"
 JNIEXPORT jint JNICALL
-Java_com_games_crispin_crispinmobile_Crispin_getFaceAdvance(JNIEnv* env, jobject instance)
+Java_com_games_crispin_crispinmobile_Native_FreeTypeMethods_getFaceAdvance(JNIEnv* env, jobject instance)
 {
     return face->glyph->advance.x;
 }
 
 extern "C"
 JNIEXPORT jint JNICALL
-Java_com_games_crispin_crispinmobile_Crispin_getFaceWidth(JNIEnv* env, jobject instance)
+Java_com_games_crispin_crispinmobile_Native_FreeTypeMethods_getFaceWidth(JNIEnv* env, jobject instance)
 {
     return face->glyph->bitmap.width;
 }
 
 extern "C"
 JNIEXPORT jint JNICALL
-Java_com_games_crispin_crispinmobile_Crispin_getFaceHeight(JNIEnv* env, jobject instance)
+Java_com_games_crispin_crispinmobile_Native_FreeTypeMethods_getFaceHeight(JNIEnv* env, jobject instance)
 {
     return face->glyph->bitmap.rows;
 }
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_games_crispin_crispinmobile_Crispin_freeFace(JNIEnv* env, jobject instance)
+Java_com_games_crispin_crispinmobile_Native_FreeTypeMethods_freeFace(JNIEnv* env, jobject instance)
 {
     FT_Done_Face(face);
 }
 
 extern "C"
 JNIEXPORT jbyteArray JNICALL
-Java_com_games_crispin_crispinmobile_Crispin_loadGlyph(JNIEnv *env, jobject instance,
+Java_com_games_crispin_crispinmobile_Native_FreeTypeMethods_loadGlyph(JNIEnv *env, jobject instance,
                                                           jbyteArray fontBytes_, jbyte thechar_, jint size) {
 //    log(ANDROID_LOG_DEBUG, "Loading Glyph");
 //

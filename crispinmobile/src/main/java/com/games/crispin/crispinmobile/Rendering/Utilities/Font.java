@@ -1,6 +1,7 @@
 package com.games.crispin.crispinmobile.Rendering.Utilities;
 
 import com.games.crispin.crispinmobile.Crispin;
+import com.games.crispin.crispinmobile.Native.FreeTypeMethods;
 import com.games.crispin.crispinmobile.Rendering.Data.FreeTypeCharacter;
 
 import java.io.ByteArrayOutputStream;
@@ -38,7 +39,7 @@ public class Font
         {
             byte[] sixtyTest = new byte[inStream.available()];
             sixtyTest = convertStreamToByteArray(inStream);
-            Crispin.initFreeType();
+            FreeTypeMethods.initFreeType();
 
             TextureOptions textureOptions = new TextureOptions();
             textureOptions.internalFormat = GL_LUMINANCE;
@@ -49,19 +50,19 @@ public class Font
             {
                 System.out.println("Loading glyph: " + i);
                 // load character, apply texture
-                byte[] glyphBmp2 = Crispin.loadGlyph(sixtyTest, (byte)i, size);
-                int width = Crispin.getFaceWidth();
-                int height = Crispin.getFaceHeight();
+                byte[] glyphBmp2 = FreeTypeMethods.loadGlyph(sixtyTest, (byte)i, size);
+                int width = FreeTypeMethods.getFaceWidth();
+                int height = FreeTypeMethods.getFaceHeight();
                 FreeTypeCharacter character = new FreeTypeCharacter();
                 character.texture = new Texture(glyphBmp2, width, height, textureOptions);
                 character.width = width;
                 character.height = height;
-                character.bearingX = Crispin.getFaceBearingX();
-                character.bearingY = Crispin.getFaceBearingY();
-                character.advance = Crispin.getFaceAdvance();
+                character.bearingX = FreeTypeMethods.getFaceBearingX();
+                character.bearingY = FreeTypeMethods.getFaceBearingY();
+                character.advance = FreeTypeMethods.getFaceAdvance();
                 character.ascii = (byte)i;
                 characters.put(i, character);
-                Crispin.freeFace();
+                FreeTypeMethods.freeFace();
             }
         }
         catch(Exception e)

@@ -41,11 +41,11 @@ public class TestScene extends Scene {
         Material brickMaterial = new Material(new Texture(R.drawable.brick));
 
         cubeTwo = new Cube(brickMaterial);
-        cubeTwo.setPosition(new Point3D(-2.0f, 2.0f, 0.0f));
+        cubeTwo.setPosition(new Point3D(-0.1f, 1.2f, -2.0f));
         cubeTwo.ignoreData(RenderObject.IGNORE_TEXEL_DATA_FLAG);
 
         cubeThree = new Cube(brickMaterial);
-        cubeThree.setPosition(new Point3D(2.0f, 2.0f, 0.0f));
+        cubeThree.setPosition(new Point3D(2.0f, 0.0f, 0.0f));
 
         cubeTwo.setColour(Colour.MAGENTA);
         cubeThree.setColour(Colour.BLUE);
