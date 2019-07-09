@@ -28,7 +28,7 @@ public class TestScene extends Scene {
     public TestScene()
     {
         // Set the background colour to yellow
-        Crispin.setBackgroundColour(Colour.LIGHT_GREY);
+        Crispin.setBackgroundColour(Colour.BLACK);
 
         // Create the camera
         camera = new Camera3D();
@@ -36,9 +36,11 @@ public class TestScene extends Scene {
 
         camera2D = new Camera2D();
 
-        Font font = new Font(R.raw.opensans, 32);
+        Font font = new Font(R.raw.alexbrush, 64);
 
-        Material brickMaterial = new Material(new Texture(R.drawable.brick), Colour.YELLOW);
+      //  Material brickMaterial = new Material(new Texture(R.drawable.brick), Colour.YELLOW);
+
+        Material brickMaterial = new Material();
 
         cubeTwo = new Cube(brickMaterial);
         cubeTwo.setPosition(new Point3D(-0.1f, 1.2f, -2.0f));

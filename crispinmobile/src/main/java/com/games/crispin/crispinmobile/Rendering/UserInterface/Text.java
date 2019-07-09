@@ -17,6 +17,15 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import static android.opengl.GLES20.GL_BLEND;
+import static android.opengl.GLES20.GL_CULL_FACE;
+import static android.opengl.GLES20.GL_DEPTH_TEST;
+import static android.opengl.GLES20.GL_ONE_MINUS_SRC_ALPHA;
+import static android.opengl.GLES20.GL_SRC_ALPHA;
+import static android.opengl.GLES20.glBlendFunc;
+import static android.opengl.GLES20.glDisable;
+import static android.opengl.GLES20.glEnable;
+
 public class Text extends UIObject
 {
     private Font font;
@@ -248,7 +257,7 @@ public class Text extends UIObject
                         float width = theChar.width * scale;
                         float height = theChar.height * scale;
 
-                        FontSquare square = new FontSquare(new Material(theChar.texture, Colour.RED));
+                        FontSquare square = new FontSquare(new Material(theChar.texture, Colour.WHITE));
                         square.setCharacterOffset(new Point2D(xpos, ypos));
                         square.useCustomShader(textShader);
                         square.setScale(new Scale2D(width, height));
@@ -284,7 +293,7 @@ public class Text extends UIObject
                     float width = freeTypeCharacter.width * scale;
                     float height = freeTypeCharacter.height * scale;
 
-                    FontSquare square = new FontSquare(new Material(freeTypeCharacter.texture, Colour.RED));
+                    FontSquare square = new FontSquare(new Material(freeTypeCharacter.texture, Colour.WHITE));
                     square.setCharacterOffset(new Point2D(xpos, ypos));
                     square.useCustomShader(textShader);
                     square.setScale(new Scale2D(width, height));
@@ -387,6 +396,9 @@ public class Text extends UIObject
 
     public void renderText(Camera2D camera)
     {
+        final boolean REENABLE_DEPTH = Crispin.isDepthEnabled();
+        glDisable(GL_DEPTH_TEST);
+
         if(wiggle)
         {
             time += wiggleSpeed;
@@ -406,6 +418,11 @@ public class Text extends UIObject
             {
                 square.draw(camera);
             }
+        }
+
+        if(REENABLE_DEPTH)
+        {
+            glEnable(GL_DEPTH_TEST);
         }
     }
 }
