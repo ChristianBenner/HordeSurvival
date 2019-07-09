@@ -104,6 +104,7 @@ public class SceneManager implements GLSurfaceView.Renderer
      */
     public static SceneManager getInstance(Context context)
     {
+        // Check if a scene manager exists before creating one
         if(sceneManagerInstance == null)
         {
             // If scene manager hasn't been constructed yet, create one
@@ -135,6 +136,7 @@ public class SceneManager implements GLSurfaceView.Renderer
      */
     public void setStartScene(Scene.Constructor startSceneConstructor)
     {
+        // Check if there is already a start scene
         if(currentScene == null)
         {
             startSceneSpecified = true;
@@ -161,10 +163,11 @@ public class SceneManager implements GLSurfaceView.Renderer
      */
     public void setScene(Scene.Constructor sceneConstructor)
     {
+        // Check if the a start scene has been selected first
         if(!startSceneSpecified)
         {
-            Logger.error(TAG, "Failed to set scene because no start scene has been specified. " +
-                    "use method 'setStartScene' before set 'setScene'");
+            Logger.error(TAG, "Failed to set scene because no start scene has been " +
+                    "specified. Use method 'setStartScene' before set 'setScene'");
         }
         else
         {
@@ -250,7 +253,8 @@ public class SceneManager implements GLSurfaceView.Renderer
      * @return  <code>true</code> if alpha is enabled, otherwise <code>false</code>
      * @since   1.0
      */
-    public boolean isAlphaEnabled() {
+    public boolean isAlphaEnabled()
+    {
         return this.alphaEnabled;
     }
 
@@ -276,7 +280,8 @@ public class SceneManager implements GLSurfaceView.Renderer
      * @return  <code>true</code> if face culling is enabled, otherwise <code>false</code>
      * @since   1.0
      */
-    public boolean isCullFaceEnabled() {
+    public boolean isCullFaceEnabled()
+    {
         return cullFaceEnabled;
     }
 
@@ -304,8 +309,8 @@ public class SceneManager implements GLSurfaceView.Renderer
 
     /**
      * The method is overridden from <code>GLSurfaceView.Renderer</code>, it is called when the
-     * surface gets created. At this point3D OpenGL ES memory has been destroyed so its a good time to
-     * re-initialise components that depend on this memory.
+     * surface gets created. At this point3D OpenGL ES memory has been destroyed so its a good time
+     * to re-initialise components that depend on this memory.
      *
      * @param gl        A reference to the GL10 library. This is a legacy parameter that no longer
      *                  has a use (due to the usage of a newer OpenGL version).
@@ -317,6 +322,8 @@ public class SceneManager implements GLSurfaceView.Renderer
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config)
     {
+        // Check if there is currently a scene bound (before attempting to re-initialise its
+        // OpenGL ES memory components)
         if(currentScene != null)
         {
             // Re-initialise the shaders and textures because there memory no longer exists
@@ -338,13 +345,18 @@ public class SceneManager implements GLSurfaceView.Renderer
      * @since           1.0
      */
     @Override
-    public void onSurfaceChanged(GL10 gl, int width, int height)
+    public void onSurfaceChanged(GL10 gl,
+                                 int width,
+                                 int height)
     {
         this.surfaceWidth = width;
         this.surfaceHeight = height;
 
         // Set the OpenGL viewport to fill the entire surface
-        glViewport(0, 0, width, height);
+        glViewport(0,
+                0,
+                width,
+                height);
     }
 
     /**
@@ -359,14 +371,18 @@ public class SceneManager implements GLSurfaceView.Renderer
      * @since           1.0
      */
     @Override
-    public void onDrawFrame(GL10 gl) {
+    public void onDrawFrame(GL10 gl)
+    {
         // Construct the current scene if it hasn't been already
         if(currentScene == null)
         {
             constructCurrentScene();
         }
 
-        currentScene.update(1.0f);
+        // The delta time (before delta time calculations are added)
+        final float TEMP_DELTA_TIME = 1.0f;
+
+        currentScene.update(TEMP_DELTA_TIME);
 
         // Always clear the buffer bit
         glClear(GL_COLOR_BUFFER_BIT);
@@ -450,6 +466,7 @@ public class SceneManager implements GLSurfaceView.Renderer
      */
     private void constructCurrentScene()
     {
+        // Check if the current scene has a constructor
         if(currentSceneConstructor != null)
         {
             Logger.info("Constructing current scene");
