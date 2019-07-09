@@ -36,6 +36,9 @@ public class Shader
     // Tag for the logger
     private static final String TAG = "Shader";
 
+    // Undefined handle value
+    private static int UNDEFINED_HANDLE = -1;
+
     // Vertex shader code
     private String vertexShaderCode;
 
@@ -206,7 +209,7 @@ public class Shader
      *                              GLSL shader programming language.
      * @since                       1.0
      */
-    protected Shader(String vertexShaderCode,String fragmentShaderCode)
+    protected Shader(String vertexShaderCode, String fragmentShaderCode)
     {
         this.vertexShaderCode = vertexShaderCode;
         this.fragmentShaderCode = fragmentShaderCode;
@@ -222,12 +225,13 @@ public class Shader
         // to worry about this and can just create new shader's in the constructor of their scenes.
         ShaderCache.registerShader(this);
 
-        positionAttributeHandle = -1;
-        colourAttributeHandle = -1;
-        textureAttributeHandle = -1;
-        colourUniformHandle = -1;
-        textureUniformHandle = -1;
-        matrixUniformHandle = -1;
+        // Set the default values of all of the different handles to undefined
+        positionAttributeHandle = UNDEFINED_HANDLE;
+        colourAttributeHandle = UNDEFINED_HANDLE;
+        textureAttributeHandle = UNDEFINED_HANDLE;
+        colourUniformHandle = UNDEFINED_HANDLE;
+        textureUniformHandle = UNDEFINED_HANDLE;
+        matrixUniformHandle = UNDEFINED_HANDLE;
     }
 
     /**
@@ -285,7 +289,8 @@ public class Shader
         final int PROGRAM_ID = glCreateProgram();
 
         // Throw exception on failure
-        if (PROGRAM_ID == 0) {
+        if (PROGRAM_ID == 0)
+        {
             Logger.error(TAG, "OpenGLES failed to generate a program object");
         }
 
@@ -325,7 +330,8 @@ public class Shader
         final int SHADER = glCreateShader(type);
 
         // Check if the shader ID is invalid
-        if (SHADER == 0) {
+        if (SHADER == 0)
+        {
             // Failed to generate shader object
             Logger.error(TAG, "OpenGLES failed to generate " +
                     typeToString(type) +
@@ -356,7 +362,8 @@ public class Shader
      * @return          True if the shader is compiled, false if not.
      * @since           1.0
      */
-    private static boolean isCompiled(int shaderID) {
+    private static boolean isCompiled(int shaderID)
+    {
         // Place to store the vertex shader compilation status
         final int[] SHADER_COMPILATION_STATUS = new int[1];
 
@@ -381,6 +388,7 @@ public class Shader
      */
     private static String typeToString(int type)
     {
+        // Determine the type and return the associated string
         switch (type)
         {
             case GL_VERTEX_SHADER:
