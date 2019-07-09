@@ -11,6 +11,7 @@ public class TextureAttributeColourShader extends Shader
 
         positionAttributeHandle = getAttribute("vPosition");
         colourAttributeHandle = getAttribute("vColour");
+        colourUniformHandle = getUniform("uColour");
         textureAttributeHandle = getAttribute("vTextureCoordinates");
         matrixUniformHandle = getUniform("uMatrix");
         textureUniformHandle = getUniform("uTexture");

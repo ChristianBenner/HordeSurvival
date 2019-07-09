@@ -1,23 +1,37 @@
 package com.games.crispin.crispinmobile.Rendering.Utilities;
 
+import com.games.crispin.crispinmobile.Rendering.Data.Colour;
+
 public class Material
 {
+    // todo: Add a texture for the normal map. This will be used eventually by lighting shaders
+
+    // Tag used in logging output
+    private static final String TAG = "Material";
+
+    // Default Material used by rendering systems when one is not provided
     public static Material DEFAULT_MATERIAL = new Material();
 
-    //texture
-    //normal map texture
-
-    // colour
-    //
-
     private Texture texture;
+    private Colour colour;
 
-    public Material()
+    public Material(Texture texture, Colour colour)
     {
-        texture = null;
+        setTexture(texture);
+        setColour(colour);
     }
 
     public Material(Texture texture)
+    {
+        this(texture, Colour.WHITE);
+    }
+
+    public Material()
+    {
+        this(null);
+    }
+
+    public void setTexture(Texture texture)
     {
         this.texture = texture;
     }
@@ -25,6 +39,27 @@ public class Material
     public Texture getTexture()
     {
         return this.texture;
+    }
+
+    public void setColour(Colour colour)
+    {
+        this.colour = colour;
+    }
+
+    public Colour getColour()
+    {
+        return this.colour;
+    }
+
+    public float[] getColourData()
+    {
+        return new float[]
+                {
+                        colour.getRed(),
+                        colour.getGreen(),
+                        colour.getBlue(),
+                        colour.getAlpha()
+                };
     }
 
     public boolean isLightingEnabled()

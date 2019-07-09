@@ -38,7 +38,7 @@ public class TestScene extends Scene {
 
         Font font = new Font(R.raw.opensans, 32);
 
-        Material brickMaterial = new Material(new Texture(R.drawable.brick));
+        Material brickMaterial = new Material(new Texture(R.drawable.brick), Colour.YELLOW);
 
         cubeTwo = new Cube(brickMaterial);
         cubeTwo.setPosition(new Point3D(-0.1f, 1.2f, -2.0f));
@@ -46,9 +46,6 @@ public class TestScene extends Scene {
 
         cubeThree = new Cube(brickMaterial);
         cubeThree.setPosition(new Point3D(2.0f, 0.0f, 0.0f));
-
-        cubeTwo.setColour(Colour.MAGENTA);
-        cubeThree.setColour(Colour.BLUE);
 
         text = new Text(font,
                 "A paragraph is a series of sentences that are organized and " +

@@ -248,10 +248,9 @@ public class Text extends UIObject
                         float width = theChar.width * scale;
                         float height = theChar.height * scale;
 
-                        FontSquare square = new FontSquare(new Material(theChar.texture));
+                        FontSquare square = new FontSquare(new Material(theChar.texture, Colour.RED));
                         square.setCharacterOffset(new Point2D(xpos, ypos));
                         square.useCustomShader(textShader);
-                        square.setColour(Colour.RED);
                         square.setScale(new Scale2D(width, height));
                         squares.add(square);
 
@@ -285,10 +284,9 @@ public class Text extends UIObject
                     float width = freeTypeCharacter.width * scale;
                     float height = freeTypeCharacter.height * scale;
 
-                    FontSquare square = new FontSquare(new Material(freeTypeCharacter.texture));
+                    FontSquare square = new FontSquare(new Material(freeTypeCharacter.texture, Colour.RED));
                     square.setCharacterOffset(new Point2D(xpos, ypos));
                     square.useCustomShader(textShader);
-                    square.setColour(Colour.RED);
                     square.setScale(new Scale2D(width, height));
                     squares.add(square);
                     theX += (freeTypeCharacter.advance >> 6) * scale;

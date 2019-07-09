@@ -12,5 +12,6 @@ public class AttributeColourShader extends Shader
         positionAttributeHandle = getAttribute("vPosition");
         colourAttributeHandle = getAttribute("vColour");
         matrixUniformHandle = getUniform("uMatrix");
+        colourUniformHandle = getUniform("uColour");
     }
 }

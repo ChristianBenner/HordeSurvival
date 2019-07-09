@@ -8,7 +8,6 @@ import com.games.crispin.crispinmobile.Geometry.Rotation2D;
 import com.games.crispin.crispinmobile.Geometry.Rotation3D;
 import com.games.crispin.crispinmobile.Geometry.Scale2D;
 import com.games.crispin.crispinmobile.Geometry.Scale3D;
-import com.games.crispin.crispinmobile.Rendering.Data.Colour;
 import com.games.crispin.crispinmobile.Rendering.Shaders.AttributeColourShader;
 import com.games.crispin.crispinmobile.Rendering.Shaders.TextureAttributeColourShader;
 import com.games.crispin.crispinmobile.Rendering.Shaders.TextureShader;
@@ -81,9 +80,6 @@ public class RenderObject
     private boolean hasCustomShader;
 
     final int VERTEX_COUNT;
-
-    private Colour colour;
-    protected float[] colourData;
 
     private final AttributeOrder_t ATTRIBUTE_ORDER;
     private final PositionDimensions_t POSITION_DIMENSIONS;
@@ -170,7 +166,6 @@ public class RenderObject
                         elementsPerColour);
 
         setMaterial(material);
-        setColour(Colour.LIGHT_GREY);
 
         hasCustomShader = false;
     }
@@ -317,18 +312,6 @@ public class RenderObject
     public void setMaterial(Material material)
     {
         this.material = material;
-    }
-
-    public void setColour(Colour colour)
-    {
-        this.colour = colour;
-
-        colourData = new float[]{
-                colour.getRed(),
-                colour.getGreen(),
-                colour.getBlue(),
-                colour.getAlpha()
-        };
     }
 
     protected void updateShader()
@@ -639,7 +622,7 @@ public class RenderObject
 
         if(shader.getColourUniformHandle() != -1)
         {
-            glUniform4fv(shader.getColourUniformHandle(), 1, colourData, 0);
+            glUniform4fv(shader.getColourUniformHandle(), 1, material.getColourData(), 0);
         }
 
         if(shader.getTextureUniformHandle() != -1 && material.hasTexture())
@@ -679,7 +662,7 @@ public class RenderObject
 
         if(shader.getColourUniformHandle() != -1)
         {
-            glUniform4fv(shader.getColourUniformHandle(), 1, colourData, 0);
+            glUniform4fv(shader.getColourUniformHandle(), 1, material.getColourData(), 0);
         }
 
         if(shader.getTextureUniformHandle() != -1 && material.hasTexture())
