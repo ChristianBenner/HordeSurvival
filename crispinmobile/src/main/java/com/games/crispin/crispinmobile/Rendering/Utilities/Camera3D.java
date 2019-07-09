@@ -24,6 +24,37 @@ public class Camera3D
     // Tag used in logging output
     private static final String TAG = "Camera3D";
 
+    // The number of floats in a 4x4 Matrix
+    private static final int NUM_FLOATS_4X4_MATRIX = 16;
+
+    // The default near of the Frustrum Matrix
+    private static final float DEFAULT_NEAR = 0.1f;
+
+    // The default far of the Frustrum Matrix
+    private static final float DEFAULT_FAR = 10.0f;
+
+    // The default field of view of the Frustrum Matrix
+    private static final float DEFAULT_FIELD_OF_VIEW = 90.0f;
+
+    // The default right direction of the 'look at' data
+    private static final Vector3D DEFAULT_RIGHT_DIRECTION = new Vector3D(1.0f,
+            0.0f,
+            0.0f);
+
+    // The default up direction of the 'look at' data
+    private static final Vector3D DEFAULT_DIRECTION = new Vector3D(0.0f,
+            0.0f,
+            -1.0f);
+
+    // Distance to begin the frustrum
+    private float near;
+
+    // Distance to end the frustrum
+    private float far;
+
+    // Perspective field of view (FOV)
+    private float fieldOfView;
+
     // The position of the camera
     private Point3D position;
 
@@ -35,15 +66,6 @@ public class Camera3D
 
     // The up direction of the camera
     private Vector3D up;
-
-    // Distance to begin the frustrum
-    private float near = 0.1f;
-
-    // Distance to end the frustrum
-    private float far = 10.0f;
-
-    // Perspective field of view (FOV)
-    private float fieldOfView = 90.0f;
 
     // The view matrix
     private float[] viewMatrix;
@@ -59,12 +81,15 @@ public class Camera3D
      */
     public Camera3D()
     {
-        position = new Point3D(0.0f, 0.0f, 0.0f);
-        right = new Vector3D(1.0f, 0.0f, 0.0f);
-        direction = new Vector3D(0.0f, 0.0f, -1.0f);
-        up = right.crossProduct(direction);
-        viewMatrix = new float[16];
-        perspectiveMatrix = new float[16];
+        near = DEFAULT_NEAR;
+        far = DEFAULT_FAR;
+        fieldOfView = DEFAULT_FIELD_OF_VIEW;
+        position = new Point3D();
+        right = DEFAULT_RIGHT_DIRECTION;
+        direction = DEFAULT_DIRECTION;
+        up = right.crossProduct(DEFAULT_DIRECTION);
+        viewMatrix = new float[NUM_FLOATS_4X4_MATRIX];
+        perspectiveMatrix = new float[NUM_FLOATS_4X4_MATRIX];
 
         updateView();
         updatePerspective();
