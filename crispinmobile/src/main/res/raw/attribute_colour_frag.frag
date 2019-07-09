@@ -5,5 +5,5 @@ uniform vec4 uColour;
 
 void main()
 {
-    gl_FragColor = (uColour + aColour) / 2.0f;
+    gl_FragColor = uColour * aColour;
 }

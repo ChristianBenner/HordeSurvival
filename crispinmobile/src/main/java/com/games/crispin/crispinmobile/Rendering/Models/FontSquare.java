@@ -21,12 +21,13 @@ public class FontSquare extends Square
         super.ignoreData(IGNORE_COLOUR_DATA_FLAG);
     }
 
-    public FontSquare(Material material)
+    public FontSquare(Material material, Point3D textPosition, Point2D characterOffset)
     {
         super(material);
 
-        characterOffset = new Point2D();
-        textPosition = new Point3D();
+        this.textPosition = textPosition;
+        this.characterOffset = characterOffset;
+        updatePosition();
 
         // Because text shouldn't have colour per vertex ignore the data if it is present
         super.ignoreData(IGNORE_COLOUR_DATA_FLAG);

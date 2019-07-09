@@ -91,8 +91,13 @@ public class Text extends UIObject
 
     public void setText(String text)
     {
-        this.textString = text;
-        generateText();
+        // Only change the text if it isn't the same as before
+        if(this.textString == null ||
+                text.compareTo(this.textString) != 0)
+        {
+            this.textString = text;
+            generateText();
+        }
     }
 
     class Word
@@ -257,8 +262,8 @@ public class Text extends UIObject
                         float width = theChar.width * scale;
                         float height = theChar.height * scale;
 
-                        FontSquare square = new FontSquare(new Material(theChar.texture, Colour.WHITE));
-                        square.setCharacterOffset(new Point2D(xpos, ypos));
+                        FontSquare square = new FontSquare(new Material(theChar.texture, Colour.BLACK),
+                                position, new Point2D(xpos, ypos));
                         square.useCustomShader(textShader);
                         square.setScale(new Scale2D(width, height));
                         squares.add(square);
@@ -293,8 +298,8 @@ public class Text extends UIObject
                     float width = freeTypeCharacter.width * scale;
                     float height = freeTypeCharacter.height * scale;
 
-                    FontSquare square = new FontSquare(new Material(freeTypeCharacter.texture, Colour.WHITE));
-                    square.setCharacterOffset(new Point2D(xpos, ypos));
+                    FontSquare square = new FontSquare(new Material(freeTypeCharacter.texture, Colour.BLACK),
+                            position, new Point2D(xpos, ypos));
                     square.useCustomShader(textShader);
                     square.setScale(new Scale2D(width, height));
                     squares.add(square);
@@ -327,33 +332,54 @@ public class Text extends UIObject
     @Override
     public void setPosition(Point3D position)
     {
-        this.position = position;
-        updateSquarePositions();
+        // Only update the position if the position has changed
+        if(this.position.x != position.x ||
+            this.position.y != position.y ||
+            this.position.z != position.z)
+        {
+            this.position = position;
+            updateSquarePositions();
+        }
     }
 
     @Override
     public void setPosition(float x, float y, float z)
     {
-        this.position.x = x;
-        this.position.y = y;
-        this.position.z = z;
-        updateSquarePositions();
+        // Only update the position if the position has changed
+        if(this.position.x != x ||
+                this.position.y != y ||
+                this.position.z != z)
+        {
+            this.position.x = x;
+            this.position.y = y;
+            this.position.z = z;
+            updateSquarePositions();
+        }
     }
 
     @Override
     public void setPosition(Point2D position)
     {
-        this.position.x = position.x;
-        this.position.y = position.y;
-        updateSquarePositions();
+        if(this.position.x != position.x ||
+                this.position.y != position.y)
+        {
+            this.position.x = position.x;
+            this.position.y = position.y;
+            updateSquarePositions();
+        }
     }
 
     @Override
     public void setPosition(float x, float y)
     {
-        this.position.x = x;
-        this.position.y = y;
-        updateSquarePositions();
+        if(this.position.x != x ||
+                this.position.y != y)
+        {
+            this.position.x = x;
+            this.position.y = y;
+            updateSquarePositions();
+            System.out.println("UPDATED POSITION");
+        }
     }
 
     public float getHeight()
