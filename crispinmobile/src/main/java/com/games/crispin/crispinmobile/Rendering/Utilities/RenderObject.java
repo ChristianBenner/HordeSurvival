@@ -18,6 +18,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 
+import static android.opengl.GLES20.glUniform2f;
 import static android.opengl.GLES30.GL_FLOAT;
 import static android.opengl.GLES30.GL_TEXTURE0;
 import static android.opengl.GLES30.GL_TEXTURE_2D;
@@ -630,6 +631,13 @@ public class RenderObject
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, material.getTexture().getId());
             glUniform1i(shader.getTextureUniformHandle(), 0);
+
+            if(shader.getUvMultiplierUniformHandlea() != -1)
+            {
+                glUniform2f(shader.getUvMultiplierUniformHandlea(),
+                        material.getUvMultiplier().x,
+                        material.getUvMultiplier().y);
+            }
         }
 
         handleAttributes(true);
@@ -670,6 +678,13 @@ public class RenderObject
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, material.getTexture().getId());
             glUniform1i(shader.getTextureUniformHandle(), 0);
+
+            if(shader.getUvMultiplierUniformHandlea() != -1)
+            {
+                glUniform2f(shader.getUvMultiplierUniformHandlea(),
+                        material.getUvMultiplier().x,
+                        material.getUvMultiplier().y);
+            }
         }
 
         handleAttributes(true);

@@ -66,6 +66,9 @@ public class Shader
     // Matrix uniform handle
     protected int matrixUniformHandle;
 
+    // UV Multiplier Uniform handle
+    protected int uvMultiplierUniformHandle;
+
     /**
      * Enable the shader program. Should be used before making draw calls to objects that you wish
      * to draw using the shader.
@@ -200,6 +203,14 @@ public class Shader
     }
 
     /**
+     * Get the uv multiplier uniform handle
+     *
+     * @return  Integer ID of the uv multiplierzx uniform handle
+     * @since   1.0
+     */
+    public int getUvMultiplierUniformHandlea() { return uvMultiplierUniformHandle; }
+
+    /**
      * Shader constructor. Create and compile the GLSL shader in Open GL ES memory and then register
      * it in the shader cache.
      *
@@ -232,6 +243,7 @@ public class Shader
         colourUniformHandle = UNDEFINED_HANDLE;
         textureUniformHandle = UNDEFINED_HANDLE;
         matrixUniformHandle = UNDEFINED_HANDLE;
+        uvMultiplierUniformHandle = UNDEFINED_HANDLE;
     }
 
     /**

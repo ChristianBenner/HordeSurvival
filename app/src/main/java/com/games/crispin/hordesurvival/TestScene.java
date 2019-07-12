@@ -1,5 +1,6 @@
 package com.games.crispin.hordesurvival;
 
+import com.games.crispin.crispinmobile.Geometry.Point2D;
 import com.games.crispin.crispinmobile.Rendering.Utilities.Camera2D;
 import com.games.crispin.crispinmobile.Rendering.Utilities.Camera3D;
 import com.games.crispin.crispinmobile.Rendering.Data.Colour;
@@ -36,11 +37,11 @@ public class TestScene extends Scene {
 
         camera2D = new Camera2D();
 
-        Font font = new Font(R.raw.chunkfiveprint, 32);
+        Font font = new Font(R.raw.chunkfiveprint, 128);
 
       //  Material brickMaterial = new Material(new Texture(R.drawable.brick), Colour.YELLOW);
 
-        Material brickMaterial = new Material();
+        Material brickMaterial = new Material(new Texture(R.drawable.brick), new Point2D(0.25f, 0.25f));
         //brickMaterial.setColour(Colour.);
 
         cubeTwo = new Cube(brickMaterial);
@@ -61,8 +62,8 @@ public class TestScene extends Scene {
                 "single topic. Almost every piece of writing you do that is longer than a few " +
                 "sentences should be organized into paragraphs.",
                 true,
-                false,
-                Crispin.getSurfaceWidth() / 2.0f);
+                true,
+                Crispin.getSurfaceWidth());
 
         // Position the text to the top right corner
         text.setPosition(Crispin.getSurfaceWidth() / 2.0f,

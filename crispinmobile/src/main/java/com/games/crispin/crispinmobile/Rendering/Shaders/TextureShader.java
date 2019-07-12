@@ -13,6 +13,7 @@ public class TextureShader extends Shader
         textureAttributeHandle = getAttribute("vTextureCoordinates");
         matrixUniformHandle = getUniform("uMatrix");
         colourUniformHandle = getUniform("uColour");
+        uvMultiplierUniformHandle = getUniform("uUvMultiplier");
         textureUniformHandle = getUniform("uTexture");
     }
 }
