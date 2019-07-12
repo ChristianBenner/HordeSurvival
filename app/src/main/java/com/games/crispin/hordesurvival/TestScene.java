@@ -1,6 +1,7 @@
 package com.games.crispin.hordesurvival;
 
 import com.games.crispin.crispinmobile.Geometry.Point2D;
+import com.games.crispin.crispinmobile.Geometry.Scale2D;
 import com.games.crispin.crispinmobile.Rendering.Utilities.Camera2D;
 import com.games.crispin.crispinmobile.Rendering.Utilities.Camera3D;
 import com.games.crispin.crispinmobile.Rendering.Data.Colour;
@@ -25,6 +26,7 @@ public class TestScene extends Scene {
     private float angle = 0.0f;
 
     private Text text;
+    private Material brickMaterial;
 
     public TestScene()
     {
@@ -37,16 +39,15 @@ public class TestScene extends Scene {
 
         camera2D = new Camera2D();
 
-        Font font = new Font(R.raw.chunkfiveprint, 128);
+        Font font = new Font(R.raw.chunkfiveprint, 32);
 
       //  Material brickMaterial = new Material(new Texture(R.drawable.brick), Colour.YELLOW);
 
-        Material brickMaterial = new Material(new Texture(R.drawable.brick), new Point2D(0.25f, 0.25f));
-        //brickMaterial.setColour(Colour.);
+        brickMaterial = new Material(new Texture(R.drawable.brick), new Scale2D(0.25f, 0.25f));
+       // brickMaterial.ignoreData(Material.IGNORE_TEXEL_DATA_FLAG);
 
         cubeTwo = new Cube(brickMaterial);
         cubeTwo.setPosition(new Point3D(-0.1f, 1.2f, -2.0f));
-        cubeTwo.ignoreData(RenderObject.IGNORE_TEXEL_DATA_FLAG);
 
         cubeThree = new Cube(brickMaterial);
         cubeThree.setPosition(new Point3D(2.0f, 0.0f, 0.0f));
@@ -63,7 +64,8 @@ public class TestScene extends Scene {
                 "sentences should be organized into paragraphs.",
                 true,
                 true,
-                Crispin.getSurfaceWidth());
+                Crispin.getSurfaceWidth() / 2.0f);
+        text.enableWiggle(-(Crispin.getSurfaceHeight() - text.getHeight()), Text.WiggleSpeed_E.SLOW);
 
         // Position the text to the top right corner
         text.setPosition(Crispin.getSurfaceWidth() / 2.0f,
@@ -77,13 +79,20 @@ public class TestScene extends Scene {
         cubeTwo.setRotation(0.0f, angle, angle);
         cubeThree.setRotation( angle, 0.0f, angle);
 
-        text.setText("Rotations: " + (int)(angle / 360));
-        text.setPosition(5.0f, Crispin.getSurfaceHeight() - text.getHeight() - 5f);
+      //  text.setText("Rotations: " + (int)(angle / 360));
+     //   text.setPosition(5.0f, Crispin.getSurfaceHeight() - text.getHeight() - 5f);
     }
+
+    float time = 0.0f;
+    float colourR = 0.0f;
 
     @Override
     public void render()
     {
+        time += 0.1f;
+        colourR = ((float)Math.sin(time) + 1f) / 2f;
+        brickMaterial.setColour(new Colour(colourR, 1.0f, 1.0f));
+
         // Draw the cube
         cubeThree.draw(camera);
         cubeTwo.draw(camera);

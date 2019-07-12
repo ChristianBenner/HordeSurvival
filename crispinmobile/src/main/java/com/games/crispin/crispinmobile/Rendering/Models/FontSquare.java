@@ -18,7 +18,7 @@ public class FontSquare extends Square
         textPosition = new Point3D();
 
         // Because text shouldn't have colour per vertex ignore the data if it is present
-        super.ignoreData(IGNORE_COLOUR_DATA_FLAG);
+        super.material.ignoreData(Material.IGNORE_COLOUR_DATA_FLAG);
     }
 
     public FontSquare(Material material, Point3D textPosition, Point2D characterOffset)
@@ -30,7 +30,7 @@ public class FontSquare extends Square
         updatePosition();
 
         // Because text shouldn't have colour per vertex ignore the data if it is present
-        super.ignoreData(IGNORE_COLOUR_DATA_FLAG);
+        super.material.ignoreData(Material.IGNORE_COLOUR_DATA_FLAG);
     }
 
     private void updatePosition()

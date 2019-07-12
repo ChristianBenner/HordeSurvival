@@ -51,10 +51,6 @@ public class RenderObject
     // ability to change for dimensions?
     static public final int BYTES_PER_FLOAT = 4;
 
-    public static final int IGNORE_POSITION_DATA_FLAG = 1;
-    public static final int IGNORE_TEXEL_DATA_FLAG = 2;
-    public static final int IGNORE_COLOUR_DATA_FLAG = 4;
-
     private int elementsPerPosition;
     private int positionStrideBytes;
     private int positionDataOffset;
@@ -86,10 +82,6 @@ public class RenderObject
     private final PositionDimensions_t POSITION_DIMENSIONS;
     private final TexelDimensions_t TEXEL_DIMENSIONS;
     private final ColourDimensions_t COLOUR_DIMENSIONS;
-
-    private boolean ignorePositionData;
-    private boolean ignoreTexelData;
-    private boolean ignoreColourData;
 
     public enum AttributeOrder_t
     {
@@ -133,9 +125,6 @@ public class RenderObject
         this.scale = new Scale3D();
         this.position = new Point3D();
         this.rotation = new Rotation3D();
-        this.ignorePositionData = false;
-        this.ignoreTexelData = false;
-        this.ignoreColourData = false;
 
         // Figure out the stride
         resolveStride(POSITION_DIMENSIONS,
@@ -262,54 +251,6 @@ public class RenderObject
                 material);
     }
 
-    public void ignoreData(final int dataFlags)
-    {
-        if((dataFlags & IGNORE_POSITION_DATA_FLAG) == IGNORE_POSITION_DATA_FLAG)
-        {
-            setIgnorePositionData(true);
-        }
-
-        if((dataFlags & IGNORE_TEXEL_DATA_FLAG) == IGNORE_TEXEL_DATA_FLAG)
-        {
-            setIgnoreTexelData(true);
-        }
-
-        if((dataFlags & IGNORE_COLOUR_DATA_FLAG) == IGNORE_COLOUR_DATA_FLAG)
-        {
-            setIgnoreColourData(true);
-        }
-    }
-
-    public void setIgnorePositionData(boolean state)
-    {
-        ignorePositionData = state;
-    }
-
-    public boolean isIgnoringPositionData()
-    {
-        return ignorePositionData;
-    }
-
-    public void setIgnoreTexelData(boolean state)
-    {
-        ignoreTexelData = state;
-    }
-
-    public boolean isIgnoringTexelData()
-    {
-        return ignoreTexelData;
-    }
-
-    public void setIgnoreColourData(boolean state)
-    {
-        ignoreColourData = state;
-    }
-
-    public boolean isIgnoringColourData()
-    {
-        return ignoreColourData;
-    }
-
     public void setMaterial(Material material)
     {
         this.material = material;
@@ -322,12 +263,12 @@ public class RenderObject
             // Check that the object has all of the components required to render a texture
             final boolean SUPPORTS_TEXTURE = material.hasTexture() &&
                     TEXEL_DIMENSIONS != TexelDimensions_t.NONE &&
-                    !ignoreTexelData;
+                    !material.isIgnoringTexelData();
 
             // Check if the object has all of the components required to render per vertex colour
             final boolean SUPPORTS_COLOUR_PER_ATTRIB =
                     COLOUR_DIMENSIONS != ColourDimensions_t.NONE &&
-                    !ignoreColourData;
+                    !material.isIgnoringColourData();
 
 //            // Determine the best shader to used depending on the material
 //            if(material.isLightingEnabled() && material.hasTexture() && material.hasNormalMap())
@@ -579,17 +520,17 @@ public class RenderObject
     // check if the data provided contains the data necessary for disable or enable an attribute
     protected void handleAttributes(boolean enable)
     {
-        if(!ignorePositionData)
+        if(!material.isIgnoringPositionData())
         {
             handlePositionDataAttribute(enable);
         }
 
-        if(!ignoreTexelData && TEXEL_DIMENSIONS != TexelDimensions_t.NONE)
+        if(!material.isIgnoringTexelData() && TEXEL_DIMENSIONS != TexelDimensions_t.NONE)
         {
             handleTexelDataAttribute(enable);
         }
 
-        if(!ignoreColourData && COLOUR_DIMENSIONS != ColourDimensions_t.NONE)
+        if(!material.isIgnoringColourData() && COLOUR_DIMENSIONS != ColourDimensions_t.NONE)
         {
             handleColourDataAttribute(enable);
         }
@@ -605,9 +546,6 @@ public class RenderObject
         updateModelMatrix();
 
         shader.enableIt();
-
- //       float[] modelViewMatrix = new float[16];
- //      Matrix.multiplyMM(modelViewMatrix, 0, camera.getOrthoMatrix(), 0, modelMatrix, 0);
 
         final float[] ortho =
                 {
