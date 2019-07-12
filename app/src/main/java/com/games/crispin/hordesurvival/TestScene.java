@@ -47,10 +47,10 @@ public class TestScene extends Scene {
        // brickMaterial.ignoreData(Material.IGNORE_TEXEL_DATA_FLAG);
 
         cubeTwo = new Cube(brickMaterial);
-        cubeTwo.setPosition(new Point3D(-0.1f, 1.2f, -2.0f));
+        cubeTwo.setPosition(new Point3D(-0.1f, 3.2f, -2.0f));
 
         cubeThree = new Cube(brickMaterial);
-        cubeThree.setPosition(new Point3D(2.0f, 0.0f, 0.0f));
+        cubeThree.setPosition(new Point3D(2.0f, 3.0f, 0.0f));
 
         text = new Text(font,
                 "A paragraph is a series of sentences that are organized and " +
