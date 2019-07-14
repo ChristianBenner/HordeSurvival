@@ -13,6 +13,7 @@ import com.games.crispin.crispinmobile.Rendering.Utilities.Material;
 import com.games.crispin.crispinmobile.Rendering.Utilities.RenderObject;
 import com.games.crispin.crispinmobile.Rendering.UserInterface.Text;
 import com.games.crispin.crispinmobile.Rendering.Utilities.Texture;
+import com.games.crispin.crispinmobile.Utilities.OBJModelLoader;
 import com.games.crispin.crispinmobile.Utilities.Scene;
 
 public class TestScene extends Scene {
@@ -39,7 +40,9 @@ public class TestScene extends Scene {
 
         camera2D = new Camera2D();
 
-        Font font = new Font(R.raw.chunkfiveprint, 32);
+        Font font = new Font(R.raw.opensans, 32);
+
+        OBJModelLoader.readObjFile(R.raw.test);
 
       //  Material brickMaterial = new Material(new Texture(R.drawable.brick), Colour.YELLOW);
 
