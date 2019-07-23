@@ -4,7 +4,11 @@ import android.content.res.Resources;
 
 import com.games.crispin.crispinmobile.Crispin;
 
+import java.io.BufferedReader;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 
 public class FileResourceReader
 {

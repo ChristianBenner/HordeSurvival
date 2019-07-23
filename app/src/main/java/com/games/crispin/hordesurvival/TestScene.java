@@ -40,7 +40,7 @@ public class TestScene extends Scene {
 
         camera2D = new Camera2D();
 
-        Font font = new Font(R.raw.opensans, 32);
+        Font font = new Font(R.raw.alexbrush, 32);
 
         OBJModelLoader.readObjFile(R.raw.test);
 
