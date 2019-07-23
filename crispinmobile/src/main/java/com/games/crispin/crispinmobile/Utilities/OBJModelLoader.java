@@ -1,10 +1,21 @@
 package com.games.crispin.crispinmobile.Utilities;
 
+import android.content.res.Resources;
 import android.util.Log;
 
+import com.games.crispin.crispinmobile.Crispin;
+
 import java.io.BufferedReader;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.FloatBuffer;
 import java.util.ArrayList;
+import java.util.Locale;
+import java.util.Scanner;
+
+import static com.games.crispin.crispinmobile.Rendering.Utilities.RenderObject.BYTES_PER_FLOAT;
 
 public class OBJModelLoader
 {
@@ -53,18 +64,15 @@ public class OBJModelLoader
 
     }
 
-    enum LINE_TYPE
+    enum LineType_t
     {
         FACE,
         VERTEX,
         TEXEL,
-        NORMAL
+        NORMAL,
+        NONE
     }
 
-//    private static LINE_TYPE scanLineType(ArrayList<Byte> word)
-//    {
-//        return LINE_TYPE.FACE;
-//    }
 //
 //    private static float scanWordFloat(ArrayList<Byte> word)
 //    {
@@ -78,51 +86,132 @@ public class OBJModelLoader
 //    }
 
 
+    private static ArrayList<Float> vertexData = new ArrayList<>();
+    private static ArrayList<Float> texelData = new ArrayList<>();
+    private static ArrayList<Float> normalData = new ArrayList<>();
+    private static ArrayList<Integer> faceData = new ArrayList<>();
+
+    private static LineType_t getType(String word)
+    {
+        if(word.compareTo("v") == 0)
+        {
+            return LineType_t.VERTEX;
+        }
+        else if(word.compareTo("vt") == 0)
+        {
+            return LineType_t.TEXEL;
+        }
+        else if(word.compareTo("vn") == 0)
+        {
+            return LineType_t.NORMAL;
+        }
+        else if(word.compareTo("f") == 0)
+        {
+            return LineType_t.FACE;
+        }
+
+        return LineType_t.NONE;
+    }
+
+    private static void processData(LineType_t type, String line)
+    {
+        // Separate into words
+        System.out.println("vvv Process Data: " + line);
+
+        Scanner scanner = new Scanner(line);
+
+        switch (type)
+        {
+            case FACE:
+                while(scanner.hasNext())
+                {
+                    String nextWord = scanner.next();
+                    Scanner faceDataScanner = new Scanner(nextWord);
+                    faceDataScanner.useDelimiter("/");
+
+                    while(faceDataScanner.hasNextInt())
+                    {
+                        faceData.add(faceDataScanner.nextInt());
+                    }
+                }
+                break;
+            case VERTEX:
+                while(scanner.hasNextFloat())
+                {
+                    vertexData.add(scanner.nextFloat());
+                }
+            case TEXEL:
+                while(scanner.hasNextFloat())
+                {
+                    texelData.add(scanner.nextFloat());
+                }
+            case NORMAL:
+                while(scanner.hasNextFloat())
+                {
+                    normalData.add(scanner.nextFloat());
+                }
+                break;
+        }
+
+    }
+
+    private static void processLine(String line)
+    {
+        LineType_t type;
+
+        int wordStartIndex = 0;
+        int wordEndIndex = 0;
+        int numWords = 0;
+
+        // Process each word in the line
+        for(int i = 0; i < line.length(); i++)
+        {
+            if(line.charAt(i) == ' ')
+            {
+                wordEndIndex = i;
+
+                if(numWords == 0 && wordEndIndex > 0)
+                {
+                    type = getType(line.substring(wordStartIndex, wordEndIndex));
+
+                    if(type != LineType_t.NONE)
+                    {
+                        final int LAST_INDEX = line.length() - 1;
+                        final int BEGIN_INDEX = wordEndIndex + 1;
+                        if(BEGIN_INDEX < LAST_INDEX)
+                        {
+                            processData(type, line.substring(BEGIN_INDEX));
+                        }
+                    }
+                }
+
+                wordStartIndex = i;
+            }
+        }
+    }
+
     public static void readObjFile(int resourceId)
     {
-        InputStreamReader inputStreamReader = new InputStreamReader(inputStream, "ASCII");
-        BufferedReader reader = new BufferedReader(inputStreamReader);
+        try {
+            Resources resources = Crispin.getApplicationContext().getResources();
+            InputStream inputStream = resources.openRawResource(resourceId);
+            InputStreamReader inputStreamReader = new InputStreamReader(inputStream,
+                    "ASCII");
+            BufferedReader reader = new BufferedReader(inputStreamReader);
 
-        ArrayList<String> lines = new ArrayList<>();
-        String line = reader.readLine();
-        while(line != null)
-        {
-            lines.add(line);
-            line = reader.readLine();
+            ArrayList<String> lines = new ArrayList<>();
+
+            String line;
+            do
+            {
+                line = reader.readLine();
+                processLine(line);
+            }
+            while(line != null);
         }
-
-        if(line != null)
+        catch(Exception e)
         {
-            lines.add(line);
+            e.printStackTrace();
         }
-
-        for(int i = 0; i < lines.size(); i++)
-        {
-            System.out.println("LINE: " + lines.get(i));
-        }
-
-        // Get the file in bytes
-        byte[] bytes = FileResourceReader.readRawResource(resourceId);
-        //readAsLinesAndWords(bytes);
-
-        // Get the file bytes as Array of Array of Array of characters. Allows us to split up the
-        // bytes into words and lines.
-        //ArrayList<ArrayList<byte[]>> words = readAsLinesAndWords(bytes);
-
-//        System.out.println("PRINTING FILE********************");
-//        for(int lineIndex = 0; lineIndex < words.size(); lineIndex++)
-//        {
-//            for(int wordIndex = 0; wordIndex < words.get(lineIndex).size(); wordIndex++)
-//            {
-//                for(int charIndex = 0; charIndex < words.get(lineIndex).get(wordIndex).size(); charIndex++)
-//                {
-//                    byte theByte = words.get(lineIndex).get(wordIndex).get(charIndex);
-//                    System.out.print((char)theByte);
-//                }
-//                System.out.print(" ");
-//            }
-//            System.out.println();
-//        }
-//        System.out.println("PRINTED FILE***********************");
     }
 }
