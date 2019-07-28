@@ -3,6 +3,8 @@ package com.games.crispin.crispinmobile.Rendering.Data;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
+import javax.crypto.spec.DESedeKeySpec;
+
 public class RenderObjectData
 {
     public enum FaceData
@@ -23,12 +25,32 @@ public class RenderObjectData
         NONE
     }
 
+    public enum PositionComponents
+    {
+        XYZW,
+        XYZ,
+        XY,
+        NONE
+    }
+
+    private static final int NUM_DATA_ELEMENTS_VERTEX_ONLY = 1;
+    private static final int NUM_DATA_ELEMENTS_VERTEX_NORMAL = 2;
+    private static final int NUM_DATA_ELEMENTS_VERTEX_TEXEL = 2;
+    private static final int NUM_DATA_ELEMENTS_VERTEX_TEXEL_NORMAL = 3;
+    private static final int VERTEX_START_INDEX = 0;
+    private static final int UNUSED_DATA_ELEMENT = -1;
+
     private ArrayList<Float> vertexDataArray;
     private ArrayList<Float> texelDataArray;
     private ArrayList<Float> normalDataArray;
     private ArrayList<Integer> faceDataArray;
     private FaceData faceData;
     private RenderMethod renderMethod;
+    private PositionComponents positionComponents;
+    private int dataStride;
+    private int vertexStartIndex;
+    private int texelStartIndex;
+    private int normalStartIndex;
 
     public RenderObjectData()
     {
@@ -38,6 +60,46 @@ public class RenderObjectData
         faceDataArray = new ArrayList<>();
         faceData = FaceData.NONE;
         renderMethod = RenderMethod.NONE;
+        positionComponents = PositionComponents.NONE;
+        dataStride = 0;
+        vertexStartIndex = UNUSED_DATA_ELEMENT;
+        texelStartIndex = UNUSED_DATA_ELEMENT;
+        normalStartIndex = UNUSED_DATA_ELEMENT;
+    }
+
+    public boolean setPositionComponents(PositionComponents positionComponents)
+    {
+        if(this.positionComponents == PositionComponents.NONE)
+        {
+            this.positionComponents = positionComponents;
+
+            switch (positionComponents)
+            {
+                case XY:
+                    System.out.println("vvv Set Position Component to XY");
+                    break;
+                case XYZ:
+                    System.out.println("vvv Set Position Component to XYZ");
+                    break;
+                case XYZW:
+                    System.out.println("vvv Set Position Component to XYZW");
+                    break;
+                case NONE:
+                    System.out.println("vvv Set Position Component to NONE");
+                    break;
+            }
+
+            return true;
+        }
+        else if(this.positionComponents == positionComponents)
+        {
+            return true;
+        }
+        else
+        {
+            System.err.println("ERROR: RenderObjectData already has a different position component type");
+            return false;
+        }
     }
 
     public boolean setRenderMethod(RenderMethod renderMethod)
@@ -67,17 +129,14 @@ public class RenderObjectData
 
             return true;
         }
+        else if(this.renderMethod == renderMethod)
+        {
+            return true;
+        }
         else
         {
-            if(this.renderMethod == renderMethod)
-            {
-                return true;
-            }
-            else
-            {
-                System.err.println("ERROR: RenderObjectData already has a different Render Method type");
-                return false;
-            }
+            System.err.println("ERROR: RenderObjectData already has a different Render Method type");
+            return false;
         }
     }
 
@@ -94,31 +153,44 @@ public class RenderObjectData
                     break;
                 case VERTEX_ONLY:
                     System.out.println("vvv Face Data Type set to: " + "VERTEX_ONLY");
+                    dataStride = NUM_DATA_ELEMENTS_VERTEX_ONLY;
+                    vertexStartIndex = VERTEX_START_INDEX;
+                    texelStartIndex = UNUSED_DATA_ELEMENT;
+                    normalStartIndex = UNUSED_DATA_ELEMENT;
                     break;
                 case VERTEX_NORMAL:
                     System.out.println("vvv Face Data Type set to: " + "VERTEX_NORMAL");
+                    dataStride = NUM_DATA_ELEMENTS_VERTEX_NORMAL;
+                    vertexStartIndex = VERTEX_START_INDEX;
+                    texelStartIndex = UNUSED_DATA_ELEMENT;
+                    normalStartIndex = vertexStartIndex + 1;
                     break;
                 case VERTEX_TEXEL:
                     System.out.println("vvv Face Data Type set to: " + "VERTEX_TEXEL");
+                    dataStride = NUM_DATA_ELEMENTS_VERTEX_TEXEL;
+                    vertexStartIndex = VERTEX_START_INDEX;
+                    texelStartIndex = vertexStartIndex + 1;
+                    normalStartIndex = UNUSED_DATA_ELEMENT;
                     break;
                 case VERTEX_TEXEL_NORMAL:
                     System.out.println("vvv Face Data Type set to: " + "VERTEX_TEXEL_NORMAL");
+                    dataStride = NUM_DATA_ELEMENTS_VERTEX_TEXEL_NORMAL;
+                    vertexStartIndex = VERTEX_START_INDEX;
+                    texelStartIndex = vertexStartIndex + 1;
+                    normalStartIndex = texelStartIndex + 1;
                     break;
             }
 
             return true;
         }
+        else if(this.faceData == faceDataType)
+        {
+            return true;
+        }
         else
         {
-            if(this.faceData == faceDataType)
-            {
-                return true;
-            }
-            else
-            {
-                System.err.println("ERROR: RenderObjectData already has a different FaceData type");
-                return false;
-            }
+            System.err.println("ERROR: RenderObjectData already has a different FaceData type");
+            return false;
         }
     }
 
@@ -143,12 +215,57 @@ public class RenderObjectData
         System.out.println("vvv Face Data Added: " + faceData);
     }
 
-    public void processFaceData()
+    private int getNumberPositionElements()
     {
-        // Look through the faces, creating model data
-        for(int i = 0; i < faceDataArray.size(); i++)
+        switch (positionComponents)
+        {
+            case XYZW:
+                return 4;
+            case XYZ:
+                return 3;
+            case XY:
+                return 2;
+            case NONE:
+                default:
+                return 0;
+        }
+    }
+
+    public float[] processFaceData()
+    {
+        final int NUMBER_OF_POSITION_FACE_DATA = faceDataArray.size() / dataStride;
+        final int NUMBER_OF_POSITION_ELEMENTS = getNumberPositionElements();
+        final int POSITION_BUFFER_SIZE = NUMBER_OF_POSITION_ELEMENTS * NUMBER_OF_POSITION_FACE_DATA;
+
+        float[] positionBuffer = new float[POSITION_BUFFER_SIZE];
+
+        int positionBufferIndex = 0;
+        // Process the vertex data
+        for(int vertexIterator = vertexStartIndex;
+            vertexIterator != -1 && vertexIterator < faceDataArray.size();
+            vertexIterator += dataStride)
         {
 
+            // Add a vertex to the data list
+
+            // make a buffer (not an array list). the size should be able to be calculated by the number of elements (XYZW/XYZ/XY - 4/3/2) * FACEVERTEXDATA-facedata/stride
+
+            for(int elementIndex = 0;
+                elementIndex < NUMBER_OF_POSITION_ELEMENTS;
+                elementIndex++)
+            {
+                positionBuffer[positionBufferIndex] =
+                        vertexDataArray.get(((faceDataArray.get(vertexIterator) - 1) * NUMBER_OF_POSITION_ELEMENTS) + elementIndex);
+                positionBufferIndex++;
+            }
         }
+
+        System.out.println("vvv Position Buffer Length: " + positionBuffer.length);
+        for(int i = 0; i < positionBuffer.length; i++)
+        {
+            System.out.println("vvv Position Buffer[" + i + "]: " + positionBuffer[i]);
+        }
+
+        return positionBuffer;
     }
 }

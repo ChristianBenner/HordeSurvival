@@ -29,6 +29,8 @@ public class TestScene extends Scene {
     private Text text;
     private Material brickMaterial;
 
+    private RenderObject renderObject;
+
     public TestScene()
     {
         // Set the background colour to yellow
@@ -42,12 +44,14 @@ public class TestScene extends Scene {
 
         Font font = new Font(R.raw.alexbrush, 32);
 
-        OBJModelLoader.readObjFile(R.raw.test);
+        renderObject = OBJModelLoader.readObjFile(R.raw.test);
+        renderObject.setMaterial(new Material(Colour.RED));
 
       //  Material brickMaterial = new Material(new Texture(R.drawable.brick), Colour.YELLOW);
 
         brickMaterial = new Material(new Texture(R.drawable.brick), new Scale2D(0.25f, 0.25f));
        // brickMaterial.ignoreData(Material.IGNORE_TEXEL_DATA_FLAG);
+
 
         cubeTwo = new Cube(brickMaterial);
         cubeTwo.setPosition(new Point3D(-0.1f, 3.2f, -2.0f));
@@ -99,6 +103,7 @@ public class TestScene extends Scene {
         // Draw the cube
         cubeThree.draw(camera);
         cubeTwo.draw(camera);
+        renderObject.draw(camera);
 
         text.renderText(camera2D);
     }

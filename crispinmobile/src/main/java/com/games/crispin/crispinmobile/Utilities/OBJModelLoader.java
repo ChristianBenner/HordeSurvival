@@ -5,7 +5,9 @@ import android.util.Log;
 
 import com.games.crispin.crispinmobile.Crispin;
 import com.games.crispin.crispinmobile.Geometry.Point2D;
+import com.games.crispin.crispinmobile.Rendering.Data.Colour;
 import com.games.crispin.crispinmobile.Rendering.Data.RenderObjectData;
+import com.games.crispin.crispinmobile.Rendering.Utilities.Material;
 import com.games.crispin.crispinmobile.Rendering.Utilities.RenderObject;
 
 import java.io.BufferedReader;
@@ -116,6 +118,9 @@ public class OBJModelLoader
     private static final int NUM_VERTEX_POINTS = 1;
     private static final int NUM_FACE_DATA_ELEMENTS_VERTEX_TEXEL = 2;
     private static final int NUM_FACE_DATA_ELEMENTS_VERTEX_TEXEL_NORMAL = 3;
+    private static final int NUM_COMPONENTS_XYZW = 4;
+    private static final int NUM_COMPONENTS_XYZ = 3;
+    private static final int NUM_COMPONENTS_XY = 2;
 
     private static void processData(LineType_t type, String line, RenderObjectData renderObjectData)
     {
@@ -255,9 +260,24 @@ public class OBJModelLoader
                 }
                 break;
             case VERTEX:
+                int dataCount = 0;
                 while(scanner.hasNextFloat())
                 {
                     renderObjectData.addVertexData(scanner.nextFloat());
+                    dataCount++;
+                }
+
+                switch (dataCount)
+                {
+                    case NUM_COMPONENTS_XYZW:
+                        renderObjectData.setPositionComponents(RenderObjectData.PositionComponents.XYZW);
+                        break;
+                    case NUM_COMPONENTS_XYZ:
+                        renderObjectData.setPositionComponents(RenderObjectData.PositionComponents.XYZ);
+                        break;
+                    case NUM_COMPONENTS_XY:
+                        renderObjectData.setPositionComponents(RenderObjectData.PositionComponents.XY);
+                        break;
                 }
             case TEXEL:
                 while(scanner.hasNextFloat())
@@ -309,7 +329,7 @@ public class OBJModelLoader
         }
     }
 
-    public static void readObjFile(int resourceId)
+    public static RenderObject readObjFile(int resourceId)
     {
         RenderObjectData renderObjectData = new RenderObjectData();
 
@@ -320,19 +340,20 @@ public class OBJModelLoader
                     "ASCII");
             BufferedReader reader = new BufferedReader(inputStreamReader);
 
-            ArrayList<String> lines = new ArrayList<>();
-
-            String line;
-            do
+            String line = reader.readLine();
+            while(line != null)
             {
-                line = reader.readLine();
                 processLine(line, renderObjectData);
+                line = reader.readLine();
             }
-            while(line != null);
+
+            return new RenderObject(renderObjectData.processFaceData(), RenderObject.PositionDimensions_t.XYZ);
         }
         catch(Exception e)
         {
             e.printStackTrace();
         }
+
+        return null;
     }
 }

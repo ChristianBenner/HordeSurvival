@@ -19,6 +19,7 @@ import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 
 import static android.opengl.GLES20.glUniform2f;
+import static android.opengl.GLES20.glUniform4f;
 import static android.opengl.GLES30.GL_FLOAT;
 import static android.opengl.GLES30.GL_TEXTURE0;
 import static android.opengl.GLES30.GL_TEXTURE_2D;
@@ -111,7 +112,7 @@ public class RenderObject
         NONE
     }
 
-    protected RenderObject(float[] vertexData,
+    public RenderObject(float[] vertexData,
                            PositionDimensions_t positionDimensions,
                            TexelDimensions_t texelDimensions,
                            ColourDimensions_t colourDimensions,
@@ -160,7 +161,7 @@ public class RenderObject
         hasCustomShader = false;
     }
 
-    protected RenderObject(float[] vertexData,
+    public RenderObject(float[] vertexData,
                            PositionDimensions_t positionDimensions,
                            TexelDimensions_t texelDimensions,
                            ColourDimensions_t colourDimensions,
@@ -171,10 +172,10 @@ public class RenderObject
                 texelDimensions,
                 colourDimensions,
                 attributeOrder,
-                Material.DEFAULT_MATERIAL);
+                new Material());
     }
 
-    protected RenderObject(float[] vertexData,
+    public RenderObject(float[] vertexData,
                            PositionDimensions_t positionDimensions)
     {
         this(vertexData,
@@ -182,10 +183,10 @@ public class RenderObject
                 TexelDimensions_t.NONE,
                 ColourDimensions_t.NONE,
                 AttributeOrder_t.POSITION,
-                Material.DEFAULT_MATERIAL);
+                new Material());
     }
 
-    protected RenderObject(float[] vertexData,
+    public RenderObject(float[] vertexData,
                            PositionDimensions_t positionDimensions,
                            Material material)
     {
@@ -197,7 +198,7 @@ public class RenderObject
                 material);
     }
 
-    protected RenderObject(float[] vertexData,
+    public RenderObject(float[] vertexData,
                            PositionDimensions_t positionDimensions,
                            TexelDimensions_t texelDimensions,
                            AttributeOrder_t attributeOrder)
@@ -207,10 +208,10 @@ public class RenderObject
                 texelDimensions,
                 ColourDimensions_t.NONE,
                 attributeOrder,
-                Material.DEFAULT_MATERIAL);
+                new Material());
     }
 
-    protected RenderObject(float[] vertexData,
+    public RenderObject(float[] vertexData,
                            PositionDimensions_t positionDimensions,
                            TexelDimensions_t texelDimensions,
                            AttributeOrder_t attributeOrder,
@@ -224,7 +225,7 @@ public class RenderObject
                 material);
     }
 
-    protected RenderObject(float[] vertexData,
+    public RenderObject(float[] vertexData,
                            PositionDimensions_t positionDimensions,
                            ColourDimensions_t colourDimensions,
                            AttributeOrder_t attributeOrder)
@@ -234,10 +235,10 @@ public class RenderObject
                 TexelDimensions_t.NONE,
                 colourDimensions,
                 attributeOrder,
-                Material.DEFAULT_MATERIAL);
+                new Material());
     }
 
-    protected RenderObject(float[] vertexData,
+    public RenderObject(float[] vertexData,
                            PositionDimensions_t positionDimensions,
                            ColourDimensions_t colourDimensions,
                            AttributeOrder_t attributeOrder,
@@ -608,7 +609,11 @@ public class RenderObject
 
         if(shader.getColourUniformHandle() != -1)
         {
-            glUniform4fv(shader.getColourUniformHandle(), 1, material.getColourData(), 0);
+            glUniform4f(shader.getColourUniformHandle(),
+                    material.getColour().getRed(),
+                    material.getColour().getGreen(),
+                    material.getColour().getBlue(),
+                    material.getColour().getAlpha());
         }
 
         if(shader.getTextureUniformHandle() != -1 && material.hasTexture())

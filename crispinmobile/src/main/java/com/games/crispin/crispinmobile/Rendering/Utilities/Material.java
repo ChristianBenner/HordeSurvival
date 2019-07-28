@@ -22,9 +22,6 @@ public class Material
     // Tag used in logging output
     private static final String TAG = "Material";
 
-    // Default Material used by rendering systems when one is not provided
-    public static Material DEFAULT_MATERIAL = new Material();
-
     // Default uv multiplier
     private static final Scale2D DEFAULT_UV_MULTIPLIER = new Scale2D();
 
@@ -136,6 +133,18 @@ public class Material
     public Material(Texture texture)
     {
         this(texture, DEFAULT_UV_MULTIPLIER, DEFAULT_COLOUR);
+    }
+
+    /**
+     * Construct the material object. The constructor sets the colour of the material.
+     *
+     * @param colour        A texture to apply over the render object
+     * @see                 Texture
+     * @since               1.0
+     */
+    public Material(Colour colour)
+    {
+        this(null, DEFAULT_UV_MULTIPLIER, colour);
     }
 
     /**
