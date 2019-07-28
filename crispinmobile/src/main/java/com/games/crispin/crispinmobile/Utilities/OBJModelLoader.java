@@ -4,6 +4,9 @@ import android.content.res.Resources;
 import android.util.Log;
 
 import com.games.crispin.crispinmobile.Crispin;
+import com.games.crispin.crispinmobile.Geometry.Point2D;
+import com.games.crispin.crispinmobile.Rendering.Data.RenderObjectData;
+import com.games.crispin.crispinmobile.Rendering.Utilities.RenderObject;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -85,12 +88,6 @@ public class OBJModelLoader
 //
 //    }
 
-
-    private static ArrayList<Float> vertexData = new ArrayList<>();
-    private static ArrayList<Float> texelData = new ArrayList<>();
-    private static ArrayList<Float> normalData = new ArrayList<>();
-    private static ArrayList<Integer> faceData = new ArrayList<>();
-
     private static LineType_t getType(String word)
     {
         if(word.compareTo("v") == 0)
@@ -113,7 +110,14 @@ public class OBJModelLoader
         return LineType_t.NONE;
     }
 
-    private static void processData(LineType_t type, String line)
+    private static final int NUM_VERTEX_QUADS = 4;
+    private static final int NUM_VERTEX_TRIANGLES = 3;
+    private static final int NUM_VERTEX_LINES = 2;
+    private static final int NUM_VERTEX_POINTS = 1;
+    private static final int NUM_FACE_DATA_ELEMENTS_VERTEX_TEXEL = 2;
+    private static final int NUM_FACE_DATA_ELEMENTS_VERTEX_TEXEL_NORMAL = 3;
+
+    private static void processData(LineType_t type, String line, RenderObjectData renderObjectData)
     {
         // Separate into words
         System.out.println("vvv Process Data: " + line);
@@ -123,39 +127,154 @@ public class OBJModelLoader
         switch (type)
         {
             case FACE:
-                while(scanner.hasNext())
+                if(line.contains("//"))
                 {
-                    String nextWord = scanner.next();
-                    Scanner faceDataScanner = new Scanner(nextWord);
-                    faceDataScanner.useDelimiter("/");
+                    // The face data is VERTEX_AND_NORMAL
+                    renderObjectData.setFaceDataType(RenderObjectData.FaceData.VERTEX_NORMAL);
 
-                    while(faceDataScanner.hasNextInt())
+                    int vertexCount = 0;
+                    while(scanner.hasNext())
                     {
-                        faceData.add(faceDataScanner.nextInt());
+                        // Get the next word in the face data line
+                        String nextWord = scanner.next();
+                        vertexCount++;
+
+                        // Create a scanner with that word
+                        Scanner faceDataScanner = new Scanner(nextWord);
+
+                        // Iterate through the scanner using the '//' as a delimiter
+                        faceDataScanner.useDelimiter("//");
+
+                        while(faceDataScanner.hasNextInt())
+                        {
+                            renderObjectData.addFaceData(faceDataScanner.nextInt());
+                        }
+                    }
+
+                    // Decide what render method to use depending on how much vertex data is present
+                    switch (vertexCount)
+                    {
+                        case NUM_VERTEX_POINTS:
+                            renderObjectData.setRenderMethod(RenderObjectData.RenderMethod.POINTS);
+                            break;
+                        case NUM_VERTEX_LINES:
+                            renderObjectData.setRenderMethod(RenderObjectData.RenderMethod.LINES);
+                            break;
+                        case NUM_VERTEX_TRIANGLES:
+                            renderObjectData.setRenderMethod(RenderObjectData.RenderMethod.TRIANGLES);
+                            break;
+                        case NUM_VERTEX_QUADS:
+                            renderObjectData.setRenderMethod(RenderObjectData.RenderMethod.QUADS);
+                            break;
+                    }
+                }
+                else if(line.contains("/"))
+                {
+                    // The face data could be VERTEX_AND_TEXEL or VERTEX_AND_TEXEL_AND_NORMAL
+
+                    int vertexCount = 0;
+                    while(scanner.hasNext())
+                    {
+                        // Get the next word in the face data line
+                        String nextWord = scanner.next();
+
+                        vertexCount++;
+
+                        // Create a scanner with that word
+                        Scanner faceDataScanner = new Scanner(nextWord);
+
+                        // Iterate through the scanner using the '/' as a delimiter
+                        faceDataScanner.useDelimiter("/");
+
+                        // Keep a count to determine if it contains 2 or 3 elements
+                        int faceDataElements = 0;
+                        while(faceDataScanner.hasNextInt())
+                        {
+                            renderObjectData.addFaceData(faceDataScanner.nextInt());
+                            faceDataElements++;
+                        }
+
+                        // Determine if the face data contains all vertex, texel and normal data
+                        // elements or just vertex and texel data elements
+                        if(faceDataElements == NUM_FACE_DATA_ELEMENTS_VERTEX_TEXEL_NORMAL)
+                        {
+                            renderObjectData.setFaceDataType(RenderObjectData.FaceData.VERTEX_TEXEL_NORMAL);
+                        }
+                        else if(faceDataElements == NUM_FACE_DATA_ELEMENTS_VERTEX_TEXEL)
+                        {
+                            renderObjectData.setFaceDataType(RenderObjectData.FaceData.VERTEX_TEXEL);
+                        }
+                    }
+
+                    // Decide what render method to use depending on how much vertex data is present
+                    switch (vertexCount)
+                    {
+                        case NUM_VERTEX_POINTS:
+                            renderObjectData.setRenderMethod(RenderObjectData.RenderMethod.POINTS);
+                            break;
+                        case NUM_VERTEX_LINES:
+                            renderObjectData.setRenderMethod(RenderObjectData.RenderMethod.LINES);
+                            break;
+                        case NUM_VERTEX_TRIANGLES:
+                            renderObjectData.setRenderMethod(RenderObjectData.RenderMethod.TRIANGLES);
+                            break;
+                        case NUM_VERTEX_QUADS:
+                            renderObjectData.setRenderMethod(RenderObjectData.RenderMethod.QUADS);
+                            break;
+                    }
+                }
+                else
+                {
+                    // The face data consists of only VERTEX data
+                    renderObjectData.setFaceDataType(RenderObjectData.FaceData.VERTEX_ONLY);
+
+                    int vertexCount = 0;
+                    while(scanner.hasNext())
+                    {
+                        // We can just look at each word (no need to use a different delimiter)
+                        renderObjectData.addFaceData(scanner.nextInt());
+                        vertexCount++;
+                    }
+
+                    // Decide what render method to use depending on how much vertex data is present
+                    switch (vertexCount)
+                    {
+                        case NUM_VERTEX_POINTS:
+                            renderObjectData.setRenderMethod(RenderObjectData.RenderMethod.POINTS);
+                            break;
+                        case NUM_VERTEX_LINES:
+                            renderObjectData.setRenderMethod(RenderObjectData.RenderMethod.LINES);
+                            break;
+                        case NUM_VERTEX_TRIANGLES:
+                            renderObjectData.setRenderMethod(RenderObjectData.RenderMethod.TRIANGLES);
+                            break;
+                        case NUM_VERTEX_QUADS:
+                            renderObjectData.setRenderMethod(RenderObjectData.RenderMethod.QUADS);
+                            break;
                     }
                 }
                 break;
             case VERTEX:
                 while(scanner.hasNextFloat())
                 {
-                    vertexData.add(scanner.nextFloat());
+                    renderObjectData.addVertexData(scanner.nextFloat());
                 }
             case TEXEL:
                 while(scanner.hasNextFloat())
                 {
-                    texelData.add(scanner.nextFloat());
+                    renderObjectData.addTexelData(scanner.nextFloat());
                 }
             case NORMAL:
                 while(scanner.hasNextFloat())
                 {
-                    normalData.add(scanner.nextFloat());
+                    renderObjectData.addNormalData(scanner.nextFloat());
                 }
                 break;
         }
 
     }
 
-    private static void processLine(String line)
+    private static void processLine(String line, RenderObjectData renderObjectData)
     {
         LineType_t type;
 
@@ -178,9 +297,9 @@ public class OBJModelLoader
                     {
                         final int LAST_INDEX = line.length() - 1;
                         final int BEGIN_INDEX = wordEndIndex + 1;
-                        if(BEGIN_INDEX < LAST_INDEX)
+                        if(BEGIN_INDEX <= LAST_INDEX)
                         {
-                            processData(type, line.substring(BEGIN_INDEX));
+                            processData(type, line.substring(BEGIN_INDEX), renderObjectData);
                         }
                     }
                 }
@@ -192,6 +311,8 @@ public class OBJModelLoader
 
     public static void readObjFile(int resourceId)
     {
+        RenderObjectData renderObjectData = new RenderObjectData();
+
         try {
             Resources resources = Crispin.getApplicationContext().getResources();
             InputStream inputStream = resources.openRawResource(resourceId);
@@ -205,7 +326,7 @@ public class OBJModelLoader
             do
             {
                 line = reader.readLine();
-                processLine(line);
+                processLine(line, renderObjectData);
             }
             while(line != null);
         }
