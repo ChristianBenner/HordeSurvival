@@ -187,6 +187,18 @@ public class RenderObject
     }
 
     public RenderObject(float[] vertexData,
+                        PositionDimensions_t positionDimensions,
+                        TexelDimensions_t texelDimensions)
+    {
+        this(vertexData,
+                positionDimensions,
+                texelDimensions,
+                ColourDimensions_t.NONE,
+                AttributeOrder_t.POSITION_THEN_TEXEL,
+                new Material());
+    }
+
+    public RenderObject(float[] vertexData,
                            PositionDimensions_t positionDimensions,
                            Material material)
     {

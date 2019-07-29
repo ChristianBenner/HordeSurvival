@@ -44,14 +44,15 @@ public class TestScene extends Scene {
 
         Font font = new Font(R.raw.alexbrush, 32);
 
-        renderObject = OBJModelLoader.readObjFile(R.raw.test);
-        renderObject.setMaterial(new Material(Colour.RED));
 
       //  Material brickMaterial = new Material(new Texture(R.drawable.brick), Colour.YELLOW);
 
         brickMaterial = new Material(new Texture(R.drawable.brick), new Scale2D(0.25f, 0.25f));
        // brickMaterial.ignoreData(Material.IGNORE_TEXEL_DATA_FLAG);
 
+
+        renderObject = OBJModelLoader.readObjFile(R.raw.test);
+        renderObject.setMaterial(brickMaterial);
 
         cubeTwo = new Cube(brickMaterial);
         cubeTwo.setPosition(new Point3D(-0.1f, 3.2f, -2.0f));

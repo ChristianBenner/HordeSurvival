@@ -347,7 +347,7 @@ public class OBJModelLoader
                 line = reader.readLine();
             }
 
-            return new RenderObject(renderObjectData.processFaceData(), RenderObject.PositionDimensions_t.XYZ);
+            return renderObjectData.processFaceData();
         }
         catch(Exception e)
         {

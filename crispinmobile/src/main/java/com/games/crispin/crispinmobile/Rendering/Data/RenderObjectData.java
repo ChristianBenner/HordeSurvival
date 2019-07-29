@@ -1,5 +1,7 @@
 package com.games.crispin.crispinmobile.Rendering.Data;
 
+import com.games.crispin.crispinmobile.Rendering.Utilities.RenderObject;
+
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
@@ -231,41 +233,70 @@ public class RenderObjectData
         }
     }
 
-    public float[] processFaceData()
+    public RenderObject processFaceData()
     {
-        final int NUMBER_OF_POSITION_FACE_DATA = faceDataArray.size() / dataStride;
+        final int NUMBER_OF_FACE_DATA = faceDataArray.size() / dataStride;
+
         final int NUMBER_OF_POSITION_ELEMENTS = getNumberPositionElements();
-        final int POSITION_BUFFER_SIZE = NUMBER_OF_POSITION_ELEMENTS * NUMBER_OF_POSITION_FACE_DATA;
+        final int POSITION_BUFFER_SIZE = NUMBER_OF_POSITION_ELEMENTS * NUMBER_OF_FACE_DATA;
 
-        float[] positionBuffer = new float[POSITION_BUFFER_SIZE];
+        final int NUMBER_OF_TEXEL_ELEMENTS = 2;
+        final int TEXEL_BUFFER_SIZE = texelStartIndex == -1 ? 0 : NUMBER_OF_TEXEL_ELEMENTS * NUMBER_OF_FACE_DATA;
 
-        int positionBufferIndex = 0;
+       // final int NUMBER_OF_NORMAL_ELEMENTS = 2;
+       // final int NORMAL_BUFFER_SIZE = texelStartIndex == -1 ? 0 : NUMBER_OF_TEXEL_ELEMENTS * NUMBER_OF_FACE_DATA;
+
+        float[] vertexDataBuffer = new float[POSITION_BUFFER_SIZE + TEXEL_BUFFER_SIZE];
+
+        int vertexDataBufferIndex = 0;
         // Process the vertex data
         for(int vertexIterator = vertexStartIndex;
             vertexIterator != -1 && vertexIterator < faceDataArray.size();
             vertexIterator += dataStride)
         {
-
-            // Add a vertex to the data list
-
-            // make a buffer (not an array list). the size should be able to be calculated by the number of elements (XYZW/XYZ/XY - 4/3/2) * FACEVERTEXDATA-facedata/stride
-
             for(int elementIndex = 0;
                 elementIndex < NUMBER_OF_POSITION_ELEMENTS;
                 elementIndex++)
             {
-                positionBuffer[positionBufferIndex] =
+                vertexDataBuffer[vertexDataBufferIndex] =
                         vertexDataArray.get(((faceDataArray.get(vertexIterator) - 1) * NUMBER_OF_POSITION_ELEMENTS) + elementIndex);
-                positionBufferIndex++;
+                vertexDataBufferIndex++;
             }
+            vertexDataBufferIndex += NUMBER_OF_TEXEL_ELEMENTS;
         }
 
-        System.out.println("vvv Position Buffer Length: " + positionBuffer.length);
-        for(int i = 0; i < positionBuffer.length; i++)
+        for(int i = 0; i < texelDataArray.size(); i++)
         {
-            System.out.println("vvv Position Buffer[" + i + "]: " + positionBuffer[i]);
+            System.out.println("vvv Texel Data Array[" + i + "}: " + texelDataArray.get(i));
         }
 
-        return positionBuffer;
+        vertexDataBufferIndex = NUMBER_OF_POSITION_ELEMENTS;
+
+        // Process the vertex data
+        for(int texelIterator = texelStartIndex;
+            texelIterator != -1 && texelIterator < faceDataArray.size();
+            texelIterator += dataStride)
+        {
+            for(int elementIndex = 0;
+                elementIndex < NUMBER_OF_TEXEL_ELEMENTS;
+                elementIndex++)
+            {
+                int index = (((faceDataArray.get(texelIterator) - 1) * NUMBER_OF_TEXEL_ELEMENTS) + elementIndex);
+                float value = texelDataArray.get((((faceDataArray.get(texelIterator) - 1) * NUMBER_OF_TEXEL_ELEMENTS) + elementIndex));
+                vertexDataBuffer[vertexDataBufferIndex] = value;
+                vertexDataBufferIndex++;
+
+                System.out.println("vvv Texel Index[" + index + "]: " + value);
+            }
+
+            vertexDataBufferIndex += NUMBER_OF_POSITION_ELEMENTS;
+        }
+
+        for(int i = 0; i < vertexDataBuffer.length; i++)
+        {
+            System.out.println("vvv VDB: " + vertexDataBuffer[i]);
+        }
+
+        return new RenderObject(vertexDataBuffer, RenderObject.PositionDimensions_t.XYZ, RenderObject.TexelDimensions_t.ST);
     }
 }
