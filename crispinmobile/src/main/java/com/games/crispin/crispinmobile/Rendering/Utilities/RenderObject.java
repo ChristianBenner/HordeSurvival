@@ -61,6 +61,9 @@ public class RenderObject
     private int elementsPerColour;
     private int colourStrideBytes;
     private int colourDataOffset;
+    private int elementsPerNormal;
+    private int normalStrideBytes;
+    private int normalDataOffset;
     private int totalStrideBytes;
 
     // Float buffer that holds all the triangle co-ordinate data
@@ -83,18 +86,46 @@ public class RenderObject
     private final PositionDimensions_t POSITION_DIMENSIONS;
     private final TexelDimensions_t TEXEL_DIMENSIONS;
     private final ColourDimensions_t COLOUR_DIMENSIONS;
+    private final NormalDimensions_t NORMAL_DIMENSIONS;
 
     public enum AttributeOrder_t
     {
         POSITION,
         POSITION_THEN_TEXEL,
         POSITION_THEN_COLOUR,
+        POSITION_THEN_NORMAL,
         POSITION_THEN_TEXEL_THEN_COLOUR,
-        POSITION_THEN_COLOUR_THEN_TEXEL
+        POSITION_THEN_COLOUR_THEN_TEXEL,
+        POSITION_THEN_TEXEL_THEN_NORMAL,
+        POSITION_THEN_NORMAL_THEN_TEXEL,
+        POSITION_THEN_COLOUR_THEN_NORMAL,
+        POSITION_THEN_NORMAL_THEN_COLOUR,
+        POSITION_THEN_TEXEL_THEN_COLOUR_THEN_NORMAL,
+        POSITION_THEN_COLOUR_THEN_TEXEL_THEN_NORMAL,
+        POSITION_THEN_TEXEL_THEN_NORMAL_THEN_COLOUR,
+        POSITION_THEN_COLOUR_THEN_NORMAL_THEN_TEXEL,
+        POSITION_THEN_NORMAL_THEN_TEXEL_THEN_COLOUR,
+        POSITION_THEN_NORMAL_THEN_COLOUR_THEN_TEXEL,
+        GROUP_POSITION_THEN_TEXEL,
+        GROUP_POSITION_THEN_COLOUR,
+        GROUP_POSITION_THEN_NORMAL,
+        GROUP_POSITION_THEN_TEXEL_THEN_COLOUR,
+        GROUP_POSITION_THEN_COLOUR_THEN_TEXEL,
+        GROUP_POSITION_THEN_TEXEL_THEN_NORMAL,
+        GROUP_POSITION_THEN_NORMAL_THEN_TEXEL,
+        GROUP_POSITION_THEN_COLOUR_THEN_NORMAL,
+        GROUP_POSITION_THEN_NORMAL_THEN_COLOUR,
+        GROUP_POSITION_THEN_TEXEL_THEN_COLOUR_THEN_NORMAL,
+        GROUP_POSITION_THEN_COLOUR_THEN_TEXEL_THEN_NORMAL,
+        GROUP_POSITION_THEN_TEXEL_THEN_NORMAL_THEN_COLOUR,
+        GROUP_POSITION_THEN_COLOUR_THEN_NORMAL_THEN_TEXEL,
+        GROUP_POSITION_THEN_NORMAL_THEN_TEXEL_THEN_COLOUR,
+        GROUP_POSITION_THEN_NORMAL_THEN_COLOUR_THEN_TEXEL
     }
 
     public enum PositionDimensions_t
     {
+        XYZW,
         XYZ,
         XY
     }
@@ -112,16 +143,26 @@ public class RenderObject
         NONE
     }
 
+    public enum NormalDimensions_t
+    {
+        XYZW,
+        XYZ,
+        XY,
+        NONE
+    }
+
     public RenderObject(float[] vertexData,
                            PositionDimensions_t positionDimensions,
                            TexelDimensions_t texelDimensions,
                            ColourDimensions_t colourDimensions,
+                           NormalDimensions_t normalDimensions,
                            AttributeOrder_t attributeOrder,
                            Material material)
     {
         this.POSITION_DIMENSIONS = positionDimensions;
         this.TEXEL_DIMENSIONS = texelDimensions;
         this.COLOUR_DIMENSIONS = colourDimensions;
+        this.NORMAL_DIMENSIONS = normalDimensions;
         this.ATTRIBUTE_ORDER = attributeOrder;
         this.scale = new Scale3D();
         this.position = new Point3D();
@@ -130,7 +171,8 @@ public class RenderObject
         // Figure out the stride
         resolveStride(POSITION_DIMENSIONS,
                 TEXEL_DIMENSIONS,
-                COLOUR_DIMENSIONS);
+                COLOUR_DIMENSIONS,
+                NORMAL_DIMENSIONS);
 
         resolveAttributeOffsets(ATTRIBUTE_ORDER);
 
@@ -154,7 +196,8 @@ public class RenderObject
         VERTEX_COUNT = vertexData.length /
                 (elementsPerPosition +
                         elementsPerTexel +
-                        elementsPerColour);
+                        elementsPerColour +
+                        elementsPerNormal);
 
         setMaterial(material);
 
@@ -165,101 +208,220 @@ public class RenderObject
                            PositionDimensions_t positionDimensions,
                            TexelDimensions_t texelDimensions,
                            ColourDimensions_t colourDimensions,
+                           NormalDimensions_t normalDimensions,
                            AttributeOrder_t attributeOrder)
     {
         this(vertexData,
                 positionDimensions,
                 texelDimensions,
                 colourDimensions,
+                normalDimensions,
                 attributeOrder,
                 new Material());
     }
 
     public RenderObject(float[] vertexData,
-                           PositionDimensions_t positionDimensions)
+                        PositionDimensions_t positionDimensions,
+                        TexelDimensions_t texelDimensions,
+                        ColourDimensions_t colourDimensions,
+                        AttributeOrder_t attributeOrder)
+    {
+        this(vertexData,
+                positionDimensions,
+                texelDimensions,
+                colourDimensions,
+                NormalDimensions_t.NONE,
+                attributeOrder,
+                new Material());
+    }
+
+    public RenderObject(float[] vertexData,
+                        PositionDimensions_t positionDimensions,
+                        TexelDimensions_t texelDimensions,
+                        ColourDimensions_t colourDimensions,
+                        AttributeOrder_t attributeOrder,
+                        Material material)
+    {
+        this(vertexData,
+                positionDimensions,
+                texelDimensions,
+                colourDimensions,
+                NormalDimensions_t.NONE,
+                attributeOrder,
+                material);
+    }
+
+    public RenderObject(float[] vertexData,
+                        PositionDimensions_t positionDimensions,
+                        NormalDimensions_t normalDimensions,
+                        AttributeOrder_t attributeOrder)
     {
         this(vertexData,
                 positionDimensions,
                 TexelDimensions_t.NONE,
                 ColourDimensions_t.NONE,
+                normalDimensions,
+                attributeOrder,
+                new Material());
+    }
+
+    public RenderObject(float[] vertexData,
+                        PositionDimensions_t positionDimensions,
+                        TexelDimensions_t texelDimensions,
+                        NormalDimensions_t normalDimensions,
+                        AttributeOrder_t attributeOrder)
+    {
+        this(vertexData,
+                positionDimensions,
+                texelDimensions,
+                ColourDimensions_t.NONE,
+                normalDimensions,
+                attributeOrder,
+                new Material());
+    }
+
+    public RenderObject(float[] vertexData,
+                        PositionDimensions_t positionDimensions,
+                        NormalDimensions_t normalDimensions,
+                        AttributeOrder_t attributeOrder,
+                        Material material)
+    {
+        this(vertexData,
+                positionDimensions,
+                TexelDimensions_t.NONE,
+                ColourDimensions_t.NONE,
+                normalDimensions,
+                attributeOrder,
+                material);
+    }
+
+    public RenderObject(float[] vertexData,
+                        PositionDimensions_t positionDimensions,
+                        TexelDimensions_t texelDimensions,
+                        NormalDimensions_t normalDimensions,
+                        AttributeOrder_t attributeOrder,
+                        Material material)
+    {
+        this(vertexData,
+                positionDimensions,
+                texelDimensions,
+                ColourDimensions_t.NONE,
+                normalDimensions,
+                attributeOrder,
+                material);
+    }
+
+    public RenderObject(float[] vertexData,
+                        PositionDimensions_t positionDimensions,
+                        ColourDimensions_t colourDimensions,
+                        NormalDimensions_t normalDimensions,
+                        AttributeOrder_t attributeOrder)
+    {
+        this(vertexData,
+                positionDimensions,
+                TexelDimensions_t.NONE,
+                colourDimensions,
+                normalDimensions,
+                attributeOrder,
+                new Material());
+    }
+
+    public RenderObject(float[] vertexData,
+                        PositionDimensions_t positionDimensions,
+                        ColourDimensions_t colourDimensions,
+                        NormalDimensions_t normalDimensions,
+                        AttributeOrder_t attributeOrder,
+                        Material material)
+    {
+        this(vertexData,
+                positionDimensions,
+                TexelDimensions_t.NONE,
+                colourDimensions,
+                normalDimensions,
+                attributeOrder,
+                material);
+    }
+
+    public RenderObject(float[] vertexData,
+                        PositionDimensions_t positionDimensions)
+    {
+        this(vertexData,
+                positionDimensions,
+                TexelDimensions_t.NONE,
+                ColourDimensions_t.NONE,
+                NormalDimensions_t.NONE,
                 AttributeOrder_t.POSITION,
                 new Material());
     }
 
     public RenderObject(float[] vertexData,
                         PositionDimensions_t positionDimensions,
-                        TexelDimensions_t texelDimensions)
-    {
-        this(vertexData,
-                positionDimensions,
-                texelDimensions,
-                ColourDimensions_t.NONE,
-                AttributeOrder_t.POSITION_THEN_TEXEL,
-                new Material());
-    }
-
-    public RenderObject(float[] vertexData,
-                           PositionDimensions_t positionDimensions,
-                           Material material)
+                        AttributeOrder_t attributeOrder,
+                        Material material)
     {
         this(vertexData,
                 positionDimensions,
                 TexelDimensions_t.NONE,
                 ColourDimensions_t.NONE,
-                AttributeOrder_t.POSITION,
-                material);
-    }
-
-    public RenderObject(float[] vertexData,
-                           PositionDimensions_t positionDimensions,
-                           TexelDimensions_t texelDimensions,
-                           AttributeOrder_t attributeOrder)
-    {
-        this(vertexData,
-                positionDimensions,
-                texelDimensions,
-                ColourDimensions_t.NONE,
-                attributeOrder,
-                new Material());
-    }
-
-    public RenderObject(float[] vertexData,
-                           PositionDimensions_t positionDimensions,
-                           TexelDimensions_t texelDimensions,
-                           AttributeOrder_t attributeOrder,
-                           Material material)
-    {
-        this(vertexData,
-                positionDimensions,
-                texelDimensions,
-                ColourDimensions_t.NONE,
+                NormalDimensions_t.NONE,
                 attributeOrder,
                 material);
     }
 
     public RenderObject(float[] vertexData,
-                           PositionDimensions_t positionDimensions,
-                           ColourDimensions_t colourDimensions,
-                           AttributeOrder_t attributeOrder)
+                        PositionDimensions_t positionDimensions,
+                        TexelDimensions_t texelDimensions,
+                        AttributeOrder_t attributeOrder)
     {
         this(vertexData,
                 positionDimensions,
-                TexelDimensions_t.NONE,
-                colourDimensions,
+                texelDimensions,
+                ColourDimensions_t.NONE,
+                NormalDimensions_t.NONE,
                 attributeOrder,
                 new Material());
     }
 
     public RenderObject(float[] vertexData,
-                           PositionDimensions_t positionDimensions,
-                           ColourDimensions_t colourDimensions,
-                           AttributeOrder_t attributeOrder,
-                           Material material)
+                        PositionDimensions_t positionDimensions,
+                        TexelDimensions_t texelDimensions,
+                        AttributeOrder_t attributeOrder,
+                        Material material)
+    {
+        this(vertexData,
+                positionDimensions,
+                texelDimensions,
+                ColourDimensions_t.NONE,
+                NormalDimensions_t.NONE,
+                attributeOrder,
+                material);
+    }
+
+    public RenderObject(float[] vertexData,
+                        PositionDimensions_t positionDimensions,
+                        ColourDimensions_t colourDimensions,
+                        AttributeOrder_t attributeOrder)
     {
         this(vertexData,
                 positionDimensions,
                 TexelDimensions_t.NONE,
                 colourDimensions,
+                NormalDimensions_t.NONE,
+                attributeOrder,
+                new Material());
+    }
+
+    public RenderObject(float[] vertexData,
+                        PositionDimensions_t positionDimensions,
+                        ColourDimensions_t colourDimensions,
+                        AttributeOrder_t attributeOrder,
+                        Material material)
+    {
+        this(vertexData,
+                positionDimensions,
+                TexelDimensions_t.NONE,
+                colourDimensions,
+                NormalDimensions_t.NONE,
                 attributeOrder,
                 material);
     }
@@ -655,12 +817,13 @@ public class RenderObject
     {
         switch (positionDimensions)
         {
+            case XYZW:
+                return 4;
             case XYZ:
+            default:
                 return 3;
             case XY:
                 return 2;
-            default:
-                return 3;
         }
     }
 
@@ -668,12 +831,11 @@ public class RenderObject
     {
         switch (texelDimensions)
         {
+            default:
             case ST:
                 return 2;
             case NONE:
                 return 0;
-            default:
-                return 2;
         }
     }
 
@@ -681,30 +843,49 @@ public class RenderObject
     {
         switch (colourDimensions)
         {
-            case RGB:
-                return 3;
             case RGBA:
                 return 4;
-            case NONE:
-                return 0;
+            case RGB:
             default:
                 return 3;
+            case NONE:
+                return 0;
+        }
+    }
+
+    private int resolveNormalDimensions(NormalDimensions_t normalDimensions)
+    {
+        switch (normalDimensions)
+        {
+            case XYZW:
+                return 4;
+            case XYZ:
+            default:
+                return 3;
+            case XY:
+                return 2;
+            case NONE:
+                return 0;
         }
     }
 
     private void resolveStride(PositionDimensions_t positionDimensions,
                                TexelDimensions_t texelDimensions,
-                               ColourDimensions_t colourDimensions)
+                               ColourDimensions_t colourDimensions,
+                               NormalDimensions_t normalDimensions)
     {
         elementsPerPosition = resolvePositionDimensions(positionDimensions);
         elementsPerTexel = resolveTexelDimensions(texelDimensions);
         elementsPerColour = resolveColourDimensions(colourDimensions);
+        elementsPerNormal = resolveNormalDimensions(normalDimensions);
         positionStrideBytes = elementsPerPosition * BYTES_PER_FLOAT;
         texelStrideBytes = elementsPerTexel * BYTES_PER_FLOAT;
         colourStrideBytes = elementsPerColour * BYTES_PER_FLOAT;
+        normalStrideBytes = elementsPerNormal * BYTES_PER_FLOAT;
         totalStrideBytes = positionStrideBytes +
                 texelStrideBytes +
-                colourStrideBytes;
+                colourStrideBytes +
+                normalStrideBytes;
     }
 
     private void resolveAttributeOffsets(AttributeOrder_t attributeOrder)
@@ -722,6 +903,9 @@ public class RenderObject
                 positionDataOffset = 0;
                 colourDataOffset = elementsPerPosition;
                 break;
+            case POSITION_THEN_NORMAL:
+
+                break;
             case POSITION_THEN_TEXEL_THEN_COLOUR:
                 positionDataOffset = 0;
                 texelDataOffset = elementsPerPosition;
@@ -731,6 +915,57 @@ public class RenderObject
                 positionDataOffset = 0;
                 colourDataOffset = elementsPerPosition;
                 texelDataOffset = colourDataOffset + elementsPerColour;
+                break;
+            case POSITION_THEN_TEXEL_THEN_NORMAL:
+
+                break;
+            case POSITION_THEN_NORMAL_THEN_TEXEL:
+                break;
+            case POSITION_THEN_COLOUR_THEN_NORMAL:
+                break;
+            case POSITION_THEN_NORMAL_THEN_COLOUR:
+                break;
+            case POSITION_THEN_TEXEL_THEN_COLOUR_THEN_NORMAL:
+                break;
+            case POSITION_THEN_COLOUR_THEN_TEXEL_THEN_NORMAL:
+                break;
+            case POSITION_THEN_TEXEL_THEN_NORMAL_THEN_COLOUR:
+                break;
+            case POSITION_THEN_COLOUR_THEN_NORMAL_THEN_TEXEL:
+                break;
+            case POSITION_THEN_NORMAL_THEN_TEXEL_THEN_COLOUR:
+                break;
+            case POSITION_THEN_NORMAL_THEN_COLOUR_THEN_TEXEL:
+                break;
+            case GROUP_POSITION_THEN_TEXEL:
+                break;
+            case GROUP_POSITION_THEN_COLOUR:
+                break;
+            case GROUP_POSITION_THEN_NORMAL:
+                break;
+            case GROUP_POSITION_THEN_TEXEL_THEN_COLOUR:
+                break;
+            case GROUP_POSITION_THEN_COLOUR_THEN_TEXEL:
+                break;
+            case GROUP_POSITION_THEN_TEXEL_THEN_NORMAL:
+                break;
+            case GROUP_POSITION_THEN_NORMAL_THEN_TEXEL:
+                break;
+            case GROUP_POSITION_THEN_COLOUR_THEN_NORMAL:
+                break;
+            case GROUP_POSITION_THEN_NORMAL_THEN_COLOUR:
+                break;
+            case GROUP_POSITION_THEN_TEXEL_THEN_COLOUR_THEN_NORMAL:
+                break;
+            case GROUP_POSITION_THEN_COLOUR_THEN_TEXEL_THEN_NORMAL:
+                break;
+            case GROUP_POSITION_THEN_TEXEL_THEN_NORMAL_THEN_COLOUR:
+                break;
+            case GROUP_POSITION_THEN_COLOUR_THEN_NORMAL_THEN_TEXEL:
+                break;
+            case GROUP_POSITION_THEN_NORMAL_THEN_TEXEL_THEN_COLOUR:
+                break;
+            case GROUP_POSITION_THEN_NORMAL_THEN_COLOUR_THEN_TEXEL:
                 break;
         }
     }

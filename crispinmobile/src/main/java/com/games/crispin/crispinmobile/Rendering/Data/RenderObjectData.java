@@ -297,6 +297,6 @@ public class RenderObjectData
             System.out.println("vvv VDB: " + vertexDataBuffer[i]);
         }
 
-        return new RenderObject(vertexDataBuffer, RenderObject.PositionDimensions_t.XYZ, RenderObject.TexelDimensions_t.ST);
+        return new RenderObject(vertexDataBuffer, RenderObject.PositionDimensions_t.XYZ, RenderObject.TexelDimensions_t.ST, RenderObject.AttributeOrder_t.POSITION_THEN_TEXEL);
     }
 }
