@@ -93,6 +93,7 @@ public class RenderObject
         this.scale = new Scale3D();
         this.position = new Point3D();
         this.rotation = new Rotation3D();
+        this.totalStrideBytes = 0;
 
         // Figure out the stride
         resolveStride();
@@ -518,14 +519,15 @@ public class RenderObject
         elementsPerTexel = DATA_FORMAT.getNumberTexelDimensions();
         elementsPerColour = DATA_FORMAT.getNumberColourDimensions();
         elementsPerNormal = DATA_FORMAT.getNumberNormalDimensions();
-        positionStrideBytes = elementsPerPosition * DATA_FORMAT.getNumberVerticesPerGroup() * BYTES_PER_FLOAT;
-        texelStrideBytes = elementsPerTexel * DATA_FORMAT.getNumberVerticesPerGroup() * BYTES_PER_FLOAT;
-        colourStrideBytes = elementsPerColour * DATA_FORMAT.getNumberVerticesPerGroup() * BYTES_PER_FLOAT;
-        normalStrideBytes = elementsPerNormal * DATA_FORMAT.getNumberVerticesPerGroup() * BYTES_PER_FLOAT;
-        totalStrideBytes = positionStrideBytes +
-                texelStrideBytes +
-                colourStrideBytes +
-                normalStrideBytes;
+
+        if(DATA_FORMAT.getNumberVerticesPerGroup() == RenderObjectDataFormat.UNGROUPED)
+        {
+            totalStrideBytes = (elementsPerPosition +
+                    elementsPerTexel +
+                    elementsPerColour +
+                    elementsPerNormal) *
+                    BYTES_PER_FLOAT;
+        }
     }
 
     private void resolveAttributeOffsets()

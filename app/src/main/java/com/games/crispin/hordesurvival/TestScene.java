@@ -2,6 +2,7 @@ package com.games.crispin.hordesurvival;
 
 import com.games.crispin.crispinmobile.Geometry.Point2D;
 import com.games.crispin.crispinmobile.Geometry.Scale2D;
+import com.games.crispin.crispinmobile.Rendering.Models.CubeGrouped;
 import com.games.crispin.crispinmobile.Rendering.Utilities.Camera2D;
 import com.games.crispin.crispinmobile.Rendering.Utilities.Camera3D;
 import com.games.crispin.crispinmobile.Rendering.Data.Colour;
@@ -19,7 +20,7 @@ import com.games.crispin.crispinmobile.Utilities.Scene;
 public class TestScene extends Scene {
     static Scene.Constructor TEST_SCENE_CONSTRUCTION = () -> new TestScene();
 
-    private Cube cubeTwo;
+    private CubeGrouped cubeTwo;
     private Cube cubeThree;
 
     private Camera3D camera;
@@ -54,7 +55,7 @@ public class TestScene extends Scene {
         renderObject = OBJModelLoader.readObjFile(R.raw.test);
         renderObject.setMaterial(brickMaterial);
 
-        cubeTwo = new Cube(brickMaterial);
+        cubeTwo = new CubeGrouped(brickMaterial);
         cubeTwo.setPosition(new Point3D(-0.1f, 3.2f, -2.0f));
 
         cubeThree = new Cube(brickMaterial);

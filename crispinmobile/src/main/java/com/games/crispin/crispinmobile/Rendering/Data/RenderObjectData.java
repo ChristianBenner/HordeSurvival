@@ -262,7 +262,6 @@ public class RenderObjectData
                         vertexDataArray.get(((faceDataArray.get(vertexIterator) - 1) * NUMBER_OF_POSITION_ELEMENTS) + elementIndex);
                 vertexDataBufferIndex++;
             }
-            vertexDataBufferIndex += NUMBER_OF_TEXEL_ELEMENTS;
         }
 
         for(int i = 0; i < texelDataArray.size(); i++)
@@ -270,7 +269,7 @@ public class RenderObjectData
             System.out.println("vvv Texel Data Array[" + i + "}: " + texelDataArray.get(i));
         }
 
-        vertexDataBufferIndex = NUMBER_OF_POSITION_ELEMENTS;
+        vertexDataBufferIndex = POSITION_BUFFER_SIZE;
 
         // Process the vertex data
         for(int texelIterator = texelStartIndex;
@@ -288,8 +287,6 @@ public class RenderObjectData
 
                 System.out.println("vvv Texel Index[" + index + "]: " + value);
             }
-
-            vertexDataBufferIndex += NUMBER_OF_POSITION_ELEMENTS;
         }
 
         for(int i = 0; i < vertexDataBuffer.length; i++)
@@ -299,7 +296,7 @@ public class RenderObjectData
 
         RenderObjectDataFormat rdf = new RenderObjectDataFormat(
                         RenderObjectDataFormat.AttributeOrder_t.POSITION_THEN_TEXEL,
-                        RenderObjectDataFormat.UNGROUPED,
+                        NUMBER_OF_FACE_DATA,
                         RenderObjectDataFormat.PositionDimensions_t.XYZ,
                         RenderObjectDataFormat.TexelDimensions_t.ST);
 
