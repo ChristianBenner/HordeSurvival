@@ -16,6 +16,8 @@ import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Scanner;
@@ -443,7 +445,9 @@ public class OBJModelLoader
         LineType_t lineType = LineType_t.NONE;
 
         // Index associated to a float when processing
-        int floatStartIndex = -1;
+        int dataStartIndex = -1;
+
+        boolean eof = false;
 
         for(int i = 0; i < theFile.length; i++)
         {
@@ -487,20 +491,20 @@ public class OBJModelLoader
                 case POSITION:
                     // This is float data relevant to vertex position
                     if((theFile[i] >= 0x30 && theFile[i] <= 0x39) || // within 0 and 9 ascii
-                            theFile[i] == 0x2E || theFile[i] == 0x2D) // point and space ascii
+                            theFile[i] == 0x2E || theFile[i] == 0x2D) // point and minus ascii
                     {
-                        if (floatStartIndex == -1)
+                        if (dataStartIndex == -1)
                         {
-                            floatStartIndex = i;
+                            dataStartIndex = i;
                         }
                     }
                     else
                     {
-                        if(floatStartIndex != -1)
+                        if(dataStartIndex != -1)
                         {
                             // We are processing a float and have found the end of it, parse it
-                            renderObjectData.addVertexData(Float.parseFloat(new String(theFile, floatStartIndex, i - floatStartIndex)));
-                            floatStartIndex = -1;
+                            renderObjectData.addVertexData(Float.parseFloat(new String(theFile, dataStartIndex, i - dataStartIndex)));
+                            dataStartIndex = -1;
                         }
                     }
                     break;
@@ -509,18 +513,18 @@ public class OBJModelLoader
                     if((theFile[i] >= 0x30 && theFile[i] <= 0x39) ||
                             theFile[i] == 0x2E || theFile[i] == 0x2D)
                     {
-                        if (floatStartIndex == -1)
+                        if (dataStartIndex == -1)
                         {
-                            floatStartIndex = i;
+                            dataStartIndex = i;
                         }
                     }
                     else
                     {
-                        if(floatStartIndex != -1)
+                        if(dataStartIndex != -1)
                         {
                             // We are processing a float and have found the end of it, parse it
-                            renderObjectData.addTexelData(Float.parseFloat(new String(theFile, floatStartIndex, i - floatStartIndex)));
-                            floatStartIndex = -1;
+                            renderObjectData.addTexelData(Float.parseFloat(new String(theFile, dataStartIndex, i - dataStartIndex)));
+                            dataStartIndex = -1;
                         }
                     }
                     break;
@@ -529,18 +533,18 @@ public class OBJModelLoader
                     if((theFile[i] >= 0x30 && theFile[i] <= 0x39) ||
                             theFile[i] == 0x2E || theFile[i] == 0x2D)
                     {
-                        if (floatStartIndex == -1)
+                        if (dataStartIndex == -1)
                         {
-                            floatStartIndex = i;
+                            dataStartIndex = i;
                         }
                     }
                     else
                     {
-                        if(floatStartIndex != -1)
+                        if(dataStartIndex != -1)
                         {
                             // We are processing a float and have found the end of it, parse it
-                            renderObjectData.addNormalData(Float.parseFloat(new String(theFile, floatStartIndex, i - floatStartIndex)));
-                            floatStartIndex = -1;
+                            renderObjectData.addNormalData(Float.parseFloat(new String(theFile, dataStartIndex, i - dataStartIndex)));
+                            dataStartIndex = -1;
                         }
                     }
                     break;
@@ -549,6 +553,19 @@ public class OBJModelLoader
                     if(theFile[i] >= 0x30 && theFile[i] <= 0x39)
                     {
                         // A number
+                        if(dataStartIndex == -1)
+                        {
+                            dataStartIndex = i;
+                        }
+                    }
+                    else
+                    {
+                        if(dataStartIndex != -1)
+                        {
+                            // We are processing an int and have found the end of it, parse it
+                            renderObjectData.addFaceData(Integer.parseInt(new String(theFile, dataStartIndex, i - dataStartIndex)));
+                            dataStartIndex = -1;
+                        }
                     }
                     break;
             }
@@ -558,9 +575,48 @@ public class OBJModelLoader
             {
                 // Reset the line type for a new line
                 lineType = LineType_t.NONE;
-                floatStartIndex = -1;
+                dataStartIndex = -1;
+            }
+
+            // If we are processing the last byte, process last bits of data
+            if(i == theFile.length -1)
+            {
+                // Look at the line type so we know what we are processing
+                switch (lineType)
+                {
+                    case POSITION:
+                        if (dataStartIndex != -1)
+                        {
+                            // We are processing a float and have found the end of it, parse it
+                            renderObjectData.addVertexData(Float.parseFloat(new String(theFile, dataStartIndex, theFile.length - dataStartIndex)));
+                        }
+                        break;
+                    case TEXEL:
+                        if (dataStartIndex != -1)
+                        {
+                            // We are processing a float and have found the end of it, parse it
+                            renderObjectData.addTexelData(Float.parseFloat(new String(theFile, dataStartIndex, theFile.length - dataStartIndex)));
+                        }
+                        break;
+                    case NORMAL:
+                        if (dataStartIndex != -1) {
+                            // We are processing a float and have found the end of it, parse it
+                            renderObjectData.addNormalData(Float.parseFloat(new String(theFile, dataStartIndex, theFile.length - dataStartIndex)));
+                        }
+                        break;
+                    case FACE:
+                        if (dataStartIndex != -1) {
+                            // We are processing an int and have found the end of it, parse it
+                            renderObjectData.addFaceData(Integer.parseInt(new String(theFile, dataStartIndex, theFile.length - dataStartIndex)));
+                        }
+                        break;
+                }
             }
         }
+
+        renderObjectData.setFaceDataType(RenderObjectData.FaceData.VERTEX_ONLY);
+        renderObjectData.setPositionComponents(RenderObjectData.PositionComponents.XYZ);
+        renderObjectData.setRenderMethod(RenderObjectData.RenderMethod.TRIANGLES);
     }
 
     public static RenderObject readObjFile(int resourceId)
@@ -573,7 +629,7 @@ public class OBJModelLoader
             InputStream inputStream;
             long start = System.nanoTime();
             inputStream = resources.openRawResource(resourceId);
-            InputStreamReader inputStreamReader = new InputStreamReader(inputStream,
+    /*        InputStreamReader inputStreamReader = new InputStreamReader(inputStream,
                     "ASCII");
             BufferedReader reader = new BufferedReader(inputStreamReader);
 
@@ -582,7 +638,7 @@ public class OBJModelLoader
             {
                 testLine(line, renderObjectData);
                 line = reader.readLine();
-            }
+            }*/
 
             long end = System.nanoTime();
             System.out.println("TimeTaken: " + ((end - start) / 1000000) + "ms");
