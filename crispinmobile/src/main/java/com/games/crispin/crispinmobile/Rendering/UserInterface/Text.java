@@ -6,6 +6,7 @@ import com.games.crispin.crispinmobile.Geometry.Point3D;
 import com.games.crispin.crispinmobile.Geometry.Scale2D;
 import com.games.crispin.crispinmobile.Rendering.Data.Colour;
 import com.games.crispin.crispinmobile.Rendering.Data.FreeTypeCharacter;
+import com.games.crispin.crispinmobile.Rendering.Data.RenderObjectDataFormat;
 import com.games.crispin.crispinmobile.Rendering.Models.FontSquare;
 import com.games.crispin.crispinmobile.Rendering.Shaders.TextShader;
 import com.games.crispin.crispinmobile.Rendering.Utilities.Camera2D;
@@ -36,9 +37,11 @@ public class Text extends UIObject
         Glyph(float[] vertexData, Material m)
         {
             super(vertexData,
-                    PositionDimensions_t.XY,
-                    TexelDimensions_t.ST,
-                    AttributeOrder_t.POSITION_THEN_TEXEL,
+                    new RenderObjectDataFormat(
+                            RenderObjectDataFormat.AttributeOrder_t.POSITION_THEN_TEXEL,
+                            RenderObjectDataFormat.UNGROUPED,
+                            RenderObjectDataFormat.PositionDimensions_t.XY,
+                            RenderObjectDataFormat.TexelDimensions_t.ST),
                     m);
         }
     }

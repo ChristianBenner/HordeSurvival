@@ -1,5 +1,7 @@
 package com.games.crispin.crispinmobile.Rendering.Models;
 
+import com.games.crispin.crispinmobile.R;
+import com.games.crispin.crispinmobile.Rendering.Data.RenderObjectDataFormat;
 import com.games.crispin.crispinmobile.Rendering.Utilities.Material;
 import com.games.crispin.crispinmobile.Rendering.Utilities.RenderObject;
 
@@ -126,19 +128,23 @@ public class Cube extends RenderObject
     public Cube()
     {
         super(CUBE_VERTEX_DATA,
-                PositionDimensions_t.XYZ,
-                TexelDimensions_t.ST,
-                ColourDimensions_t.RGBA,
-                AttributeOrder_t.POSITION_THEN_COLOUR_THEN_TEXEL);
+                new RenderObjectDataFormat(
+                        RenderObjectDataFormat.AttributeOrder_t.POSITION_THEN_COLOUR_THEN_TEXEL,
+                        RenderObjectDataFormat.UNGROUPED,
+                        RenderObjectDataFormat.PositionDimensions_t.XYZ,
+                        RenderObjectDataFormat.TexelDimensions_t.ST,
+                        RenderObjectDataFormat.ColourDimensions_t.RGBA));
     }
 
     public Cube(Material material)
     {
         super(CUBE_VERTEX_DATA,
-                PositionDimensions_t.XYZ,
-                TexelDimensions_t.ST,
-                ColourDimensions_t.RGBA,
-                AttributeOrder_t.POSITION_THEN_COLOUR_THEN_TEXEL,
+                new RenderObjectDataFormat(
+                        RenderObjectDataFormat.AttributeOrder_t.POSITION_THEN_COLOUR_THEN_TEXEL,
+                        RenderObjectDataFormat.UNGROUPED,
+                        RenderObjectDataFormat.PositionDimensions_t.XYZ,
+                        RenderObjectDataFormat.TexelDimensions_t.ST,
+                        RenderObjectDataFormat.ColourDimensions_t.RGBA),
                 material);
     }
 }

@@ -1,5 +1,6 @@
 package com.games.crispin.crispinmobile.Rendering.Models;
 
+import com.games.crispin.crispinmobile.Rendering.Data.RenderObjectDataFormat;
 import com.games.crispin.crispinmobile.Rendering.Utilities.Material;
 import com.games.crispin.crispinmobile.Rendering.Utilities.RenderObject;
 
@@ -23,15 +24,22 @@ public class Square extends RenderObject
 
     public Square()
     {
-        super(VERTEX_DATA, PositionDimensions_t.XY, TexelDimensions_t.ST, AttributeOrder_t.POSITION_THEN_TEXEL);
+        super(VERTEX_DATA,
+                new RenderObjectDataFormat(
+                        RenderObjectDataFormat.AttributeOrder_t.POSITION_THEN_TEXEL,
+                        RenderObjectDataFormat.UNGROUPED,
+                        RenderObjectDataFormat.PositionDimensions_t.XY,
+                        RenderObjectDataFormat.TexelDimensions_t.ST));
     }
 
     public Square(Material material)
     {
         super(VERTEX_DATA,
-                PositionDimensions_t.XY,
-                TexelDimensions_t.ST,
-                AttributeOrder_t.POSITION_THEN_TEXEL,
+                new RenderObjectDataFormat(
+                        RenderObjectDataFormat.AttributeOrder_t.POSITION_THEN_TEXEL,
+                        RenderObjectDataFormat.UNGROUPED,
+                        RenderObjectDataFormat.PositionDimensions_t.XY,
+                        RenderObjectDataFormat.TexelDimensions_t.ST),
                 material);
     }
 }
