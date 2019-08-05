@@ -72,9 +72,11 @@ public class OBJModelLoader
     enum LineType_t
     {
         FACE,
-        VERTEX,
+        POSITION,
         TEXEL,
         NORMAL,
+        VERTEX,
+        COMMENT,
         NONE
     }
 
@@ -94,7 +96,7 @@ public class OBJModelLoader
     {
         if(word.compareTo("v") == 0)
         {
-            return LineType_t.VERTEX;
+            return LineType_t.POSITION;
         }
         else if(word.compareTo("vt") == 0)
         {
@@ -125,8 +127,6 @@ public class OBJModelLoader
     private static void processData(LineType_t type, String line, RenderObjectData renderObjectData)
     {
         // Separate into words
-        System.out.println("vvv Process Data: " + line);
-
         Scanner scanner = new Scanner(line);
 
         switch (type)
@@ -259,7 +259,7 @@ public class OBJModelLoader
                     }
                 }
                 break;
-            case VERTEX:
+            case POSITION:
                 int dataCount = 0;
                 while(scanner.hasNextFloat())
                 {
@@ -294,37 +294,271 @@ public class OBJModelLoader
 
     }
 
-    private static void processLine(String line, RenderObjectData renderObjectData)
+//    private static void processLine(String line, RenderObjectData renderObjectData)
+//    {
+//        LineType_t type;
+//
+//        int wordStartIndex = 0;
+//        int wordEndIndex = 0;
+//        int numWords = 0;
+//
+//        // Process each word in the line
+//        for(int i = 0; i < line.length(); i++)
+//        {
+//            if(line.charAt(i) == ' ')
+//            {
+//                wordEndIndex = i;
+//
+//                if(numWords == 0 && wordEndIndex > 0)
+//                {
+//                    type = getType(line.substring(wordStartIndex, wordEndIndex));
+//
+//                    if(type != LineType_t.NONE)
+//                    {
+//                        final int LAST_INDEX = line.length() - 1;
+//                        final int BEGIN_INDEX = wordEndIndex + 1;
+//                        if(BEGIN_INDEX <= LAST_INDEX)
+//                        {
+//                            long start = System.nanoTime();
+//                            processData(type, line.substring(BEGIN_INDEX), renderObjectData);
+//                            System.out.println("TimeData: " + (System.nanoTime() - start) + "ns");
+//                            break;
+//                        }
+//                    }
+//                }
+//
+//                wordStartIndex = i;
+//            }
+//        }
+//    }
+
+    public static void processLine(String line, RenderObjectData renderObjectData)
     {
-        LineType_t type;
+        // Discover the type
 
-        int wordStartIndex = 0;
-        int wordEndIndex = 0;
-        int numWords = 0;
+        Scanner scanner = new Scanner(line);
 
-        // Process each word in the line
-        for(int i = 0; i < line.length(); i++)
+        String type = scanner.next();
+
+        if(type.compareTo("f") == 0)
         {
-            if(line.charAt(i) == ' ')
+            while(scanner.hasNextInt())
             {
-                wordEndIndex = i;
+                renderObjectData.addFaceData(scanner.nextInt());
+            }
+        }
+        else if(type.compareTo("v") == 0)
+        {
+            while(scanner.hasNextFloat())
+            {
+                renderObjectData.addVertexData(scanner.nextFloat());
+            }
+        }
+        else if(type.compareTo("vt") == 0)
+        {
+            while(scanner.hasNextFloat())
+            {
+                renderObjectData.addTexelData(scanner.nextFloat());
+            }
+        }
+        else if(type.compareTo("vn") == 0)
+        {
+            while (scanner.hasNextFloat())
+            {
+                renderObjectData.addNormalData(scanner.nextFloat());
+            }
+        }
+    }
 
-                if(numWords == 0 && wordEndIndex > 0)
+    public static void testLine(String line, RenderObjectData data)
+    {
+        LineType_t type = LineType_t.NONE;
+        final char typeChar = line.charAt(0);
+        int startIndex = 0;
+
+        switch (typeChar)
+        {
+            case 'f':
+                type = LineType_t.FACE;
+                startIndex = 2;
+                break;
+            case 'v':
+                final char typeCharTwo = line.charAt(1);
+                switch (typeCharTwo)
                 {
-                    type = getType(line.substring(wordStartIndex, wordEndIndex));
+                    case ' ':
+                        type = LineType_t.POSITION;
+                        startIndex = 2;
+                        break;
+                    case 'n':
+                        type = LineType_t.NORMAL;
+                        startIndex = 3;
+                        break;
+                    case 't':
+                        type = LineType_t.TEXEL;
+                        startIndex = 3;
+                        break;
+                }
+                break;
+        }
 
-                    if(type != LineType_t.NONE)
+        if(type == LineType_t.POSITION)
+        {
+            int startNumberScanIndex = -1;
+            for(int i = startIndex; i < line.length(); i++)
+            {
+                if((line.charAt(i) >= 0x30 && line.charAt(i) <= 0x39) ||
+                        line.charAt(i) == 0x2E || line.charAt(i) == 0x2D)
+                {
+                    if(startNumberScanIndex == -1)
                     {
-                        final int LAST_INDEX = line.length() - 1;
-                        final int BEGIN_INDEX = wordEndIndex + 1;
-                        if(BEGIN_INDEX <= LAST_INDEX)
-                        {
-                            processData(type, line.substring(BEGIN_INDEX), renderObjectData);
-                        }
+                        startNumberScanIndex = i;
+                    }
+                }
+                else
+                {
+                    if(startNumberScanIndex != -1)
+                    {
+                        // Using the current index, parse the string
+                        float f = Float.parseFloat(line.substring(startNumberScanIndex, i));
+                        startNumberScanIndex = -1;
+                        System.out.println("Parsed Float: " + f);
                     }
                 }
 
-                wordStartIndex = i;
+                // parse the last float on the line
+                if(i == line.length() - 1 && startNumberScanIndex != -1)
+                {
+                    float f = Float.parseFloat(line.substring(startNumberScanIndex));
+                    startNumberScanIndex = -1;
+                    System.out.println("Parsed Float: " + f);
+                }
+            }
+        }
+    }
+
+    public static void processObj(byte[] theFile, RenderObjectData renderObjectData)
+    {
+        // Keep track of the type of data we are looking at
+        LineType_t lineType = LineType_t.NONE;
+
+        // Index associated to a float when processing
+        int floatStartIndex = -1;
+
+        for(int i = 0; i < theFile.length; i++)
+        {
+            // Look at the line type so we know what we are processing
+            switch (lineType)
+            {
+                case NONE:
+                    // Discover what type the line that we are working on is
+                    switch (theFile[i])
+                    {
+                        case 0x23: // '#' for comment
+                            lineType = LineType_t.COMMENT;
+                            break;
+                        case 0x66: // 'f' for face
+                            lineType = LineType_t.FACE;
+                            break;
+                        case 0x76: // 'v' for vertex
+                            lineType = LineType_t.VERTEX;
+                            break;
+                    }
+                    break;
+                case VERTEX:
+                    // We know that the line type is vertex related but we still don't know what it
+                    // is, discover its type
+                    switch (theFile[i])
+                    {
+                        case 0x20: // SPACE for vertex position
+                            lineType = LineType_t.POSITION;
+                            break;
+                        case 0x74: // 't' for vertex texel
+                            lineType = LineType_t.TEXEL;
+                            break;
+                        case 0x6E: // 'n' for vertex normal
+                            lineType = LineType_t.NORMAL;
+                            break;
+                        default: // Unsupported or error. Reset the line type
+                            lineType = LineType_t.NONE;
+                            break;
+                    }
+                    break;
+                case POSITION:
+                    // This is float data relevant to vertex position
+                    if((theFile[i] >= 0x30 && theFile[i] <= 0x39) || // within 0 and 9 ascii
+                            theFile[i] == 0x2E || theFile[i] == 0x2D) // point and space ascii
+                    {
+                        if (floatStartIndex == -1)
+                        {
+                            floatStartIndex = i;
+                        }
+                    }
+                    else
+                    {
+                        if(floatStartIndex != -1)
+                        {
+                            // We are processing a float and have found the end of it, parse it
+                            renderObjectData.addVertexData(Float.parseFloat(new String(theFile, floatStartIndex, i - floatStartIndex)));
+                            floatStartIndex = -1;
+                        }
+                    }
+                    break;
+                case TEXEL:
+                    // This is float data relevant to vertex position
+                    if((theFile[i] >= 0x30 && theFile[i] <= 0x39) ||
+                            theFile[i] == 0x2E || theFile[i] == 0x2D)
+                    {
+                        if (floatStartIndex == -1)
+                        {
+                            floatStartIndex = i;
+                        }
+                    }
+                    else
+                    {
+                        if(floatStartIndex != -1)
+                        {
+                            // We are processing a float and have found the end of it, parse it
+                            renderObjectData.addTexelData(Float.parseFloat(new String(theFile, floatStartIndex, i - floatStartIndex)));
+                            floatStartIndex = -1;
+                        }
+                    }
+                    break;
+                case NORMAL:
+                    // This is float data relevant to vertex position
+                    if((theFile[i] >= 0x30 && theFile[i] <= 0x39) ||
+                            theFile[i] == 0x2E || theFile[i] == 0x2D)
+                    {
+                        if (floatStartIndex == -1)
+                        {
+                            floatStartIndex = i;
+                        }
+                    }
+                    else
+                    {
+                        if(floatStartIndex != -1)
+                        {
+                            // We are processing a float and have found the end of it, parse it
+                            renderObjectData.addNormalData(Float.parseFloat(new String(theFile, floatStartIndex, i - floatStartIndex)));
+                            floatStartIndex = -1;
+                        }
+                    }
+                    break;
+                case FACE:
+                    // Now we have to parse integers
+                    if(theFile[i] >= 0x30 && theFile[i] <= 0x39)
+                    {
+                        // A number
+                    }
+                    break;
+            }
+
+            // Check if the byte represents line feed or new line '/r' or '/n'
+            if(theFile[i] == 0x0A || theFile[i] == 0x0D) // '\n' or '\r'
+            {
+                // Reset the line type for a new line
+                lineType = LineType_t.NONE;
+                floatStartIndex = -1;
             }
         }
     }
@@ -335,7 +569,10 @@ public class OBJModelLoader
 
         try {
             Resources resources = Crispin.getApplicationContext().getResources();
-            InputStream inputStream = resources.openRawResource(resourceId);
+
+            InputStream inputStream;
+            long start = System.nanoTime();
+            inputStream = resources.openRawResource(resourceId);
             InputStreamReader inputStreamReader = new InputStreamReader(inputStream,
                     "ASCII");
             BufferedReader reader = new BufferedReader(inputStreamReader);
@@ -343,9 +580,19 @@ public class OBJModelLoader
             String line = reader.readLine();
             while(line != null)
             {
-                processLine(line, renderObjectData);
+                testLine(line, renderObjectData);
                 line = reader.readLine();
             }
+
+            long end = System.nanoTime();
+            System.out.println("TimeTaken: " + ((end - start) / 1000000) + "ms");
+
+            inputStream.reset();
+            long b = System.nanoTime();
+            byte[] theFile = new byte[inputStream.available()];
+            inputStream.read(theFile);
+            processObj(theFile, renderObjectData);
+            System.out.println("TK: " + ((System.nanoTime() - b) / 1000000) + "ms");
 
             return renderObjectData.processFaceData();
         }

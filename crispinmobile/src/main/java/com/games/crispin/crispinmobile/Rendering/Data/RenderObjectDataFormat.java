@@ -77,6 +77,18 @@ public class RenderObjectDataFormat
 
     public RenderObjectDataFormat(AttributeOrder_t attributeOrder,
                                   int numVerticesPerGroup,
+                                  PositionDimensions_t positionDimensions)
+    {
+        this(attributeOrder,
+                numVerticesPerGroup,
+                positionDimensions,
+                TexelDimensions_t.NONE,
+                ColourDimensions_t.NONE,
+                NormalDimensions_t.NONE);
+    }
+
+    public RenderObjectDataFormat(AttributeOrder_t attributeOrder,
+                                  int numVerticesPerGroup,
                                   PositionDimensions_t positionDimensions,
                                   TexelDimensions_t texelDimensions,
                                   ColourDimensions_t colourDimensions)

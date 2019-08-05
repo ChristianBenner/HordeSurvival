@@ -214,7 +214,6 @@ public class RenderObjectData
     public void addFaceData(int faceData)
     {
         faceDataArray.add(faceData);
-        System.out.println("vvv Face Data Added: " + faceData);
     }
 
     private int getNumberPositionElements()
@@ -243,9 +242,6 @@ public class RenderObjectData
         final int NUMBER_OF_TEXEL_ELEMENTS = 2;
         final int TEXEL_BUFFER_SIZE = texelStartIndex == -1 ? 0 : NUMBER_OF_TEXEL_ELEMENTS * NUMBER_OF_FACE_DATA;
 
-       // final int NUMBER_OF_NORMAL_ELEMENTS = 2;
-       // final int NORMAL_BUFFER_SIZE = texelStartIndex == -1 ? 0 : NUMBER_OF_TEXEL_ELEMENTS * NUMBER_OF_FACE_DATA;
-
         float[] vertexDataBuffer = new float[POSITION_BUFFER_SIZE + TEXEL_BUFFER_SIZE];
 
         int vertexDataBufferIndex = 0;
@@ -264,11 +260,6 @@ public class RenderObjectData
             }
         }
 
-        for(int i = 0; i < texelDataArray.size(); i++)
-        {
-            System.out.println("vvv Texel Data Array[" + i + "}: " + texelDataArray.get(i));
-        }
-
         vertexDataBufferIndex = POSITION_BUFFER_SIZE;
 
         // Process the vertex data
@@ -280,25 +271,16 @@ public class RenderObjectData
                 elementIndex < NUMBER_OF_TEXEL_ELEMENTS;
                 elementIndex++)
             {
-                int index = (((faceDataArray.get(texelIterator) - 1) * NUMBER_OF_TEXEL_ELEMENTS) + elementIndex);
                 float value = texelDataArray.get((((faceDataArray.get(texelIterator) - 1) * NUMBER_OF_TEXEL_ELEMENTS) + elementIndex));
                 vertexDataBuffer[vertexDataBufferIndex] = value;
                 vertexDataBufferIndex++;
-
-                System.out.println("vvv Texel Index[" + index + "]: " + value);
             }
         }
 
-        for(int i = 0; i < vertexDataBuffer.length; i++)
-        {
-            System.out.println("vvv VDB: " + vertexDataBuffer[i]);
-        }
-
         RenderObjectDataFormat rdf = new RenderObjectDataFormat(
-                        RenderObjectDataFormat.AttributeOrder_t.POSITION_THEN_TEXEL,
+                        RenderObjectDataFormat.AttributeOrder_t.POSITION,
                         NUMBER_OF_FACE_DATA,
-                        RenderObjectDataFormat.PositionDimensions_t.XYZ,
-                        RenderObjectDataFormat.TexelDimensions_t.ST);
+                        RenderObjectDataFormat.PositionDimensions_t.XYZ);
 
         return new RenderObject(vertexDataBuffer, rdf);
     }

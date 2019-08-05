@@ -53,7 +53,12 @@ public class TestScene extends Scene {
 
 
         renderObject = OBJModelLoader.readObjFile(R.raw.test);
-        renderObject.setMaterial(brickMaterial);
+
+        Material mRed = new Material();
+        mRed.setColour(Colour.RED);
+
+//        renderObject.setMaterial(mRed);
+      //  renderObject.setMaterial(brickMaterial);
 
         cubeTwo = new CubeGrouped(brickMaterial);
         cubeTwo.setPosition(new Point3D(-0.1f, 3.2f, -2.0f));
@@ -87,7 +92,7 @@ public class TestScene extends Scene {
         angle += 1.0f;
         cubeTwo.setRotation(0.0f, angle, angle);
         cubeThree.setRotation( angle, 0.0f, angle);
-
+//        renderObject.setRotation(30.0f, angle, 0.0f);
       //  text.setText("Rotations: " + (int)(angle / 360));
      //   text.setPosition(5.0f, Crispin.getSurfaceHeight() - text.getHeight() - 5f);
     }
@@ -105,7 +110,7 @@ public class TestScene extends Scene {
         // Draw the cube
         cubeThree.draw(camera);
         cubeTwo.draw(camera);
-        renderObject.draw(camera);
+        //renderObject.draw(camera);
 
         text.renderText(camera2D);
     }
