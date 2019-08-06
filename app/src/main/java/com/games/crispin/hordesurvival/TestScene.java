@@ -57,8 +57,8 @@ public class TestScene extends Scene {
         Material mRed = new Material();
         mRed.setColour(Colour.RED);
 
-        renderObject.setMaterial(mRed);
-    //    renderObject.setMaterial(brickMaterial);
+ //       renderObject.setMaterial(mRed);
+        renderObject.setMaterial(brickMaterial);
 
         cubeTwo = new CubeGrouped(brickMaterial);
         cubeTwo.setPosition(new Point3D(-0.1f, 3.2f, -2.0f));

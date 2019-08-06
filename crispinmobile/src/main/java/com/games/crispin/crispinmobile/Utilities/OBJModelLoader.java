@@ -1,28 +1,14 @@
 package com.games.crispin.crispinmobile.Utilities;
 
 import android.content.res.Resources;
-import android.util.Log;
 
 import com.games.crispin.crispinmobile.Crispin;
-import com.games.crispin.crispinmobile.Geometry.Point2D;
-import com.games.crispin.crispinmobile.Rendering.Data.Colour;
 import com.games.crispin.crispinmobile.Rendering.Data.RenderObjectData;
-import com.games.crispin.crispinmobile.Rendering.Utilities.Material;
 import com.games.crispin.crispinmobile.Rendering.Utilities.RenderObject;
 
-import java.io.BufferedReader;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.FloatBuffer;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Locale;
 import java.util.Scanner;
-
-import static com.games.crispin.crispinmobile.Rendering.Utilities.RenderObject.BYTES_PER_FLOAT;
 
 public class OBJModelLoader
 {
@@ -137,7 +123,7 @@ public class OBJModelLoader
                 if(line.contains("//"))
                 {
                     // The face data is VERTEX_AND_NORMAL
-                    renderObjectData.setFaceDataType(RenderObjectData.FaceData.VERTEX_NORMAL);
+                    renderObjectData.setFaceDataType(RenderObjectData.FaceData.POSITION_AND_NORMAL);
 
                     int vertexCount = 0;
                     while(scanner.hasNext())
@@ -205,11 +191,11 @@ public class OBJModelLoader
                         // elements or just vertex and texel data elements
                         if(faceDataElements == NUM_FACE_DATA_ELEMENTS_VERTEX_TEXEL_NORMAL)
                         {
-                            renderObjectData.setFaceDataType(RenderObjectData.FaceData.VERTEX_TEXEL_NORMAL);
+                            renderObjectData.setFaceDataType(RenderObjectData.FaceData.POSITION_AND_TEXEL_AND_NORMAL);
                         }
                         else if(faceDataElements == NUM_FACE_DATA_ELEMENTS_VERTEX_TEXEL)
                         {
-                            renderObjectData.setFaceDataType(RenderObjectData.FaceData.VERTEX_TEXEL);
+                            renderObjectData.setFaceDataType(RenderObjectData.FaceData.POSITION_AND_TEXEL);
                         }
                     }
 
@@ -233,7 +219,7 @@ public class OBJModelLoader
                 else
                 {
                     // The face data consists of only VERTEX data
-                    renderObjectData.setFaceDataType(RenderObjectData.FaceData.VERTEX_ONLY);
+                    renderObjectData.setFaceDataType(RenderObjectData.FaceData.POSITION_ONLY);
 
                     int vertexCount = 0;
                     while(scanner.hasNext())
@@ -441,13 +427,24 @@ public class OBJModelLoader
 
     public static void processObj(byte[] theFile, RenderObjectData renderObjectData)
     {
+        ArrayList<Integer> faceData = new ArrayList<>();
+        ArrayList<Float> positionData = new ArrayList<>();
+        ArrayList<Float> texelData = new ArrayList<>();
+        ArrayList<Float> normalData = new ArrayList<>();
+
         // Keep track of the type of data we are looking at
         LineType_t lineType = LineType_t.NONE;
 
         // Index associated to a float when processing
         int dataStartIndex = -1;
 
-        boolean eof = false;
+        // Keep the number of different elements in the face data
+        int numberFaceDataElements = 0;
+
+        // Keep the number of slashes in the face data
+        int numberFaceDataSeparators = 0;
+
+        boolean processingFaceData = false;
 
         for(int i = 0; i < theFile.length; i++)
         {
@@ -560,11 +557,36 @@ public class OBJModelLoader
                     }
                     else
                     {
+                        if(!processingFaceData &&
+                                numberFaceDataElements == 0 &&
+                                numberFaceDataSeparators == 0)
+                        {
+                            processingFaceData = true;
+                        }
+
+                        if(theFile[i] == 0x2F) // forward slash
+                        {
+                            if(processingFaceData)
+                            {
+                                numberFaceDataSeparators++;
+                            }
+                        }
+
                         if(dataStartIndex != -1)
                         {
                             // We are processing an int and have found the end of it, parse it
                             renderObjectData.addFaceData(Integer.parseInt(new String(theFile, dataStartIndex, i - dataStartIndex)));
                             dataStartIndex = -1;
+
+                            if(processingFaceData)
+                            {
+                                numberFaceDataElements++;
+                            }
+                        }
+
+                        if(theFile[i] == 0x20) // space
+                        {
+                            processingFaceData = false;
                         }
                     }
                     break;
@@ -614,7 +636,27 @@ public class OBJModelLoader
             }
         }
 
-        renderObjectData.setFaceDataType(RenderObjectData.FaceData.VERTEX_ONLY);
+        if(numberFaceDataElements == 3 && numberFaceDataSeparators == 2)
+        {
+            // Position, texel and normal data has been provided
+            renderObjectData.setFaceDataType(RenderObjectData.FaceData.POSITION_AND_TEXEL_AND_NORMAL);
+        }
+        else if(numberFaceDataElements == 2 && numberFaceDataSeparators == 2)
+        {
+            // Position and normal data has been provided
+            renderObjectData.setFaceDataType(RenderObjectData.FaceData.POSITION_AND_NORMAL);
+        }
+        else if(numberFaceDataElements == 2 && numberFaceDataSeparators == 1)
+        {
+            // Position and texel data has been provided
+            renderObjectData.setFaceDataType(RenderObjectData.FaceData.POSITION_AND_TEXEL);
+        }
+        else if(numberFaceDataElements == 1 && numberFaceDataSeparators == 0)
+        {
+            // Only position data has been provided
+            renderObjectData.setFaceDataType(RenderObjectData.FaceData.POSITION_ONLY);
+        }
+
         renderObjectData.setPositionComponents(RenderObjectData.PositionComponents.XYZ);
         renderObjectData.setRenderMethod(RenderObjectData.RenderMethod.TRIANGLES);
     }

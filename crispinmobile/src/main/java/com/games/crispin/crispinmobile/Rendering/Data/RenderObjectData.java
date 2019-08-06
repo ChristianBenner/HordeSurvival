@@ -2,19 +2,16 @@ package com.games.crispin.crispinmobile.Rendering.Data;
 
 import com.games.crispin.crispinmobile.Rendering.Utilities.RenderObject;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-
-import javax.crypto.spec.DESedeKeySpec;
 
 public class RenderObjectData
 {
     public enum FaceData
     {
-        VERTEX_ONLY,
-        VERTEX_TEXEL,
-        VERTEX_NORMAL,
-        VERTEX_TEXEL_NORMAL,
+        POSITION_ONLY,
+        POSITION_AND_TEXEL,
+        POSITION_AND_NORMAL,
+        POSITION_AND_TEXEL_AND_NORMAL,
         NONE
     }
 
@@ -35,14 +32,14 @@ public class RenderObjectData
         NONE
     }
 
-    private static final int NUM_DATA_ELEMENTS_VERTEX_ONLY = 1;
-    private static final int NUM_DATA_ELEMENTS_VERTEX_NORMAL = 2;
-    private static final int NUM_DATA_ELEMENTS_VERTEX_TEXEL = 2;
-    private static final int NUM_DATA_ELEMENTS_VERTEX_TEXEL_NORMAL = 3;
-    private static final int VERTEX_START_INDEX = 0;
+    private static final int NUM_DATA_ELEMENTS_POSITION_ONLY = 1;
+    private static final int NUM_DATA_ELEMENTS_POSITION_AND_NORMAL = 2;
+    private static final int NUM_DATA_ELEMENTS_POSITION_AND_TEXEL = 2;
+    private static final int NUM_DATA_ELEMENTS_POSITION_AND_TEXEL_AND_NORMAL = 3;
+    private static final int POSITION_START_INDEX = 0;
     private static final int UNUSED_DATA_ELEMENT = -1;
 
-    private ArrayList<Float> vertexDataArray;
+    private ArrayList<Float> positionDataArray;
     private ArrayList<Float> texelDataArray;
     private ArrayList<Float> normalDataArray;
     private ArrayList<Integer> faceDataArray;
@@ -56,7 +53,7 @@ public class RenderObjectData
 
     public RenderObjectData()
     {
-        vertexDataArray = new ArrayList<>();
+        positionDataArray = new ArrayList<>();
         texelDataArray = new ArrayList<>();
         normalDataArray = new ArrayList<>();
         faceDataArray = new ArrayList<>();
@@ -153,31 +150,31 @@ public class RenderObjectData
                 case NONE:
                     System.out.println("vvv Face Data Type set to: " + "NONE");
                     break;
-                case VERTEX_ONLY:
-                    System.out.println("vvv Face Data Type set to: " + "VERTEX_ONLY");
-                    dataStride = NUM_DATA_ELEMENTS_VERTEX_ONLY;
-                    vertexStartIndex = VERTEX_START_INDEX;
+                case POSITION_ONLY:
+                    System.out.println("vvv Face Data Type set to: " + "POSITION_ONLY");
+                    dataStride = NUM_DATA_ELEMENTS_POSITION_ONLY;
+                    vertexStartIndex = POSITION_START_INDEX;
                     texelStartIndex = UNUSED_DATA_ELEMENT;
                     normalStartIndex = UNUSED_DATA_ELEMENT;
                     break;
-                case VERTEX_NORMAL:
-                    System.out.println("vvv Face Data Type set to: " + "VERTEX_NORMAL");
-                    dataStride = NUM_DATA_ELEMENTS_VERTEX_NORMAL;
-                    vertexStartIndex = VERTEX_START_INDEX;
+                case POSITION_AND_NORMAL:
+                    System.out.println("vvv Face Data Type set to: " + "POSITION_AND_NORMAL");
+                    dataStride = NUM_DATA_ELEMENTS_POSITION_AND_NORMAL;
+                    vertexStartIndex = POSITION_START_INDEX;
                     texelStartIndex = UNUSED_DATA_ELEMENT;
                     normalStartIndex = vertexStartIndex + 1;
                     break;
-                case VERTEX_TEXEL:
-                    System.out.println("vvv Face Data Type set to: " + "VERTEX_TEXEL");
-                    dataStride = NUM_DATA_ELEMENTS_VERTEX_TEXEL;
-                    vertexStartIndex = VERTEX_START_INDEX;
+                case POSITION_AND_TEXEL:
+                    System.out.println("vvv Face Data Type set to: " + "POSITION_AND_TEXEL");
+                    dataStride = NUM_DATA_ELEMENTS_POSITION_AND_TEXEL;
+                    vertexStartIndex = POSITION_START_INDEX;
                     texelStartIndex = vertexStartIndex + 1;
                     normalStartIndex = UNUSED_DATA_ELEMENT;
                     break;
-                case VERTEX_TEXEL_NORMAL:
-                    System.out.println("vvv Face Data Type set to: " + "VERTEX_TEXEL_NORMAL");
-                    dataStride = NUM_DATA_ELEMENTS_VERTEX_TEXEL_NORMAL;
-                    vertexStartIndex = VERTEX_START_INDEX;
+                case POSITION_AND_TEXEL_AND_NORMAL:
+                    System.out.println("vvv Face Data Type set to: " + "POSITION_AND_TEXEL_AND_NORMAL");
+                    dataStride = NUM_DATA_ELEMENTS_POSITION_AND_TEXEL_AND_NORMAL;
+                    vertexStartIndex = POSITION_START_INDEX;
                     texelStartIndex = vertexStartIndex + 1;
                     normalStartIndex = texelStartIndex + 1;
                     break;
@@ -198,7 +195,7 @@ public class RenderObjectData
 
     public void addVertexData(float vertexData)
     {
-        vertexDataArray.add(vertexData);
+        positionDataArray.add(vertexData);
     }
 
     public void addTexelData(float texelData)
@@ -255,7 +252,7 @@ public class RenderObjectData
                 elementIndex++)
             {
                 vertexDataBuffer[vertexDataBufferIndex] =
-                        vertexDataArray.get(((faceDataArray.get(vertexIterator) - 1) * NUMBER_OF_POSITION_ELEMENTS) + elementIndex);
+                        positionDataArray.get(((faceDataArray.get(vertexIterator) - 1) * NUMBER_OF_POSITION_ELEMENTS) + elementIndex);
                 vertexDataBufferIndex++;
             }
         }
@@ -278,9 +275,10 @@ public class RenderObjectData
         }
 
         RenderObjectDataFormat rdf = new RenderObjectDataFormat(
-                        RenderObjectDataFormat.AttributeOrder_t.POSITION,
+                        RenderObjectDataFormat.AttributeOrder_t.POSITION_THEN_TEXEL,
                         NUMBER_OF_FACE_DATA,
-                        RenderObjectDataFormat.PositionDimensions_t.XYZ);
+                        RenderObjectDataFormat.PositionDimensions_t.XYZ,
+                        RenderObjectDataFormat.TexelDimensions_t.ST);
 
         return new RenderObject(vertexDataBuffer, rdf);
     }
