@@ -52,12 +52,12 @@ public class TestScene extends Scene {
        // brickMaterial.ignoreData(Material.IGNORE_TEXEL_DATA_FLAG);
 
 
-        renderObject = OBJModelLoader.readObjFile(R.raw.monkey);
+        renderObject = OBJModelLoader.readObjFile(R.raw.test);
 
         Material mRed = new Material();
         mRed.setColour(Colour.RED);
 
- //       renderObject.setMaterial(mRed);
+  //      renderObject.setMaterial(mRed);
         renderObject.setMaterial(brickMaterial);
 
         cubeTwo = new CubeGrouped(brickMaterial);

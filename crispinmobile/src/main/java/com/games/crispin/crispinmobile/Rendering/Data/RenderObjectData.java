@@ -4,6 +4,14 @@ import com.games.crispin.crispinmobile.Rendering.Utilities.RenderObject;
 
 import java.util.ArrayList;
 
+import static com.games.crispin.crispinmobile.Rendering.Data.RenderObjectDataFormat.AttributeOrder_t.POSITION;
+import static com.games.crispin.crispinmobile.Rendering.Data.RenderObjectDataFormat.AttributeOrder_t.POSITION_THEN_NORMAL;
+import static com.games.crispin.crispinmobile.Rendering.Data.RenderObjectDataFormat.AttributeOrder_t.POSITION_THEN_TEXEL;
+import static com.games.crispin.crispinmobile.Rendering.Data.RenderObjectDataFormat.AttributeOrder_t.POSITION_THEN_TEXEL_THEN_NORMAL;
+import static com.games.crispin.crispinmobile.Rendering.Data.RenderObjectDataFormat.PositionDimensions_t.XY;
+import static com.games.crispin.crispinmobile.Rendering.Data.RenderObjectDataFormat.PositionDimensions_t.XYZ;
+import static com.games.crispin.crispinmobile.Rendering.Data.RenderObjectDataFormat.TexelDimensions_t.ST;
+
 public class RenderObjectData
 {
     public enum FaceData
@@ -229,6 +237,21 @@ public class RenderObjectData
         }
     }
 
+    private RenderObjectDataFormat.PositionDimensions_t getPositionDimensions()
+    {
+        switch (positionComponents)
+        {
+            case XY:
+                return RenderObjectDataFormat.PositionDimensions_t.XY;
+            case XYZW:
+                return RenderObjectDataFormat.PositionDimensions_t.XYZW;
+            case NONE:
+            case XYZ:
+            default:
+                return RenderObjectDataFormat.PositionDimensions_t.XYZ;
+        }
+    }
+
     public RenderObject processFaceData()
     {
         final int NUMBER_OF_FACE_DATA = faceDataArray.size() / dataStride;
@@ -274,11 +297,41 @@ public class RenderObjectData
             }
         }
 
-        RenderObjectDataFormat rdf = new RenderObjectDataFormat(
-                        RenderObjectDataFormat.AttributeOrder_t.POSITION_THEN_TEXEL,
+        RenderObjectDataFormat.PositionDimensions_t positionDimensions = getPositionDimensions();
+        RenderObjectDataFormat rdf;
+        switch (faceData)
+        {
+            case POSITION_AND_TEXEL_AND_NORMAL:
+                rdf = new RenderObjectDataFormat(
+                        POSITION_THEN_TEXEL_THEN_NORMAL,
                         NUMBER_OF_FACE_DATA,
-                        RenderObjectDataFormat.PositionDimensions_t.XYZ,
+                        positionDimensions,
+                        RenderObjectDataFormat.TexelDimensions_t.ST,
+                        RenderObjectDataFormat.NormalDimensions_t.XYZ);
+                break;
+            case POSITION_AND_NORMAL:
+                rdf = new RenderObjectDataFormat(
+                        POSITION_THEN_NORMAL,
+                        NUMBER_OF_FACE_DATA,
+                        positionDimensions,
+                        RenderObjectDataFormat.NormalDimensions_t.XYZ);
+                break;
+            case POSITION_AND_TEXEL:
+                rdf = new RenderObjectDataFormat(
+                        POSITION_THEN_TEXEL,
+                        NUMBER_OF_FACE_DATA,
+                        positionDimensions,
                         RenderObjectDataFormat.TexelDimensions_t.ST);
+                break;
+            case POSITION_ONLY:
+            case NONE:
+                default:
+                    rdf = new RenderObjectDataFormat(
+                            POSITION,
+                            NUMBER_OF_FACE_DATA,
+                            positionDimensions);
+                    break;
+        }
 
         return new RenderObject(vertexDataBuffer, rdf);
     }

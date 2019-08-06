@@ -426,43 +426,8 @@ public class OBJModelLoader
         }
     }
 
-    public enum FaceData
+    public static RenderObject processObj(byte[] theFile, RenderObjectData renderObjectData)
     {
-        POSITION_ONLY,
-        POSITION_AND_TEXEL,
-        POSITION_AND_NORMAL,
-        POSITION_AND_TEXEL_AND_NORMAL,
-        NONE
-    }
-
-    public enum RenderMethod
-    {
-        POINTS,
-        LINES,
-        TRIANGLES,
-        QUADS,
-        NONE
-    }
-
-    public enum PositionComponents
-    {
-        XYZW,
-        XYZ,
-        XY,
-        NONE
-    }
-
-    public static void processObj(byte[] theFile, RenderObjectData renderObjectData)
-    {
-        ArrayList<Integer> faceData = new ArrayList<>();
-        ArrayList<Float> positionData = new ArrayList<>();
-        ArrayList<Float> texelData = new ArrayList<>();
-        ArrayList<Float> normalData = new ArrayList<>();
-
-        RenderMethod renderMethod = RenderMethod.NONE;
-        FaceData faceDataElements = FaceData.NONE;
-        PositionComponents positionComponents = PositionComponents.NONE;
-
         // Keep track of the type of data we are looking at
         LineType_t lineType = LineType_t.NONE;
 
@@ -549,7 +514,7 @@ public class OBJModelLoader
                         if(dataStartIndex != -1)
                         {
                             // We are processing a float and have found the end of it, parse it
-                            positionData.add(Float.parseFloat(new String(theFile, dataStartIndex, i - dataStartIndex)));
+                            renderObjectData.addVertexData(Float.parseFloat(new String(theFile, dataStartIndex, i - dataStartIndex)));
                             dataStartIndex = -1;
 
                             if(countPositionDataElements)
@@ -574,7 +539,7 @@ public class OBJModelLoader
                         if(dataStartIndex != -1)
                         {
                             // We are processing a float and have found the end of it, parse it
-                            texelData.add(Float.parseFloat(new String(theFile, dataStartIndex, i - dataStartIndex)));
+                            renderObjectData.addTexelData(Float.parseFloat(new String(theFile, dataStartIndex, i - dataStartIndex)));
                             dataStartIndex = -1;
                         }
                     }
@@ -594,7 +559,7 @@ public class OBJModelLoader
                         if(dataStartIndex != -1)
                         {
                             // We are processing a float and have found the end of it, parse it
-                            normalData.add(Float.parseFloat(new String(theFile, dataStartIndex, i - dataStartIndex)));
+                            renderObjectData.addNormalData(Float.parseFloat(new String(theFile, dataStartIndex, i - dataStartIndex)));
                             dataStartIndex = -1;
                         }
                     }
@@ -637,7 +602,7 @@ public class OBJModelLoader
                         if(dataStartIndex != -1)
                         {
                             // We are processing an int and have found the end of it, parse it
-                            faceData.add(Integer.parseInt(new String(theFile, dataStartIndex, i - dataStartIndex)));
+                            renderObjectData.addFaceData(Integer.parseInt(new String(theFile, dataStartIndex, i - dataStartIndex)));
 
                             // If we have finished processing a chunk of face data
                             if(theFile[i] != 0x2F && countFaceDataPerLine)
@@ -682,26 +647,26 @@ public class OBJModelLoader
                         if (dataStartIndex != -1)
                         {
                             // We are processing a float and have found the end of it, parse it
-                            positionData.add(Float.parseFloat(new String(theFile, dataStartIndex, theFile.length - dataStartIndex)));
+                            renderObjectData.addVertexData(Float.parseFloat(new String(theFile, dataStartIndex, theFile.length - dataStartIndex)));
                         }
                         break;
                     case TEXEL:
                         if (dataStartIndex != -1)
                         {
                             // We are processing a float and have found the end of it, parse it
-                            texelData.add(Float.parseFloat(new String(theFile, dataStartIndex, theFile.length - dataStartIndex)));
+                            renderObjectData.addTexelData(Float.parseFloat(new String(theFile, dataStartIndex, theFile.length - dataStartIndex)));
                         }
                         break;
                     case NORMAL:
                         if (dataStartIndex != -1) {
                             // We are processing a float and have found the end of it, parse it
-                            normalData.add(Float.parseFloat(new String(theFile, dataStartIndex, theFile.length - dataStartIndex)));
+                            renderObjectData.addNormalData(Float.parseFloat(new String(theFile, dataStartIndex, theFile.length - dataStartIndex)));
                         }
                         break;
                     case FACE:
                         if (dataStartIndex != -1) {
                             // We are processing an int and have found the end of it, parse it
-                            faceData.add(Integer.parseInt(new String(theFile, dataStartIndex, theFile.length - dataStartIndex)));
+                            renderObjectData.addFaceData(Integer.parseInt(new String(theFile, dataStartIndex, theFile.length - dataStartIndex)));
 
                             // If we have finished processing a chunk of face data
                             if(theFile[i] != 0x2F && countFaceDataPerLine)
@@ -717,22 +682,22 @@ public class OBJModelLoader
         if(numberFaceDataElements == 3 && numberFaceDataSeparators == 2)
         {
             // Position, texel and normal data has been provided
-            faceDataElements = FaceData.POSITION_AND_TEXEL_AND_NORMAL;
+            renderObjectData.setFaceDataType(RenderObjectData.FaceData.POSITION_AND_TEXEL_AND_NORMAL);
         }
         else if(numberFaceDataElements == 2 && numberFaceDataSeparators == 2)
         {
             // Position and normal data has been provided
-            faceDataElements = FaceData.POSITION_AND_NORMAL;
+            renderObjectData.setFaceDataType(RenderObjectData.FaceData.POSITION_AND_NORMAL);
         }
         else if(numberFaceDataElements == 2 && numberFaceDataSeparators == 1)
         {
             // Position and texel data has been provided
-            faceDataElements = FaceData.POSITION_AND_TEXEL;
+            renderObjectData.setFaceDataType(RenderObjectData.FaceData.POSITION_AND_TEXEL);
         }
         else if(numberFaceDataElements == 1 && numberFaceDataSeparators == 0)
         {
             // Only position data has been provided
-            faceDataElements = FaceData.POSITION_ONLY;
+            renderObjectData.setFaceDataType(RenderObjectData.FaceData.POSITION_ONLY);
         }
         else
         {
@@ -742,16 +707,16 @@ public class OBJModelLoader
         switch (numberFaceDataPerLine)
         {
             case 1:
-                renderMethod = RenderMethod.POINTS;
+                renderObjectData.setRenderMethod(RenderObjectData.RenderMethod.POINTS);
                 break;
             case 2:
-                renderMethod = RenderMethod.LINES;
+                renderObjectData.setRenderMethod(RenderObjectData.RenderMethod.LINES);
                 break;
             case 3:
-                renderMethod = RenderMethod.TRIANGLES;
+                renderObjectData.setRenderMethod(RenderObjectData.RenderMethod.TRIANGLES);
                 break;
             case 4:
-                renderMethod = RenderMethod.QUADS;
+                renderObjectData.setRenderMethod(RenderObjectData.RenderMethod.QUADS);
                 break;
                 default:
                     // error
@@ -761,20 +726,20 @@ public class OBJModelLoader
         switch (numberPositionDataElements)
         {
             case 2:
-                positionComponents = PositionComponents.XY;
+                renderObjectData.setPositionComponents(RenderObjectData.PositionComponents.XY);
                 break;
             case 3:
-                positionComponents = PositionComponents.XYZ;
+                renderObjectData.setPositionComponents(RenderObjectData.PositionComponents.XYZ);
                 break;
             case 4:
-                positionComponents = PositionComponents.XYZW;
+                renderObjectData.setPositionComponents(RenderObjectData.PositionComponents.XYZW);
                 break;
                 default:
                     // error
                     break;
         }
 
-
+        return renderObjectData.processFaceData();
     }
 
     public static RenderObject readObjFile(int resourceId)
