@@ -53,37 +53,50 @@ public class RenderObject
     // ability to change for dimensions?
     static public final int BYTES_PER_FLOAT = 4;
 
+    // The number of elements that are in the position data
     private int elementsPerPosition;
-    private int positionStrideBytes;
+
+    // The start index of the position data in the vertex data buffer
     private int positionDataOffset;
+
+    // The number of elements that are in the texel data
     private int elementsPerTexel;
-    private int texelStrideBytes;
+
+    // The start index of the texel data in the vertex data buffer
     private int texelDataOffset;
+
+    // The number of elements that are in the colour data
     private int elementsPerColour;
-    private int colourStrideBytes;
+
+    // The start index of the colour data in the vertex data buffer
     private int colourDataOffset;
+
+    // The number of elements that are in the normal data
     private int elementsPerNormal;
-    private int normalStrideBytes;
+
+    // The start index of the normal data in the vertex data buffer
     private int normalDataOffset;
+
+    // The stride between each set of data (only if the data format is ungrouped)
     private int totalStrideBytes;
 
+    // Float buffer that holds all the triangle co-ordinate data
+    private FloatBuffer vertexBuffer;
+
+    // The format of the render data
     private final RenderObjectDataFormat DATA_FORMAT;
 
-    // Float buffer that holds all the triangle co-ordinate data
-    private FloatBuffer VERTEX_BUFFER;
+    // If the model has a custom shader
+    private boolean hasCustomShader;
+    private float[] modelMatrix = new float[16];
+    private final int VERTEX_COUNT;
 
     private Scale3D scale;
     private Point3D position;
     private Rotation3D rotation;
 
-    float[] modelMatrix = new float[16];
-
     protected Material material;
-
     protected Shader shader;
-    private boolean hasCustomShader;
-
-    final int VERTEX_COUNT;
 
     public RenderObject(float[] vertexData,
                         RenderObjectDataFormat renderObjectDataFormat,
@@ -107,13 +120,13 @@ public class RenderObject
         VERTICES_BYTE_BUFFER.order(ByteOrder.nativeOrder());
 
         // Create a Float buffer from the ByteBuffer
-        VERTEX_BUFFER = VERTICES_BYTE_BUFFER.asFloatBuffer();
+        vertexBuffer = VERTICES_BYTE_BUFFER.asFloatBuffer();
 
         // Add the array of floats to the buffer
-        VERTEX_BUFFER.put(vertexData);
+        vertexBuffer.put(vertexData);
 
         // Set buffer to read the first co-ordinate
-        VERTEX_BUFFER.position(0);
+        vertexBuffer.position(0);
 
         // Calculate the number of vertices in the data
         VERTEX_COUNT = vertexData.length /
@@ -341,15 +354,15 @@ public class RenderObject
     {
         if(enable)
         {
-            VERTEX_BUFFER.position(positionDataOffset);
+            vertexBuffer.position(positionDataOffset);
             glEnableVertexAttribArray(shader.getPositionAttributeHandle());
             glVertexAttribPointer(shader.getPositionAttributeHandle(),
                     elementsPerPosition,
                     GL_FLOAT,
                     true,
                     totalStrideBytes,
-                    VERTEX_BUFFER);
-            VERTEX_BUFFER.position(0);
+                    vertexBuffer);
+            vertexBuffer.position(0);
         }
         else
         {
@@ -362,15 +375,15 @@ public class RenderObject
         if(enable)
         {
             // Enable attrib texture data
-            VERTEX_BUFFER.position(texelDataOffset);
+            vertexBuffer.position(texelDataOffset);
             glEnableVertexAttribArray(shader.getTextureAttributeHandle());
             glVertexAttribPointer(shader.getTextureAttributeHandle(),
                     elementsPerTexel,
                     GL_FLOAT,
                     true,
                     totalStrideBytes,
-                    VERTEX_BUFFER);
-            VERTEX_BUFFER.position(0);
+                    vertexBuffer);
+            vertexBuffer.position(0);
         }
         else
         {
@@ -383,15 +396,15 @@ public class RenderObject
         if(enable)
         {
             // Enable attrib colour data
-            VERTEX_BUFFER.position(colourDataOffset);
+            vertexBuffer.position(colourDataOffset);
             glEnableVertexAttribArray(shader.getColourAttributeHandle());
             glVertexAttribPointer(shader.getColourAttributeHandle(),
                     elementsPerColour,
                     GL_FLOAT,
                     true,
                     totalStrideBytes,
-                    VERTEX_BUFFER);
-            VERTEX_BUFFER.position(0);
+                    vertexBuffer);
+            vertexBuffer.position(0);
         }
         else
         {

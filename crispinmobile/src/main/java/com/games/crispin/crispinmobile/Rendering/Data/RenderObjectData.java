@@ -262,7 +262,10 @@ public class RenderObjectData
         final int NUMBER_OF_TEXEL_ELEMENTS = 2;
         final int TEXEL_BUFFER_SIZE = texelStartIndex == -1 ? 0 : NUMBER_OF_TEXEL_ELEMENTS * NUMBER_OF_FACE_DATA;
 
-        float[] vertexDataBuffer = new float[POSITION_BUFFER_SIZE + TEXEL_BUFFER_SIZE];
+        final int NUMBER_OF_NORMAL_ELEMENTS = 3;
+        final int NORMAL_BUFFER_SIZE = normalStartIndex == -1 ? 0 : NUMBER_OF_NORMAL_ELEMENTS * NUMBER_OF_FACE_DATA;
+
+        float[] vertexDataBuffer = new float[POSITION_BUFFER_SIZE + TEXEL_BUFFER_SIZE + NORMAL_BUFFER_SIZE];
 
         int vertexDataBufferIndex = 0;
         // Process the vertex data
@@ -297,8 +300,26 @@ public class RenderObjectData
             }
         }
 
+        vertexDataBufferIndex = POSITION_BUFFER_SIZE + TEXEL_BUFFER_SIZE;
+
+        // Process the vertex data
+        for(int normalIterator = normalStartIndex;
+            normalIterator != -1 && normalIterator < faceDataArray.size();
+            normalIterator += dataStride)
+        {
+            for(int elementIndex = 0;
+                elementIndex < NUMBER_OF_NORMAL_ELEMENTS;
+                elementIndex++)
+            {
+                float value = normalDataArray.get((((faceDataArray.get(normalIterator) - 1) * NUMBER_OF_NORMAL_ELEMENTS) + elementIndex));
+                vertexDataBuffer[vertexDataBufferIndex] = value;
+                vertexDataBufferIndex++;
+            }
+        }
+
         RenderObjectDataFormat.PositionDimensions_t positionDimensions = getPositionDimensions();
         RenderObjectDataFormat rdf;
+
         switch (faceData)
         {
             case POSITION_AND_TEXEL_AND_NORMAL:
