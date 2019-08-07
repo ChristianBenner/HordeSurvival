@@ -20,48 +20,6 @@ public class OBJModelLoader
     // Tag used in logging output
     private static final String TAG = "OBJModelLoader";
 
-    private static void readAsLinesAndWords(byte[] bytes)
-    {
-        // Num of lines
-        int lineCount = 1;
-
-        // Find number of lines
-        for(int i = 0; i < bytes.length; i++)
-        {
-            if(bytes[i] == 0x0A) // Checks for line feed '\n'
-            {
-                // Increase the number of lines that are in the file
-                lineCount++;
-            }
-            else if(bytes[i] == 0x0D) // Checks for carriage return '\r'
-            {
-                // DOS/Windows use \r\n line endings, so skip one iteration
-                i++;
-                lineCount++;
-            }
-        }
-
-        System.out.println("Lines: " + lineCount);
-
-        byte[][] structuredBytes = new byte[lineCount][];
-        int currentLine = 0;
-        for(int i = 0; i < bytes.length; i++)
-        {
-           // structuredBytes[0][]
-            if(bytes[i] == 0x20) // ASCII Space
-            {
-                // New word
-            }
-        }
-    }
-
-
-
-    private static void scanLine(ArrayList<ArrayList<Byte>> line)
-    {
-
-    }
-
     enum LineType_t
     {
         FACE,

@@ -15,6 +15,7 @@ import com.games.crispin.crispinmobile.Rendering.Utilities.RenderObject;
 import com.games.crispin.crispinmobile.Rendering.UserInterface.Text;
 import com.games.crispin.crispinmobile.Rendering.Utilities.Texture;
 import com.games.crispin.crispinmobile.Utilities.OBJModelLoader;
+import com.games.crispin.crispinmobile.Utilities.OBJThreadTest;
 import com.games.crispin.crispinmobile.Utilities.Scene;
 
 public class TestScene extends Scene {
@@ -30,10 +31,17 @@ public class TestScene extends Scene {
     private Text text;
     private Material brickMaterial;
 
-    private RenderObject renderObject;
-
     private Text fpsText;
     private Material mRed;
+    private Material mGreen;
+    private Material mBlue;
+
+    private OBJThreadTest dinomodelThread;
+    private RenderObject dinomodel;
+    private OBJThreadTest carmodelThread;
+    private RenderObject carmodel;
+    private OBJThreadTest personmodelThread;
+    private RenderObject personmodel;
 
     public TestScene()
     {
@@ -54,15 +62,22 @@ public class TestScene extends Scene {
         brickMaterial = new Material(new Texture(R.drawable.brick), new Scale2D(0.25f, 0.25f));
        // brickMaterial.ignoreData(Material.IGNORE_TEXEL_DATA_FLAG);
 
-
-        renderObject = OBJModelLoader.readObjFile(R.raw.dragon);
-        renderObject.setPosition(0.0f, -2.5f, 0.0f);
-        renderObject.setScale(0.3f, 0.3f, 0.3f);
+        dinomodelThread = new OBJThreadTest(R.raw.dinomodel);
+        new Thread(dinomodelThread).start();
+        personmodelThread = new OBJThreadTest(R.raw.personmodel);
+        new Thread(personmodelThread).start();
+        carmodelThread = new OBJThreadTest(R.raw.carmodel);
+        new Thread(carmodelThread).start();
 
         mRed = new Material();
         mRed.setColour(Colour.RED);
 
-        renderObject.setMaterial(mRed);
+        mGreen = new Material();
+        mGreen.setColour(Colour.GREEN);
+
+        mBlue = new Material();
+        mBlue.setColour(Colour.BLUE);
+
   //3      renderObject.setMaterial(brickMaterial);
 
         cubeTwo = new CubeGrouped(brickMaterial);
@@ -94,15 +109,105 @@ public class TestScene extends Scene {
         fpsText.setPosition(5.0f, 5.0f);
     }
 
+    boolean onetimeDino = false;
+    float modelFadeInDino = 0.0f;
+    boolean startModelFadeInDino = false;
+
+    boolean onetimeCar = false;
+    float modelFadeInCar = 0.0f;
+    boolean startModelFadeInCar = false;
+
+    boolean onetimePerson = false;
+    float modelFadeInPerson = 0.0f;
+    boolean startModelFadeInPerson = false;
+
     @Override
     public void update(float deltaTime)
     {
         angle += 1.0f;
         cubeTwo.setRotation(0.0f, angle, angle);
         cubeThree.setRotation( angle, 0.0f, angle);
-        renderObject.setRotation(15.0f, angle, 0.0f);
+
       //  text.setText("Rotations: " + (int)(angle / 360));
      //   text.setPosition(5.0f, Crispin.getSurfaceHeight() - text.getHeight() - 5f);
+
+        if(dinomodelThread.isComplete() && !onetimeDino)
+        {
+          //  renderObject = OBJModelLoader.readObjFile(R.raw.dragon);
+            dinomodel = dinomodelThread.getRenderObject();
+            dinomodel.setPosition(-2.0f, -2.5f, 0.0f);
+            dinomodel.setScale(0.005f, 0.005f, 0.005f);
+            dinomodel.setMaterial(mRed);
+            startModelFadeInDino = true;
+            onetimeDino = true;
+        }
+
+        if(dinomodelThread.isComplete())
+        {
+            dinomodel.setRotation(15.0f, angle, 0.0f);
+
+            if(startModelFadeInDino && modelFadeInDino != 1.0f)
+            {
+                modelFadeInDino += 0.03f;
+                if(modelFadeInDino >= 0.5f)
+                {
+                    modelFadeInDino = 0.5f;
+                }
+                dinomodel.getMaterial().getColour().setAlpha(modelFadeInDino);
+            }
+        }
+
+        if(carmodelThread.isComplete() && !onetimeCar)
+        {
+            //  renderObject = OBJModelLoader.readObjFile(R.raw.dragon);
+            carmodel = carmodelThread.getRenderObject();
+            carmodel.setPosition(0.0f, -2.5f, 0.0f);
+            carmodel.setScale(0.025f, 0.025f, 0.025f);
+            carmodel.setMaterial(mGreen);
+            startModelFadeInCar = true;
+            onetimeCar = true;
+        }
+
+        if(carmodelThread.isComplete())
+        {
+            carmodel.setRotation(15.0f, angle, 0.0f);
+
+            if(startModelFadeInCar && modelFadeInCar != 1.0f)
+            {
+                modelFadeInCar += 0.03f;
+                if(modelFadeInCar >= 0.5f)
+                {
+                    modelFadeInCar = 0.5f;
+                }
+                carmodel.getMaterial().getColour().setAlpha(modelFadeInCar);
+            }
+        }
+
+        if(personmodelThread.isComplete() && !onetimePerson)
+        {
+            //  renderObject = OBJModelLoader.readObjFile(R.raw.dragon);
+            personmodel = personmodelThread.getRenderObject();
+            personmodel.setPosition(2.0f, -2.5f, 0.0f);
+            personmodel.setScale(0.01f, 0.01f, 0.01f);
+            personmodel.setMaterial(mBlue);
+            startModelFadeInPerson = true;
+            onetimePerson = true;
+        }
+
+        if(personmodelThread.isComplete())
+        {
+            personmodel.setRotation(15.0f, angle, 0.0f);
+
+            if(startModelFadeInPerson && modelFadeInPerson != 1.0f)
+            {
+                modelFadeInPerson += 0.03f;
+                if(modelFadeInPerson >= 0.5f)
+                {
+                    modelFadeInPerson = 0.5f;
+                }
+                personmodel.getMaterial().getColour().setAlpha(modelFadeInPerson);
+            }
+        }
     }
 
     float time = 0.0f;
@@ -121,7 +226,20 @@ public class TestScene extends Scene {
         cubeThree.draw(camera);
         cubeTwo.draw(camera);
 
-        renderObject.draw(camera);
+        if(dinomodel != null)
+        {
+            dinomodel.draw(camera);
+        }
+
+        if(carmodel != null)
+        {
+            carmodel.draw(camera);
+        }
+
+        if(personmodel != null)
+        {
+            personmodel.draw(camera);
+        }
 
         text.renderText(camera2D);
         fpsText.renderText(camera2D);
