@@ -139,6 +139,7 @@ public class CubeGrouped extends RenderObject {
     {
         super(CUBE_VERTEX_DATA,
                 new RenderObjectDataFormat(
+                        RenderMethod.TRIANGLES,
                         RenderObjectDataFormat.AttributeOrder_t.POSITION_THEN_COLOUR_THEN_TEXEL,
                         36,
                         RenderObjectDataFormat.PositionDimensions_t.XYZ,
@@ -150,6 +151,7 @@ public class CubeGrouped extends RenderObject {
     {
         super(CUBE_VERTEX_DATA,
                 new RenderObjectDataFormat(
+                        RenderMethod.TRIANGLES,
                         RenderObjectDataFormat.AttributeOrder_t.POSITION_THEN_COLOUR_THEN_TEXEL,
                         36,
                         RenderObjectDataFormat.PositionDimensions_t.XYZ,

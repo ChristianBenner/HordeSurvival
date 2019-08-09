@@ -59,14 +59,17 @@ public class RenderObjectDataFormat
     private final ColourDimensions_t COLOUR_DIMENSIONS;
     private final NormalDimensions_t NORMAL_DIMENSIONS;
     private final int NUM_VERTICES_GROUP;
+    private final RenderObject.RenderMethod renderMethod;
 
-    public RenderObjectDataFormat(AttributeOrder_t attributeOrder,
+    public RenderObjectDataFormat(RenderObject.RenderMethod renderMethod,
+                                  AttributeOrder_t attributeOrder,
                                   int numVerticesPerGroup,
                                   PositionDimensions_t positionDimensions,
                                   TexelDimensions_t texelDimensions,
                                   ColourDimensions_t colourDimensions,
                                   NormalDimensions_t normalDimensions)
     {
+        this.renderMethod = renderMethod;
         this.POSITION_DIMENSIONS = positionDimensions;
         this.NUM_VERTICES_GROUP = numVerticesPerGroup;
         this.TEXEL_DIMENSIONS = texelDimensions;
@@ -75,11 +78,13 @@ public class RenderObjectDataFormat
         this.ATTRIBUTE_ORDER = attributeOrder;
     }
 
-    public RenderObjectDataFormat(AttributeOrder_t attributeOrder,
+    public RenderObjectDataFormat(RenderObject.RenderMethod renderMethod,
+                                  AttributeOrder_t attributeOrder,
                                   int numVerticesPerGroup,
                                   PositionDimensions_t positionDimensions)
     {
-        this(attributeOrder,
+        this(renderMethod,
+                attributeOrder,
                 numVerticesPerGroup,
                 positionDimensions,
                 TexelDimensions_t.NONE,
@@ -87,13 +92,15 @@ public class RenderObjectDataFormat
                 NormalDimensions_t.NONE);
     }
 
-    public RenderObjectDataFormat(AttributeOrder_t attributeOrder,
+    public RenderObjectDataFormat(RenderObject.RenderMethod renderMethod,
+                                  AttributeOrder_t attributeOrder,
                                   int numVerticesPerGroup,
                                   PositionDimensions_t positionDimensions,
                                   TexelDimensions_t texelDimensions,
                                   ColourDimensions_t colourDimensions)
     {
-        this(attributeOrder,
+        this(renderMethod,
+                attributeOrder,
                 numVerticesPerGroup,
                 positionDimensions,
                 texelDimensions,
@@ -101,13 +108,15 @@ public class RenderObjectDataFormat
                 NormalDimensions_t.NONE);
     }
 
-    public RenderObjectDataFormat(AttributeOrder_t attributeOrder,
+    public RenderObjectDataFormat(RenderObject.RenderMethod renderMethod,
+                                  AttributeOrder_t attributeOrder,
                                   int numVerticesPerGroup,
                                   PositionDimensions_t positionDimensions,
                                   TexelDimensions_t texelDimensions,
                                   NormalDimensions_t normalDimensions)
     {
-        this(attributeOrder,
+        this(renderMethod,
+                attributeOrder,
                 numVerticesPerGroup,
                 positionDimensions,
                 texelDimensions,
@@ -115,13 +124,15 @@ public class RenderObjectDataFormat
                 normalDimensions);
     }
 
-    public RenderObjectDataFormat(AttributeOrder_t attributeOrder,
+    public RenderObjectDataFormat(RenderObject.RenderMethod renderMethod,
+                                  AttributeOrder_t attributeOrder,
                                   int numVerticesPerGroup,
                                   PositionDimensions_t positionDimensions,
                                   ColourDimensions_t colourDimensions,
                                   NormalDimensions_t normalDimensions)
     {
-        this(attributeOrder,
+        this(renderMethod,
+                attributeOrder,
                 numVerticesPerGroup,
                 positionDimensions,
                 TexelDimensions_t.NONE,
@@ -129,12 +140,14 @@ public class RenderObjectDataFormat
                 normalDimensions);
     }
 
-    public RenderObjectDataFormat(AttributeOrder_t attributeOrder,
+    public RenderObjectDataFormat(RenderObject.RenderMethod renderMethod,
+                                  AttributeOrder_t attributeOrder,
                                   int numVerticesPerGroup,
                                   PositionDimensions_t positionDimensions,
                                   TexelDimensions_t texelDimensions)
     {
-        this(attributeOrder,
+        this(renderMethod,
+                attributeOrder,
                 numVerticesPerGroup,
                 positionDimensions,
                 texelDimensions,
@@ -142,12 +155,14 @@ public class RenderObjectDataFormat
                 NormalDimensions_t.NONE);
     }
 
-    public RenderObjectDataFormat(AttributeOrder_t attributeOrder,
+    public RenderObjectDataFormat(RenderObject.RenderMethod renderMethod,
+                                  AttributeOrder_t attributeOrder,
                                   int numVerticesPerGroup,
                                   PositionDimensions_t positionDimensions,
                                   NormalDimensions_t normalDimensions)
     {
-        this(attributeOrder,
+        this(renderMethod,
+                attributeOrder,
                 numVerticesPerGroup,
                 positionDimensions,
                 TexelDimensions_t.NONE,
@@ -155,12 +170,14 @@ public class RenderObjectDataFormat
                 normalDimensions);
     }
 
-    public RenderObjectDataFormat(AttributeOrder_t attributeOrder,
+    public RenderObjectDataFormat(RenderObject.RenderMethod renderMethod,
+                                  AttributeOrder_t attributeOrder,
                                   int numVerticesPerGroup,
                                   PositionDimensions_t positionDimensions,
                                   ColourDimensions_t colourDimensions)
     {
-        this(attributeOrder,
+        this(renderMethod,
+                attributeOrder,
                 numVerticesPerGroup,
                 positionDimensions,
                 TexelDimensions_t.NONE,
@@ -267,5 +284,10 @@ public class RenderObjectDataFormat
             case NONE:
                 return 0;
         }
+    }
+
+    public RenderObject.RenderMethod getRenderMethod()
+    {
+        return renderMethod;
     }
 }

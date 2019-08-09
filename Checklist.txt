@@ -1,0 +1,70 @@
+Project Classes
+	Geometry >
+		Geometry	- INCOMPLETE
+		Point2D		- DONE
+		Point3D		- DONE
+		Rotation2D	- INCOMPLETE
+		Rotation3D	- INCOMPLETE
+		Scale2D		- INCOMPLETE
+		Scale3D		- INCOMPLETE
+		Vector3D	- INCOMPLETE
+
+	Native >
+		FreeTypeMethods
+		
+	Rendering >
+		Data >
+			Colour
+			FreeTypeCharacter
+			RenderObjectData
+			RenderObjectDataFormat
+		Entities >
+			Light
+		Models >
+			Cube
+			CubeGrouped
+			FontSquare
+			Square
+		Shaders >
+			AttributeColourShader
+			TextShader
+			TextureAttributeColourShader
+			TextureShader
+			UniformColourShader
+		UserInterface >
+			Text
+			UIObject
+		Utilities >
+			Camera2D
+			Camera3D
+			Font
+			Material
+			RenderObject
+			Shader
+			Texture
+			TextureOptions
+			
+	Utilities >
+		FileResourceReader
+		Logger
+		OBJModelLoader
+		OBJThreadTest
+		Scene
+		SceneManager
+		ShaderCache
+		TextureCache
+		
+	Crispin
+	UnsupprtedDevice
+
+Code Checklist:
+- JavaDoc Documentation
+- No use of System.out.print methods
+- TAG at the top for logging
+- All class variables have comments
+- No magic numbers (unless 0)
+- If/while/for statements have comments explaining what they do
+- Scope starts are on new lines
+- If function signatures contain more than 2 parameters, put them on new lines
+- Do not allow any code to get past the white line (put on a new line)
+- No unused imports

@@ -1,54 +1,6 @@
 package com.games.crispin.crispinmobile.Geometry;
 
-import static java.lang.Math.sin;
-
-/**
- * Created by Christian Benner on 11/08/2017.
- */
-
 public class Geometry {
-    public static class Cuboid {
-        public final Point3D center;
-        public float height;
-        public float width;
-        public float depth;
-
-        public Cuboid(Point3D center, float width, float height, float depth)
-        {
-            this.center = center;
-            this.width = width;
-            this.height = height;
-            this.depth = depth;
-        }
-    }
-
-    public static class Circle {
-        public final Point3D center;
-        public final float radius;
-
-        public Circle(Point3D center, float radius) {
-            this.center = center;
-            this.radius = radius;
-        }
-
-        public Circle scale(float scale) {
-            return new Circle(center, radius * scale);
-        }
-    }
-
-    public static class Cylinder {
-        public final Point3D center;
-        public final float radius;
-        public final float height;
-
-        public Cylinder(Point3D center, float radius, float height){
-            this.center = center;
-            this.radius = radius;
-            this.height = height;
-        }
-    }
-
-
     public static Vector3D vectorBetween(Point3D from, Point3D to) {
         return new Vector3D(
                 to.x - from.x,

@@ -129,6 +129,7 @@ public class Cube extends RenderObject
     {
         super(CUBE_VERTEX_DATA,
                 new RenderObjectDataFormat(
+                        RenderMethod.TRIANGLES,
                         RenderObjectDataFormat.AttributeOrder_t.POSITION_THEN_COLOUR_THEN_TEXEL,
                         RenderObjectDataFormat.UNGROUPED,
                         RenderObjectDataFormat.PositionDimensions_t.XYZ,
@@ -140,6 +141,7 @@ public class Cube extends RenderObject
     {
         super(CUBE_VERTEX_DATA,
                 new RenderObjectDataFormat(
+                        RenderMethod.TRIANGLES,
                         RenderObjectDataFormat.AttributeOrder_t.POSITION_THEN_COLOUR_THEN_TEXEL,
                         RenderObjectDataFormat.UNGROUPED,
                         RenderObjectDataFormat.PositionDimensions_t.XYZ,

@@ -23,15 +23,6 @@ public class RenderObjectData
         NONE
     }
 
-    public enum RenderMethod
-    {
-        POINTS,
-        LINES,
-        TRIANGLES,
-        QUADS,
-        NONE
-    }
-
     public enum PositionComponents
     {
         XYZW,
@@ -52,7 +43,7 @@ public class RenderObjectData
     private ArrayList<Float> normalDataArray;
     private ArrayList<Integer> faceDataArray;
     private FaceData faceData;
-    private RenderMethod renderMethod;
+    private RenderObject.RenderMethod renderMethod;
     private PositionComponents positionComponents;
     private int dataStride;
     private int vertexStartIndex;
@@ -66,7 +57,7 @@ public class RenderObjectData
         normalDataArray = new ArrayList<>();
         faceDataArray = new ArrayList<>();
         faceData = FaceData.NONE;
-        renderMethod = RenderMethod.NONE;
+        renderMethod = RenderObject.RenderMethod.NONE;
         positionComponents = PositionComponents.NONE;
         dataStride = 0;
         vertexStartIndex = UNUSED_DATA_ELEMENT;
@@ -109,9 +100,9 @@ public class RenderObjectData
         }
     }
 
-    public boolean setRenderMethod(RenderMethod renderMethod)
+    public boolean setRenderMethod(RenderObject.RenderMethod renderMethod)
     {
-        if(this.renderMethod == RenderMethod.NONE)
+        if(this.renderMethod == RenderObject.RenderMethod.NONE)
         {
             this.renderMethod = renderMethod;
 
@@ -119,9 +110,6 @@ public class RenderObjectData
             {
                 case NONE:
                     System.out.println("vvv Render Method Set to: " + "NONE");
-                    break;
-                case QUADS:
-                    System.out.println("vvv Render Method Set to: " + "QUADS");
                     break;
                 case TRIANGLES:
                     System.out.println("vvv Render Method Set to: " + "TRIANGLES");
@@ -324,6 +312,7 @@ public class RenderObjectData
         {
             case POSITION_AND_TEXEL_AND_NORMAL:
                 rdf = new RenderObjectDataFormat(
+                        renderMethod,
                         POSITION_THEN_TEXEL_THEN_NORMAL,
                         NUMBER_OF_FACE_DATA,
                         positionDimensions,
@@ -332,6 +321,7 @@ public class RenderObjectData
                 break;
             case POSITION_AND_NORMAL:
                 rdf = new RenderObjectDataFormat(
+                        renderMethod,
                         POSITION_THEN_NORMAL,
                         NUMBER_OF_FACE_DATA,
                         positionDimensions,
@@ -339,6 +329,7 @@ public class RenderObjectData
                 break;
             case POSITION_AND_TEXEL:
                 rdf = new RenderObjectDataFormat(
+                        renderMethod,
                         POSITION_THEN_TEXEL,
                         NUMBER_OF_FACE_DATA,
                         positionDimensions,
@@ -348,6 +339,7 @@ public class RenderObjectData
             case NONE:
                 default:
                     rdf = new RenderObjectDataFormat(
+                            renderMethod,
                             POSITION,
                             NUMBER_OF_FACE_DATA,
                             positionDimensions);

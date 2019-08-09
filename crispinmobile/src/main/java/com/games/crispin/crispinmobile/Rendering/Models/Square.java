@@ -26,6 +26,7 @@ public class Square extends RenderObject
     {
         super(VERTEX_DATA,
                 new RenderObjectDataFormat(
+                        RenderMethod.TRIANGLES,
                         RenderObjectDataFormat.AttributeOrder_t.POSITION_THEN_TEXEL,
                         RenderObjectDataFormat.UNGROUPED,
                         RenderObjectDataFormat.PositionDimensions_t.XY,
@@ -36,6 +37,7 @@ public class Square extends RenderObject
     {
         super(VERTEX_DATA,
                 new RenderObjectDataFormat(
+                        RenderMethod.TRIANGLES,
                         RenderObjectDataFormat.AttributeOrder_t.POSITION_THEN_TEXEL,
                         RenderObjectDataFormat.UNGROUPED,
                         RenderObjectDataFormat.PositionDimensions_t.XY,

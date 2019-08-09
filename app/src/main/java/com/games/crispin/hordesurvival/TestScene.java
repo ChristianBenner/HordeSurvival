@@ -66,14 +66,14 @@ public class TestScene extends Scene {
         new Thread(dinomodelThread).start();
         personmodelThread = new OBJThreadTest(R.raw.personmodel);
         new Thread(personmodelThread).start();
-        carmodelThread = new OBJThreadTest(R.raw.carmodel);
+        carmodelThread = new OBJThreadTest(R.raw.shotty);
         new Thread(carmodelThread).start();
 
         mRed = new Material();
         mRed.setColour(Colour.RED);
 
-        mGreen = new Material();
-        mGreen.setColour(Colour.GREEN);
+        mGreen = new Material(new Texture(R.drawable.shotgun));
+       // mGreen.setColour(Colour.GREEN);
 
         mBlue = new Material();
         mBlue.setColour(Colour.BLUE);
@@ -162,7 +162,7 @@ public class TestScene extends Scene {
             //  renderObject = OBJModelLoader.readObjFile(R.raw.dragon);
             carmodel = carmodelThread.getRenderObject();
             carmodel.setPosition(0.0f, -2.5f, 0.0f);
-            carmodel.setScale(0.025f, 0.025f, 0.025f);
+          //  carmodel.setScale(0.025f, 0.025f, 0.025f);
             carmodel.setMaterial(mGreen);
             startModelFadeInCar = true;
             onetimeCar = true;
@@ -175,9 +175,9 @@ public class TestScene extends Scene {
             if(startModelFadeInCar && modelFadeInCar != 1.0f)
             {
                 modelFadeInCar += 0.03f;
-                if(modelFadeInCar >= 0.5f)
+                if(modelFadeInCar >= 1f)
                 {
-                    modelFadeInCar = 0.5f;
+                    modelFadeInCar = 1f;
                 }
                 carmodel.getMaterial().getColour().setAlpha(modelFadeInCar);
             }

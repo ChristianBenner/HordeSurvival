@@ -38,6 +38,7 @@ public class Text extends UIObject
         {
             super(vertexData,
                     new RenderObjectDataFormat(
+                            RenderMethod.TRIANGLES,
                             RenderObjectDataFormat.AttributeOrder_t.POSITION_THEN_TEXEL,
                             RenderObjectDataFormat.UNGROUPED,
                             RenderObjectDataFormat.PositionDimensions_t.XY,

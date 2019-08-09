@@ -19,6 +19,8 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 
+import static android.opengl.GLES20.GL_LINES;
+import static android.opengl.GLES20.GL_POINTS;
 import static android.opengl.GLES20.glUniform2f;
 import static android.opengl.GLES20.glUniform4f;
 import static android.opengl.GLES30.GL_FLOAT;
@@ -34,6 +36,7 @@ import static android.opengl.GLES30.glUniform1i;
 import static android.opengl.GLES30.glUniform4fv;
 import static android.opengl.GLES30.glUniformMatrix4fv;
 import static android.opengl.GLES30.glVertexAttribPointer;
+import static android.opengl.GLES32.GL_QUADS;
 
 /**
  * Render object is a base class for any graphical object. It handles an objects shader (based on
@@ -97,6 +100,14 @@ public class RenderObject
 
     protected Material material;
     protected Shader shader;
+
+    public enum RenderMethod
+    {
+        POINTS,
+        LINES,
+        TRIANGLES,
+        NONE
+    }
 
     public RenderObject(float[] vertexData,
                         RenderObjectDataFormat renderObjectDataFormat,
@@ -467,7 +478,20 @@ public class RenderObject
         }
 
         handleAttributes(true);
-        glDrawArrays(GL_TRIANGLES, 0, VERTEX_COUNT);
+
+        switch (DATA_FORMAT.getRenderMethod())
+        {
+            case POINTS:
+                glDrawArrays(GL_POINTS, 0, VERTEX_COUNT);
+                break;
+            case LINES:
+                glDrawArrays(GL_LINES, 0, VERTEX_COUNT);
+                break;
+            case TRIANGLES:
+                glDrawArrays(GL_TRIANGLES, 0, VERTEX_COUNT);
+                break;
+        }
+
         handleAttributes(false);
 
         glBindTexture(GL_TEXTURE_2D, 0);
@@ -518,7 +542,18 @@ public class RenderObject
         }
 
         handleAttributes(true);
-        glDrawArrays(GL_TRIANGLES, 0, VERTEX_COUNT);
+        switch (DATA_FORMAT.getRenderMethod())
+        {
+            case POINTS:
+                glDrawArrays(GL_POINTS, 0, VERTEX_COUNT);
+                break;
+            case LINES:
+                glDrawArrays(GL_LINES, 0, VERTEX_COUNT);
+                break;
+            case TRIANGLES:
+                glDrawArrays(GL_TRIANGLES, 0, VERTEX_COUNT);
+                break;
+        }
         handleAttributes(false);
 
         glBindTexture(GL_TEXTURE_2D, 0);
