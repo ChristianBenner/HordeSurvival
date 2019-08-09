@@ -5,8 +5,9 @@ Project Classes
 		Point3D		- DONE
 		Rotation2D	- DONE
 		Rotation3D	- DONE
-		Scale2D		- INCOMPLETE
-		Scale3D		- INCOMPLETE
+		Scale2D		- DONE
+		Scale3D		- DONE
+		Vector2D	- INCOMPLETE
 		Vector3D	- INCOMPLETE
 
 	Native >
