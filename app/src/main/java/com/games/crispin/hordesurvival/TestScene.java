@@ -54,9 +54,6 @@ public class TestScene extends Scene {
 
         camera2D = new Camera2D();
 
-
-
-
       //  Material brickMaterial = new Material(new Texture(R.drawable.brick), Colour.YELLOW);
 
         brickMaterial = new Material(new Texture(R.drawable.brick), new Scale2D(0.25f, 0.25f));

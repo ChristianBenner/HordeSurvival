@@ -3,8 +3,8 @@ Project Classes
 		Geometry	- INCOMPLETE
 		Point2D		- DONE
 		Point3D		- DONE
-		Rotation2D	- INCOMPLETE
-		Rotation3D	- INCOMPLETE
+		Rotation2D	- DONE
+		Rotation3D	- DONE
 		Scale2D		- INCOMPLETE
 		Scale3D		- INCOMPLETE
 		Vector3D	- INCOMPLETE
