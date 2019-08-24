@@ -1,33 +1,115 @@
 package com.games.crispin.crispinmobile.Geometry;
 
+/**
+ * Vector2D provides a singular object that can represent a two dimensional (x and y) vector. It is
+ * the base class for Vector3D.
+ *
+ * @author      Christian Benner
+ * @version     %I%, %G%
+ * @see         Vector3D
+ * @since       1.0
+ */
 public class Vector2D
 {
-    public final float x, y;
+    // Tag used in logging output
+    private static final String TAG = "Vector2D";
 
+    // The x dimension value
+    public float x;
+
+    // The y dimension value
+    public float y;
+
+    /**
+     * Construct a 2D vector object
+     *
+     * @param x The x dimension value
+     * @param y The y dimension value
+     * @since 1.0
+     */
     public Vector2D(float x, float y)
     {
         this.x = x;
         this.y = y;
     }
 
-    public float length()
+    /**
+     * Construct a 2D vector object with default values (x: 0.0 and y: 0.0)
+     *
+     * @since 1.0
+     */
+    public Vector2D()
+    {
+        this(0.0f, 0.0f);
+    }
+
+    /**
+     * Get the magnitude of the vector
+     *
+     * @return  The magnitude of the vector as a float
+     * @since   1.0
+     */
+    public float getMagnitude()
     {
         return (float)Math.sqrt(x * x + y * y);
     }
 
-    public float dotProduct(Vector3D other)
+    /**
+     * Get the length (magnitude) of the vector
+     *
+     * @return  The length (magnitude) of the vector as a float
+     * @since   1.0
+     */
+    public float getLength()
+    {
+        return getMagnitude();
+    }
+
+    /**
+     * Get the dot product of the vector
+     *
+     * @return  The dot product of the vector as a float
+     * @since   1.0
+     */
+    public float getDotProduct(Vector2D other)
     {
         return (x * other.x) + (y * other.y);
     }
 
-    public Vector2D scale(float f)
+    /**
+     * Scale the vector by a multiplier
+     *
+     * @param scale Scale multiplier (multiplies both dimensions x and y)
+     * @since 1.0
+     */
+    public void scale(float scale)
     {
-        return new Vector2D(x * f, y * f);
+        this.x *= scale;
+        this.y *= scale;
     }
 
+    /**
+     * Scale each dimension of the vector by a specific multiplier
+     *
+     * @param x Scale multiplier for the x dimension
+     * @param y Scale multiplier for the y dimension
+     * @since 1.0
+     */
+    public void scale(float x, float y)
+    {
+        this.x *= x;
+        this.y *= y;
+    }
+
+    /**
+     * Get a string that contains the vector data that can be used in a log
+     *
+     * @return  String in the format 'Vector2D[x:X,y:Y]'
+     * @since 1.0
+     */
     @Override
     public String toString()
     {
-        return "Vector2D[x: " + x + ", y: " + y + "]";
+        return TAG + "[x: " + x + ", y: " + y + "]";
     }
 }

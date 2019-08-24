@@ -1,59 +1,65 @@
-Project Classes
+Class States:
+INCOMPLETE - Both checklist and functionality check are incomplete
+CHECKLIST_ONLY(#AsOfCommitId) - The checklist for the class has been complete but not the functionality check
+FUNCTIONAL(#AsOfCommitId) - The functional check has been complete but not the code checlist
+COMPLETE(#AsOfCommitId) - Both the code checklist and functional check have been completed
+
+Project Classes:
 	Geometry >
 		Geometry	- INCOMPLETE
-		Point2D		- DONE
-		Point3D		- DONE
-		Rotation2D	- DONE
-		Rotation3D	- DONE
-		Scale2D		- DONE
-		Scale3D		- DONE
-		Vector2D	- INCOMPLETE
-		Vector3D	- INCOMPLETE
+		Point2D		- CHECKLIST_ONLY
+		Point3D		- CHECKLIST_ONLY
+		Rotation2D	- CHECKLIST_ONLY
+		Rotation3D	- CHECKLIST_ONLY
+		Scale2D		- CHECKLIST_ONLY
+		Scale3D		- CHECKLIST_ONLY
+		Vector2D	- CHECKLIST_ONLY
+		Vector3D	- CHECKLIST_ONLY
 
 	Native >
-		FreeTypeMethods
+		FreeTypeMethods	- INCOMPLETE
 		
 	Rendering >
 		Data >
-			Colour
-			FreeTypeCharacter
-			RenderObjectData
-			RenderObjectDataFormat
+			Colour					- INCOMPLETE
+			FreeTypeCharacter		- INCOMPLETE
+			RenderObjectData		- INCOMPLETE
+			RenderObjectDataFormat	- INCOMPLETE
 		Entities >
-			Light
+			Light	- INCOMPLETE
 		Models >
-			Cube
-			CubeGrouped
-			FontSquare
+			Cube		- INCOMPLETE
+			CubeGrouped	- INCOMPLETE
+			FontSquare	- INCOMPLETE
 			Square
 		Shaders >
-			AttributeColourShader
-			TextShader
-			TextureAttributeColourShader
-			TextureShader
-			UniformColourShader
+			AttributeColourShader			- INCOMPLETE
+			TextShader						- INCOMPLETE
+			TextureAttributeColourShader	- INCOMPLETE
+			TextureShader					- INCOMPLETE
+			UniformColourShader				- INCOMPLETE
 		UserInterface >
-			Text
-			UIObject
+			Text		- INCOMPLETE
+			UIObject	- INCOMPLETE
 		Utilities >
-			Camera2D
-			Camera3D
-			Font
-			Material
-			RenderObject
-			Shader
-			Texture
-			TextureOptions
+			Camera2D		- INCOMPLETE
+			Camera3D		- INCOMPLETE
+			Font			- INCOMPLETE
+			Material		- INCOMPLETE
+			RenderObject	- INCOMPLETE
+			Shader			- INCOMPLETE
+			Texture			- INCOMPLETE
+			TextureOptions	- INCOMPLETE
 			
 	Utilities >
-		FileResourceReader
-		Logger
-		OBJModelLoader
-		OBJThreadTest
-		Scene
-		SceneManager
-		ShaderCache
-		TextureCache
+		FileResourceReader	- INCOMPLETE
+		Logger				- INCOMPLETE
+		OBJModelLoader		- INCOMPLETE
+		OBJThreadTest		- INCOMPLETE
+		Scene				- INCOMPLETE
+		SceneManager		- INCOMPLETE
+		ShaderCache			- INCOMPLETE
+		TextureCache		- INCOMPLETE
 		
 	Crispin
 	UnsupprtedDevice
@@ -69,3 +75,8 @@ Code Checklist:
 - If function signatures contain more than 2 parameters, put them on new lines
 - Do not allow any code to get past the white line (put on a new line)
 - No unused imports
+
+Functionality Check:
+- Test to see if the code file is complete
+- No bugs
+- All functions are written (no incomplete code or missing functions e.g. a getWidth but not a getHeight on a UI object)

@@ -39,8 +39,8 @@ public class Geometry {
         Vector3D p1ToPoint = vectorBetween(ray.point3D, point3D);
         Vector3D p2ToPoint = vectorBetween(translate(ray.point3D, ray.vector), point3D);
 
-        float areaOfTriangleTimesTwo = p1ToPoint.crossProduct(p2ToPoint).length();
-        float lengthOfBase = ray.vector.length();
+        float areaOfTriangleTimesTwo = p1ToPoint.getCrossProduct(p2ToPoint).getLength();
+        float lengthOfBase = ray.vector.getLength();
 
         // area of triangle = base * height so height = triangle / base
         float distanceFromPointToRay = areaOfTriangleTimesTwo / lengthOfBase;
@@ -66,15 +66,22 @@ public class Geometry {
                 point3D.y + vector.y,
                 point3D.z + vector.z);
     }
+    public static Vector3D scaleVector(Vector3D vector, float scale)
+    {
+        return new Vector3D(
+                vector.x * scale,
+                vector.y * scale,
+                vector.z * scale);
+    }
 
     public static Point3D intersectionPoint(Ray ray, Plane plane)
     {
         Vector3D rayToPlaneVector = vectorBetween(ray.point3D, plane.point3D);
 
-        float scaleFactor = rayToPlaneVector.dotProduct(plane.normal)
-                / ray.vector.dotProduct(plane.normal);
+        float scaleFactor = rayToPlaneVector.getDotProduct(plane.normal)
+                / ray.vector.getDotProduct(plane.normal);
 
-        Point3D intersectionPoint3D = translate(ray.point3D, ray.vector.scale(scaleFactor));
+        Point3D intersectionPoint3D = translate(ray.point3D, scaleVector(ray.vector, scaleFactor));
         return intersectionPoint3D;
     }
 }
