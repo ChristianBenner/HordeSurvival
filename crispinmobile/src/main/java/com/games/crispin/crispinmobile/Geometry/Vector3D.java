@@ -1,7 +1,7 @@
 package com.games.crispin.crispinmobile.Geometry;
 
 /**
- * Vector3D provides a singular object that can represent a three dimensional (x, y and z) vector.
+ * Vector3D provides a singular object that can represent a three dimensional (x, y and z) direction.
  * It is a subclass of the Vector2D class.
  *
  * @author      Christian Benner
@@ -18,7 +18,7 @@ public class Vector3D extends Vector2D
     public float z;
 
     /**
-     * Construct a 3D vector object
+     * Construct a 3D direction object
      *
      * @param x The x dimension value
      * @param y The y dimension value
@@ -34,7 +34,7 @@ public class Vector3D extends Vector2D
     }
 
     /**
-     * Construct a 3D vector object with default values (x: 0.0, y: 0.0 and z: 0.0)
+     * Construct a 3D direction object with default values (x: 0.0, y: 0.0 and z: 0.0)
      *
      * @since 1.0
      */
@@ -47,9 +47,9 @@ public class Vector3D extends Vector2D
     }
 
     /**
-     * Get the magnitude of the vector
+     * Get the magnitude of the direction
      *
-     * @return  The magnitude of the vector as a float
+     * @return  The magnitude of the direction as a float
      * @since   1.0
      */
     public float getMagnitude()
@@ -58,9 +58,9 @@ public class Vector3D extends Vector2D
     }
 
     /**
-     * Get the length (magnitude) of the vector
+     * Get the length (magnitude) of the direction
      *
-     * @return  The length (magnitude) of the vector as a float
+     * @return  The length (magnitude) of the direction as a float
      * @since   1.0
      */
     public float getLength()
@@ -71,8 +71,8 @@ public class Vector3D extends Vector2D
     /**
      * Get the cross product of two vectors
      *
-     * @param other The other vector
-     * @return  The cross product vector
+     * @param other The other direction
+     * @return  The cross product direction
      * @since   1.0
      */
     public Vector3D getCrossProduct(Vector3D other)
@@ -86,8 +86,8 @@ public class Vector3D extends Vector2D
     /**
      * Get the dot product of two vectors
      *
-     * @param other The other vector
-     * @return  The dot product vector
+     * @param other The other direction
+     * @return  The dot product direction
      * @since   1.0
      */
     public float getDotProduct(Vector3D other)
@@ -96,7 +96,7 @@ public class Vector3D extends Vector2D
     }
 
     /**
-     * Scale the vector by a multiplier
+     * Scale the direction by a multiplier
      *
      * @param scale Scale multiplier (multiplies all dimensions x, y and z)
      * @since 1.0
@@ -108,7 +108,7 @@ public class Vector3D extends Vector2D
     }
 
     /**
-     * Scale each dimension of the vector by a specific multiplier
+     * Scale each dimension of the direction by a specific multiplier
      *
      * @param x Scale multiplier for the x dimension
      * @param y Scale multiplier for the y dimension
@@ -124,7 +124,7 @@ public class Vector3D extends Vector2D
     }
 
     /**
-     * Get a string that contains the vector data that can be used in a log
+     * Get a string that contains the direction data that can be used in a log
      *
      * @return  String in the format 'Vector2D[x:X,y:Y]'
      * @since 1.0

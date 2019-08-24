@@ -122,7 +122,7 @@ public class Point2D
      * @return  The distance magnitude as a float
      * @since 1.0
      */
-    public float distance(float x, float y)
+    public float getDistance(float x, float y)
     {
         // Distance in the x plane
         final float DX = x - this.x;
@@ -140,19 +140,19 @@ public class Point2D
      * @return          The distance magnitude as a float
      * @since 1.0
      */
-    public float distance(Point2D target)
+    public float getDistance(Point2D target)
     {
-        return distance(target.x, target.y);
+        return getDistance(target.x, target.y);
     }
 
     /**
-     * Get a distance vector to another point (gives distance in each dimension)
+     * Get a distance direction to another point (gives distance in each dimension)
      *
      * @param target    Another point to find the distance to
      * @return          The distance Vector2D containing the distance in each dimension
      * @since 1.0
      */
-    public Vector2D distance2D(Point3D target)
+    public Vector2D getDistance2D(Point3D target)
     {
         return new Vector2D(
                 target.x - x,

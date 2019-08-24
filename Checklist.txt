@@ -7,14 +7,17 @@ COMPLETE(#AsOfCommitId) - Both the code checklist and functional check have been
 Project Classes:
 	Geometry >
 		Geometry	- INCOMPLETE
-		Point2D		- CHECKLIST_ONLY(72ccb8b)
-		Point3D		- CHECKLIST_ONLY(72ccb8b)
-		Rotation2D	- CHECKLIST_ONLY(72ccb8b)
-		Rotation3D	- CHECKLIST_ONLY(72ccb8b)
-		Scale2D		- CHECKLIST_ONLY(72ccb8b)
-		Scale3D		- CHECKLIST_ONLY(72ccb8b)
-		Vector2D	- CHECKLIST_ONLY(72ccb8b)
-		Vector3D	- CHECKLIST_ONLY(72ccb8b)
+		Plane		- CHECKLIST_ONLY
+		Point2D		- CHECKLIST_ONLY(593a520)
+		Point3D		- CHECKLIST_ONLY(593a520)
+		Ray			- CHECKLIST_ONLY
+		Rotation2D	- CHECKLIST_ONLY(593a520)
+		Rotation3D	- CHECKLIST_ONLY(593a520)
+		Scale2D		- CHECKLIST_ONLY(593a520)
+		Scale3D		- CHECKLIST_ONLY(593a520)
+		Sphere		- CHECKLIST_ONLY
+		Vector2D	- CHECKLIST_ONLY(593a520)
+		Vector3D	- CHECKLIST_ONLY(593a520)
 
 	Native >
 		FreeTypeMethods	- INCOMPLETE

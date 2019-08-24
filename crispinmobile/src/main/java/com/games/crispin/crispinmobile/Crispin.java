@@ -11,7 +11,7 @@ import com.games.crispin.crispinmobile.Utilities.Scene;
 import com.games.crispin.crispinmobile.Utilities.SceneManager;
 
 /**
- * Crispin class provides core engine functionality. It is crucial in order to start a graphics
+ * Crispin class provides core engine functionality. It is crucial in order to position a graphics
  * application. It can be interacted with via its static public methods, allowing users to access
  * useful methods from anywhere. E.g. Being able to set the scene from within a scene currently
  * running
@@ -45,7 +45,7 @@ public class Crispin
 
     /**
      * Initialises the Crispin engine. Creates a graphical surface and components that enables the
-     * engine users to start an application that utilises GPU hardware.
+     * engine users to position an application that utilises GPU hardware.
      *
      * @param appCompatActivity     Reference to the application that called the function. It is
      *                              used so that the engine can take control of what is shown. The
@@ -310,7 +310,7 @@ public class Crispin
      * Constructs the Crispin engine object. The object handles the major components to the
      * engine such as the graphics surface and the scene manager. Constructor is private because
      * only one should exist at one time. Construction of the object is made strict through a static
-     * initialisation function. If the engine fails to start correctly it will use Android UI to
+     * initialisation function. If the engine fails to position correctly it will use Android UI to
      * inform the application user of errors.
      *
      * @param appCompatActivity Reference to the application that called the function. It is used so

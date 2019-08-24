@@ -58,10 +58,10 @@ public class Camera3D
     // The position of the camera
     private Point3D position;
 
-    // The right vector
+    // The right direction
     private Vector3D right;
 
-    // The direction the camera is facing (vector)
+    // The direction the camera is facing (direction)
     private Vector3D direction;
 
     // The up direction of the camera
@@ -123,7 +123,7 @@ public class Camera3D
     /**
      * Get the right direction of the camera
      *
-     * @return  A 3D vector of the right direction
+     * @return  A 3D direction of the right direction
      * @see     Vector3D
      * @since   1.0
      */
@@ -148,7 +148,7 @@ public class Camera3D
     /**
      * Get the direction of the camera
      *
-     * @return  A 3D vector of the camera facing direction
+     * @return  A 3D direction of the camera facing direction
      * @see     Vector3D
      * @since   1.0
      */
@@ -173,7 +173,7 @@ public class Camera3D
     /**
      * Get the up direction of the camera
      *
-     * @return  A 3D vector of the camera up direction
+     * @return  A 3D direction of the camera up direction
      * @see     Vector3D
      * @since   1.0
      */

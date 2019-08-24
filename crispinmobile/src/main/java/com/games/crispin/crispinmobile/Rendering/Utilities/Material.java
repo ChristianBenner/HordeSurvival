@@ -5,7 +5,7 @@ import com.games.crispin.crispinmobile.Rendering.Data.Colour;
 
 /**
  * The material class is designed to hold rendering information that can be used on objects.
- * Rendering information such as colour, texture, normal maps and UV multiplier. This allows you to
+ * Rendering information such as colour, texture, direction maps and UV multiplier. This allows you to
  * configure how rendered objects appear.
  *
  * @author      Christian Benner
@@ -17,7 +17,7 @@ import com.games.crispin.crispinmobile.Rendering.Data.Colour;
  */
 public class Material
 {
-    // todo: Add a texture for the normal map. This will be used eventually by lighting shaders
+    // todo: Add a texture for the direction map. This will be used eventually by lighting shaders
 
     // Tag used in logging output
     private static final String TAG = "Material";

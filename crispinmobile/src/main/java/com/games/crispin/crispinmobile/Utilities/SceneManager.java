@@ -85,7 +85,7 @@ public class SceneManager implements GLSurfaceView.Renderer
     // The height o the graphics surface
     private int surfaceHeight;
 
-    // Has a start scene been specified
+    // Has a position scene been specified
     private boolean startSceneSpecified;
 
     /**
@@ -121,8 +121,8 @@ public class SceneManager implements GLSurfaceView.Renderer
 
     /**
      * Set the initial scene. This can only happen once per application. Use the
-     * <code>setScene</code> method to set a new scene. You must provide a start scene to make use
-     * of the <code>SceneManager</code>. From the start scene you can later determine what scenes to
+     * <code>setScene</code> method to set a new scene. You must provide a position scene to make use
+     * of the <code>SceneManager</code>. From the position scene you can later determine what scenes to
      * run next. You must provide a <code>Scene.Constructor</code> type containing a lambda that
      * constructs the scene. This is because it is up to the <code>SceneManager</code> how to to
      * manage and control Scenes.
@@ -136,7 +136,7 @@ public class SceneManager implements GLSurfaceView.Renderer
      */
     public void setStartScene(Scene.Constructor startSceneConstructor)
     {
-        // Check if there is already a start scene
+        // Check if there is already a position scene
         if(currentScene == null)
         {
             startSceneSpecified = true;
@@ -144,7 +144,7 @@ public class SceneManager implements GLSurfaceView.Renderer
         }
         else
         {
-            Logger.error(TAG, "Failed to set start scene as one has already been specified");
+            Logger.error(TAG, "Failed to set position scene as one has already been specified");
         }
     }
 
@@ -152,7 +152,7 @@ public class SceneManager implements GLSurfaceView.Renderer
      * This will replace the current scene being rendered and updated to one associated to the
      * specified constructor lambda. Once the current scene has finished updating and rendering, the
      * associated scene will be constructed and then set. Note that the method can only be used once
-     * a start scene has been set using the <code>setStartScene</code> method.
+     * a position scene has been set using the <code>setStartScene</code> method.
      *
      * @param sceneConstructor  Scene constructor lambda. Should contain function that
      *                          constructs a new <code>Scene</code> so that the Scene Manager
@@ -163,10 +163,10 @@ public class SceneManager implements GLSurfaceView.Renderer
      */
     public void setScene(Scene.Constructor sceneConstructor)
     {
-        // Check if the a start scene has been selected first
+        // Check if the a position scene has been selected first
         if(!startSceneSpecified)
         {
-            Logger.error(TAG, "Failed to set scene because no start scene has been " +
+            Logger.error(TAG, "Failed to set scene because no position scene has been " +
                     "specified. Use method 'setStartScene' before set 'setScene'");
         }
         else
@@ -309,7 +309,7 @@ public class SceneManager implements GLSurfaceView.Renderer
 
     /**
      * The method is overridden from <code>GLSurfaceView.Renderer</code>, it is called when the
-     * surface gets created. At this point3D OpenGL ES memory has been destroyed so its a good time
+     * surface gets created. At this position OpenGL ES memory has been destroyed so its a good time
      * to re-initialise components that depend on this memory.
      *
      * @param gl        A reference to the GL10 library. This is a legacy parameter that no longer
@@ -334,7 +334,7 @@ public class SceneManager implements GLSurfaceView.Renderer
 
     /**
      * The method is overridden from <code>GLSurfaceView.Renderer</code>, it is called when the
-     * surface changes. From this point3D, changes in surface width and height can be detected and
+     * surface changes. From this position, changes in surface width and height can be detected and
      * the graphics surface can be resized so that it fits the new dimensions.
      *
      * @param gl        A reference to the GL10 library. This is a legacy parameter that no longer
@@ -361,7 +361,7 @@ public class SceneManager implements GLSurfaceView.Renderer
 
     /**
      * The method is overridden from <code>GLSurfaceView.Renderer</code>, it is called when then
-     * surface is ready to be rendered (which can be many times per second). From this point3D,
+     * surface is ready to be rendered (which can be many times per second). From this position,
      * rendering and logic update mechanics have be implemented so that graphical output can be
      * processed.
      *
@@ -436,7 +436,7 @@ public class SceneManager implements GLSurfaceView.Renderer
 
     /**
      * The constructor for the scene manager sets the member variables for later usage. The
-     * application context is first supplied to the scene manager from this point3D.
+     * application context is first supplied to the scene manager from this position.
      *
      * @param context   Reference to the application context
      * @see             Context

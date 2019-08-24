@@ -290,7 +290,7 @@ public class Text extends UIObject
         {
             if(maxLineWidth == 0.0f)
             {
-                // The start x position for the current line
+                // The position x position for the current line
                 float theX = 0.0f;
                 float currentY = 0.0f;
 

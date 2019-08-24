@@ -127,7 +127,7 @@ public class OBJModelLoader
                         case ASCII_T: // 't' for vertex texel
                             lineType = TEXEL;
                             break;
-                        case ASCII_N: // 'n' for vertex normal
+                        case ASCII_N: // 'n' for vertex direction
                             lineType = NORMAL;
                             break;
                         default: // Unsupported or error. Reset the line type
@@ -214,13 +214,13 @@ public class OBJModelLoader
                         {
                             dataStartIndex = i;
 
-                            // Check if we should start counting the amount of face data per line
+                            // Check if we should position counting the amount of face data per line
                             if(!countFaceDataPerLine && numberFaceDataPerLine == 0)
                             {
                                 countFaceDataPerLine = true;
                             }
 
-                            // Check if we should start counting the number of face data elements
+                            // Check if we should position counting the number of face data elements
                             // and separators
                             if(!countFaceDataElements &&
                                     numberFaceDataElements == 0 &&
@@ -319,12 +319,12 @@ public class OBJModelLoader
 
         if(numberFaceDataElements == 3 && numberFaceDataSeparators == 2)
         {
-            // Position, texel and normal data has been provided
+            // Position, texel and direction data has been provided
             renderObjectData.setFaceDataType(RenderObjectData.FaceData.POSITION_AND_TEXEL_AND_NORMAL);
         }
         else if(numberFaceDataElements == 2 && numberFaceDataSeparators == 2)
         {
-            // Position and normal data has been provided
+            // Position and direction data has been provided
             renderObjectData.setFaceDataType(RenderObjectData.FaceData.POSITION_AND_NORMAL);
         }
         else if(numberFaceDataElements == 2 && numberFaceDataSeparators == 1)

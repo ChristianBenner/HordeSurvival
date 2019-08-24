@@ -59,25 +59,25 @@ public class RenderObject
     // The number of elements that are in the position data
     private int elementsPerPosition;
 
-    // The start index of the position data in the vertex data buffer
+    // The position index of the position data in the vertex data buffer
     private int positionDataOffset;
 
     // The number of elements that are in the texel data
     private int elementsPerTexel;
 
-    // The start index of the texel data in the vertex data buffer
+    // The position index of the texel data in the vertex data buffer
     private int texelDataOffset;
 
     // The number of elements that are in the colour data
     private int elementsPerColour;
 
-    // The start index of the colour data in the vertex data buffer
+    // The position index of the colour data in the vertex data buffer
     private int colourDataOffset;
 
-    // The number of elements that are in the normal data
+    // The number of elements that are in the direction data
     private int elementsPerNormal;
 
-    // The start index of the normal data in the vertex data buffer
+    // The position index of the direction data in the vertex data buffer
     private int normalDataOffset;
 
     // The stride between each set of data (only if the data format is ungrouped)
@@ -179,7 +179,7 @@ public class RenderObject
 //            // Determine the best shader to used depending on the material
 //            if(material.isLightingEnabled() && material.hasTexture() && material.hasNormalMap())
 //            {
-//                // Use lighting, texture/normal map supporting shader
+//                // Use lighting, texture/direction map supporting shader
 //            }
 //            else if(material.isLightingEnabled() && material.hasTexture())
 //            {

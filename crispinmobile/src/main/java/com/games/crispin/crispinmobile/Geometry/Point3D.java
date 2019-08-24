@@ -157,7 +157,7 @@ public class Point3D extends Point2D
      * @return  The distance magnitude as a float
      * @since 1.0
      */
-    public float distance(float x,
+    public float getDistance(float x,
                           float y,
                           float z)
     {
@@ -180,22 +180,22 @@ public class Point3D extends Point2D
      * @return          The distance magnitude as a float
      * @since 1.0
      */
-    public float distance(Point3D target)
+    public float getDistance(Point3D target)
     {
-        return distance(
+        return getDistance(
                 target.x,
                 target.y,
                 target.z);
     }
 
     /**
-     * Get a distance vector to another point (gives distance in each dimension)
+     * Get a distance direction to another point (gives distance in each dimension)
      *
      * @param target    Another point to find the distance to
      * @return          The distance Vector3D containing the distance in each dimension
      * @since 1.0
      */
-    public Vector3D distance3D(Point3D target)
+    public Vector3D getDistance3D(Point3D target)
     {
         return new Vector3D(
                 target.x - x,
