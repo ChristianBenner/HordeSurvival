@@ -1,23 +1,23 @@
 Class States:
 INCOMPLETE - Both checklist and functionality check are incomplete
-CHECKLIST_ONLY(#AsOfCommitId) - The checklist for the class has been complete but not the functionality check
-FUNCTIONAL(#AsOfCommitId) - The functional check has been complete but not the code checlist
+CHECKLIST(#AsOfCommitId) - The checklist for the class has been complete but not the functionality check
+FUNCTIONAL(#AsOfCommitId) - The functional check has been complete but not the code checklist
 COMPLETE(#AsOfCommitId) - Both the code checklist and functional check have been completed
 
 Project Classes:
 	Geometry >
-		Geometry	- INCOMPLETE
-		Plane		- CHECKLIST_ONLY(70a9230)
-		Point2D		- CHECKLIST_ONLY(70a9230)
-		Point3D		- CHECKLIST_ONLY(70a9230)
-		Ray			- CHECKLIST_ONLY(70a9230)
-		Rotation2D	- CHECKLIST_ONLY(70a9230)
-		Rotation3D	- CHECKLIST_ONLY(70a9230)
-		Scale2D		- CHECKLIST_ONLY(70a9230)
-		Scale3D		- CHECKLIST_ONLY(70a9230)
-		Sphere		- CHECKLIST_ONLY(70a9230)
-		Vector2D	- CHECKLIST_ONLY(70a9230)
-		Vector3D	- CHECKLIST_ONLY(70a9230)
+		Geometry	- CHECKLIST: 2D types need functions
+		Plane		- CHECKLIST(70a9230)
+		Point2D		- CHECKLIST(70a9230)
+		Point3D		- CHECKLIST(70a9230)
+		Ray			- CHECKLIST(70a9230)
+		Rotation2D	- CHECKLIST(70a9230)
+		Rotation3D	- CHECKLIST(70a9230)
+		Scale2D		- CHECKLIST(70a9230)
+		Scale3D		- CHECKLIST(70a9230)
+		Sphere		- CHECKLIST(70a9230)
+		Vector2D	- CHECKLIST(70a9230)
+		Vector3D	- CHECKLIST(70a9230)
 
 	Native >
 		FreeTypeMethods	- INCOMPLETE
@@ -70,7 +70,7 @@ Project Classes:
 Code Checklist:
 - JavaDoc Documentation
 - No use of System.out.print methods
-- TAG at the top for logging
+- TAG at the top for logging (unless there is no logging)
 - All class variables have comments
 - No magic numbers (unless 0)
 - If/while/for statements have comments explaining what they do

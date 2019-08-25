@@ -87,7 +87,7 @@ public class Camera3D
         position = new Point3D();
         right = DEFAULT_RIGHT_DIRECTION;
         direction = DEFAULT_DIRECTION;
-        up = right.crossProduct(DEFAULT_DIRECTION);
+        up = right.getCrossProduct(DEFAULT_DIRECTION);
         viewMatrix = new float[NUM_FLOATS_4X4_MATRIX];
         perspectiveMatrix = new float[NUM_FLOATS_4X4_MATRIX];
 

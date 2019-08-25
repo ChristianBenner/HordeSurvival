@@ -17,6 +17,14 @@ package com.games.crispin.crispinmobile.Geometry;
  */
 public class Geometry
 {
+    /**
+     * Get the vector between two points.
+     *
+     * @param from  The first 3D point
+     * @param to    The second 3D point
+     * @return      A vector with a direction from the first point to the second.
+     * @since 1.0
+     */
     public static Vector3D getVectorBetween(Point3D from, Point3D to)
     {
         return new Vector3D(
@@ -25,12 +33,43 @@ public class Geometry
                 to.z - from.z);
     }
 
-    public static boolean intersects(Sphere sphere, Ray ray)
+    /**
+     * Get the ray between two points
+     *
+     * @param from  The first 3D point (and also the origin of the ray)
+     * @param to    The second 3D point
+     * @return      A ray originating from the first point that is facing the second point
+     * @since 1.0
+     */
+    public static Ray getRayBetween(Point3D from, Point3D to)
     {
-        return getDistanceBetweens(sphere.center, ray) < sphere.radius;
+        return new Ray(from,
+                getVectorBetween(from, to));
     }
 
-    public static float getDistanceBetweens(Point3D point3D, Ray ray)
+    /**
+     * Check if a ray intersects a sphere. The method checks if the distance between a ray and a
+     * spheres center point is less than the spheres radius.
+     *
+     * @param sphere    The virtual sphere
+     * @param ray       The virtual ray
+     * @return          True if the ray intersects the sphere, else false
+     * @since 1.0
+     */
+    public static boolean intersects(Sphere sphere, Ray ray)
+    {
+        return getDistanceBetween(sphere.center, ray) < sphere.radius;
+    }
+
+    /**
+     * Get the distance between a point and a ray
+     *
+     * @param point3D   The 3D point
+     * @param ray       The virtual ray
+     * @return          Distance between the given point and ray as a float
+     * @since 1.0
+     */
+    public static float getDistanceBetween(Point3D point3D, Ray ray)
     {
         Vector3D p1ToPoint = getVectorBetween(ray.position, point3D);
         Vector3D p2ToPoint = getVectorBetween(translate(ray.position, ray.direction), point3D);
@@ -43,6 +82,14 @@ public class Geometry
         return distanceFromPointToRay;
     }
 
+    /**
+     * Translate a point by a vector
+     *
+     * @param point3D   The point to translate
+     * @param vector    The vector to translate the point by
+     * @return          The translated point
+     * @since 1.0
+     */
     public static Point3D translate(Point3D point3D, Vector3D vector)
     {
         return new Point3D(
@@ -52,9 +99,31 @@ public class Geometry
     }
 
     /**
+     * Translate a point by floats
+     *
+     * @param point3D   The point to translate
+     * @param x         Amount to translate the x co-ordinate
+     * @param y         Amount to translate the x co-ordinate
+     * @param z         Amount to translate the x co-ordinate
+     * @return          The translated point
+     * @since 1.0
+     */
+    public static Point3D translate(Point3D point3D,
+                                    float x,
+                                    float y,
+                                    float z)
+    {
+        return new Point3D(
+                point3D.x + x,
+                point3D.y + y,
+                point3D.z + z);
+    }
+
+    /**
      * Scale a given direction by a multiplier
      *
      * @param scale Scale multiplier (multiplies all dimensions x, y and z)
+     * @return      The scaled vector
      * @since 1.0
      */
     public static Vector3D scaleVector(Vector3D vector, float scale)
@@ -71,6 +140,7 @@ public class Geometry
      * @param x Scale multiplier for the x dimension
      * @param y Scale multiplier for the y dimension
      * @param z Scale multiplier for the z dimension
+     * @return  The scaled vector
      * @since 1.0
      */
     public static Vector3D scaleVector(Vector3D vector,
@@ -84,6 +154,14 @@ public class Geometry
                 vector.z * z);
     }
 
+    /**
+     * Get the intersection point between a ray and a plane
+     *
+     * @param ray   The virtual ray
+     * @param ray   The virtual plane
+     * @return      The point in which the ray intersects the plane
+     * @since 1.0
+     */
     public static Point3D getIntersectionPoint(Ray ray, Plane plane)
     {
         Vector3D rayToPlaneVector = getVectorBetween(ray.position, plane.position);
@@ -91,7 +169,8 @@ public class Geometry
         float scaleFactor = rayToPlaneVector.getDotProduct(plane.direction)
                 / ray.direction.getDotProduct(plane.direction);
 
-        Point3D intersectionPoint3D = translate(ray.position, scaleVector(ray.direction, scaleFactor));
+        Point3D intersectionPoint3D = translate(ray.position,
+                scaleVector(ray.direction, scaleFactor));
         return intersectionPoint3D;
     }
 }
