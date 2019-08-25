@@ -5,19 +5,19 @@ FUNCTIONAL(#AsOfCommitId) - The functional check has been complete but not the c
 COMPLETE(#AsOfCommitId) - Both the code checklist and functional check have been completed
 
 Project Classes:
-	Geometry >
-		Geometry	- CHECKLIST: 2D types need functions
-		Plane		- CHECKLIST(70a9230)
-		Point2D		- CHECKLIST(70a9230)
-		Point3D		- CHECKLIST(70a9230)
-		Ray			- CHECKLIST(70a9230)
-		Rotation2D	- CHECKLIST(70a9230)
-		Rotation3D	- CHECKLIST(70a9230)
-		Scale2D		- CHECKLIST(70a9230)
-		Scale3D		- CHECKLIST(70a9230)
-		Sphere		- CHECKLIST(70a9230)
-		Vector2D	- CHECKLIST(70a9230)
-		Vector3D	- CHECKLIST(70a9230)
+	Geometry - CHECKLIST(5b852fd) >
+		Geometry	- CHECKLIST(5b852fd): 2D types need functions
+		Plane		- CHECKLIST(5b852fd)
+		Point2D		- CHECKLIST(5b852fd)
+		Point3D		- CHECKLIST(5b852fd)
+		Ray			- CHECKLIST(5b852fd)
+		Rotation2D	- CHECKLIST(5b852fd)
+		Rotation3D	- CHECKLIST(5b852fd)
+		Scale2D		- CHECKLIST(5b852fd)
+		Scale3D		- CHECKLIST(5b852fd)
+		Sphere		- CHECKLIST(5b852fd)
+		Vector2D	- CHECKLIST(5b852fd)
+		Vector3D	- CHECKLIST(5b852fd)
 
 	Native >
 		FreeTypeMethods	- INCOMPLETE
