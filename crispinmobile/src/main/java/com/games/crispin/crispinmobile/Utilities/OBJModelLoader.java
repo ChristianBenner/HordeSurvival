@@ -1,19 +1,12 @@
 package com.games.crispin.crispinmobile.Utilities;
 
 import android.content.res.Resources;
-import android.util.Base64;
-import android.util.Xml;
 
 import com.games.crispin.crispinmobile.Crispin;
 import com.games.crispin.crispinmobile.Rendering.Data.RenderObjectData;
-import com.games.crispin.crispinmobile.Rendering.Data.RenderObjectDataFormat;
 import com.games.crispin.crispinmobile.Rendering.Utilities.RenderObject;
 
 import java.io.InputStream;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Scanner;
 
 public class OBJModelLoader
 {
@@ -155,7 +148,7 @@ public class OBJModelLoader
                         if(dataStartIndex != NO_START_INDEX)
                         {
                             // We are processing a float and have found the end of it, parse it
-                            renderObjectData.addVertexData(Float.parseFloat(new String(theFile, dataStartIndex, i - dataStartIndex)));
+                            renderObjectData.addPositionData(Float.parseFloat(new String(theFile, dataStartIndex, i - dataStartIndex)));
                             dataStartIndex = NO_START_INDEX;
 
                             if(countPositionDataElements)
@@ -285,7 +278,7 @@ public class OBJModelLoader
                         if (dataStartIndex != NO_START_INDEX)
                         {
                             // We are processing a float and have found the end of it, parse it
-                            renderObjectData.addVertexData(Float.parseFloat(new String(theFile, dataStartIndex, theFile.length - dataStartIndex)));
+                            renderObjectData.addPositionData(Float.parseFloat(new String(theFile, dataStartIndex, theFile.length - dataStartIndex)));
                         }
                         break;
                     case TEXEL:
@@ -377,7 +370,7 @@ public class OBJModelLoader
                 break;
         }
 
-        return renderObjectData.processFaceData();
+        return renderObjectData.processData();
     }
 
     public static RenderObject readObjFile(int resourceId)

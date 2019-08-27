@@ -39,7 +39,7 @@ public class Font
         {
             byte[] sixtyTest = new byte[inStream.available()];
             sixtyTest = convertStreamToByteArray(inStream);
-            FreeTypeMethods.initFreeType();
+          //  FreeTypeMethods.initFreeType();
 
             TextureOptions textureOptions = new TextureOptions();
             textureOptions.internalFormat = GL_LUMINANCE;
@@ -50,19 +50,16 @@ public class Font
             {
                 System.out.println("Loading glyph: " + i);
                 // load character, apply texture
-                byte[] glyphBmp2 = FreeTypeMethods.loadGlyph(sixtyTest, (byte)i, size);
-                int width = FreeTypeMethods.getFaceWidth();
-                int height = FreeTypeMethods.getFaceHeight();
+                FreeTypeMethods.FreeTypeCharacter temp = new FreeTypeMethods.FreeTypeCharacter(sixtyTest, size, (byte)i);
                 FreeTypeCharacter character = new FreeTypeCharacter();
-                character.texture = new Texture(glyphBmp2, width, height, textureOptions);
-                character.width = width;
-                character.height = height;
-                character.bearingX = FreeTypeMethods.getFaceBearingX();
-                character.bearingY = FreeTypeMethods.getFaceBearingY();
-                character.advance = FreeTypeMethods.getFaceAdvance();
+                character.texture = new Texture(temp.getBytes(), temp.getWidth(), temp.getHeight(), textureOptions);
+                character.width = temp.getWidth();
+                character.height = temp.getHeight();
+                character.bearingX = temp.getBearingX();
+                character.bearingY = temp.getBearingY();
+                character.advance = temp.getAdvance();
                 character.ascii = (byte)i;
                 characters.put(i, character);
-                FreeTypeMethods.freeFace();
             }
         }
         catch(Exception e)

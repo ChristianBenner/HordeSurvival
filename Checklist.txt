@@ -24,7 +24,7 @@ Project Classes:
 		
 	Rendering >
 		Data >
-			Colour					- INCOMPLETE
+			Colour					- INCOMPLETE: Colours take up too much data (should be 4 bytes not 16 bytes)
 			FreeTypeCharacter		- INCOMPLETE
 			RenderObjectData		- INCOMPLETE
 			RenderObjectDataFormat	- INCOMPLETE

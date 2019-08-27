@@ -8,12 +8,29 @@ import static com.games.crispin.crispinmobile.Rendering.Data.RenderObjectDataFor
 import static com.games.crispin.crispinmobile.Rendering.Data.RenderObjectDataFormat.AttributeOrder_t.POSITION_THEN_NORMAL;
 import static com.games.crispin.crispinmobile.Rendering.Data.RenderObjectDataFormat.AttributeOrder_t.POSITION_THEN_TEXEL;
 import static com.games.crispin.crispinmobile.Rendering.Data.RenderObjectDataFormat.AttributeOrder_t.POSITION_THEN_TEXEL_THEN_NORMAL;
-import static com.games.crispin.crispinmobile.Rendering.Data.RenderObjectDataFormat.PositionDimensions_t.XY;
-import static com.games.crispin.crispinmobile.Rendering.Data.RenderObjectDataFormat.PositionDimensions_t.XYZ;
-import static com.games.crispin.crispinmobile.Rendering.Data.RenderObjectDataFormat.TexelDimensions_t.ST;
 
+/**
+ * RenderObjectData is a class designed to build vertex data based on position, texel, normal and
+ * face data. This makes it suitable for building vertex data for the GPU from OBJ data formats.
+ *
+ * @author      Christian Benner
+ * @version     %I%, %G%
+ * @see         RenderObject
+ * @since       1.0
+ */
 public class RenderObjectData
 {
+    /**
+     * The type of vertex data that the face data contains.
+     *  POSITION_ONLY: The face data only includes positional vertex data
+     *  POSITION_AND_TEXEL: The face data includes positional and texel vertex data
+     *  POSITION_AND_NORMAL: The face data includes positional and normal vertex data
+     *  POSITION_AND_TEXEL_AND_NORMAL: The face data includes positional, texel and normal vertex
+     *  data
+     *  NONE: FaceData has not been determined to contain any vertex data
+     *
+     * @since       1.0
+     */
     public enum FaceData
     {
         POSITION_ONLY,
@@ -23,6 +40,11 @@ public class RenderObjectData
         NONE
     }
 
+    /**
+     * The position components that the positional vertex data is comprised of.
+     *
+     * @since       1.0
+     */
     public enum PositionComponents
     {
         XYZW,
@@ -31,25 +53,65 @@ public class RenderObjectData
         NONE
     }
 
+    // The number of data elements in position only face data
     private static final int NUM_DATA_ELEMENTS_POSITION_ONLY = 1;
+
+    // The number of data elements in position and normal face data
     private static final int NUM_DATA_ELEMENTS_POSITION_AND_NORMAL = 2;
+
+    // The number of data elements in position and texel data
     private static final int NUM_DATA_ELEMENTS_POSITION_AND_TEXEL = 2;
+
+    // The number of data elements in position, texel and normal data
     private static final int NUM_DATA_ELEMENTS_POSITION_AND_TEXEL_AND_NORMAL = 3;
+
+    // The start index for the position data
     private static final int POSITION_START_INDEX = 0;
+
+    // Represent a data start index as unused
     private static final int UNUSED_DATA_ELEMENT = -1;
 
+    // Array holding the position vertex data
     private ArrayList<Float> positionDataArray;
+
+    // Array holding the texel vertex data
     private ArrayList<Float> texelDataArray;
+
+    // Array holding the normal vertex data
     private ArrayList<Float> normalDataArray;
+
+    // Array holding the face data
     private ArrayList<Integer> faceDataArray;
+
+    // The type of face data that is to be loaded
     private FaceData faceData;
+
+    // The render method that has been determined
     private RenderObject.RenderMethod renderMethod;
+
+    // The position components in the data
     private PositionComponents positionComponents;
+
+    // The data stride
     private int dataStride;
-    private int vertexStartIndex;
+
+    // The start index of the position data
+    private int positionStartIndex;
+
+    // The start index of the texel data
     private int texelStartIndex;
+
+    // The start index of the normal data
     private int normalStartIndex;
 
+    // Number of position components
+    private int numberOfPositionComponents;
+
+    /**
+     * Construct the RenderObjectData object
+     *
+     * @since   1.0
+     */
     public RenderObjectData()
     {
         positionDataArray = new ArrayList<>();
@@ -59,12 +121,18 @@ public class RenderObjectData
         faceData = FaceData.NONE;
         renderMethod = RenderObject.RenderMethod.NONE;
         positionComponents = PositionComponents.NONE;
-        dataStride = 0;
-        vertexStartIndex = UNUSED_DATA_ELEMENT;
+        positionStartIndex = UNUSED_DATA_ELEMENT;
         texelStartIndex = UNUSED_DATA_ELEMENT;
         normalStartIndex = UNUSED_DATA_ELEMENT;
+        dataStride = 0;
+        numberOfPositionComponents = 0;
     }
 
+    /**
+     * Set the position component type
+     *
+     * @since   1.0
+     */
     public boolean setPositionComponents(PositionComponents positionComponents)
     {
         if(this.positionComponents == PositionComponents.NONE)
@@ -75,12 +143,15 @@ public class RenderObjectData
             {
                 case XY:
                     System.out.println("vvv Set Position Component to XY");
+                    numberOfPositionComponents = 2;
                     break;
                 case XYZ:
                     System.out.println("vvv Set Position Component to XYZ");
+                    numberOfPositionComponents = 3;
                     break;
                 case XYZW:
                     System.out.println("vvv Set Position Component to XYZW");
+                    numberOfPositionComponents = 4;
                     break;
                 case NONE:
                     System.out.println("vvv Set Position Component to NONE");
@@ -100,6 +171,11 @@ public class RenderObjectData
         }
     }
 
+    /**
+     * Set the render method type
+     *
+     * @since   1.0
+     */
     public boolean setRenderMethod(RenderObject.RenderMethod renderMethod)
     {
         if(this.renderMethod == RenderObject.RenderMethod.NONE)
@@ -135,6 +211,11 @@ public class RenderObjectData
         }
     }
 
+    /**
+     * Set the face data type
+     *
+     * @since   1.0
+     */
     public boolean setFaceDataType(FaceData faceDataType)
     {
         if(this.faceData == FaceData.NONE)
@@ -149,29 +230,29 @@ public class RenderObjectData
                 case POSITION_ONLY:
                     System.out.println("vvv Face Data Type set to: " + "POSITION_ONLY");
                     dataStride = NUM_DATA_ELEMENTS_POSITION_ONLY;
-                    vertexStartIndex = POSITION_START_INDEX;
+                    positionStartIndex = POSITION_START_INDEX;
                     texelStartIndex = UNUSED_DATA_ELEMENT;
                     normalStartIndex = UNUSED_DATA_ELEMENT;
                     break;
                 case POSITION_AND_NORMAL:
                     System.out.println("vvv Face Data Type set to: " + "POSITION_AND_NORMAL");
                     dataStride = NUM_DATA_ELEMENTS_POSITION_AND_NORMAL;
-                    vertexStartIndex = POSITION_START_INDEX;
+                    positionStartIndex = POSITION_START_INDEX;
                     texelStartIndex = UNUSED_DATA_ELEMENT;
-                    normalStartIndex = vertexStartIndex + 1;
+                    normalStartIndex = positionStartIndex + 1;
                     break;
                 case POSITION_AND_TEXEL:
                     System.out.println("vvv Face Data Type set to: " + "POSITION_AND_TEXEL");
                     dataStride = NUM_DATA_ELEMENTS_POSITION_AND_TEXEL;
-                    vertexStartIndex = POSITION_START_INDEX;
-                    texelStartIndex = vertexStartIndex + 1;
+                    positionStartIndex = POSITION_START_INDEX;
+                    texelStartIndex = positionStartIndex + 1;
                     normalStartIndex = UNUSED_DATA_ELEMENT;
                     break;
                 case POSITION_AND_TEXEL_AND_NORMAL:
                     System.out.println("vvv Face Data Type set to: " + "POSITION_AND_TEXEL_AND_NORMAL");
                     dataStride = NUM_DATA_ELEMENTS_POSITION_AND_TEXEL_AND_NORMAL;
-                    vertexStartIndex = POSITION_START_INDEX;
-                    texelStartIndex = vertexStartIndex + 1;
+                    positionStartIndex = POSITION_START_INDEX;
+                    texelStartIndex = positionStartIndex + 1;
                     normalStartIndex = texelStartIndex + 1;
                     break;
             }
@@ -189,42 +270,51 @@ public class RenderObjectData
         }
     }
 
-    public void addVertexData(float vertexData)
+    /**
+     * Add some position data to be processed later
+     *
+     * @since   1.0
+     */
+    public void addPositionData(float vertexData)
     {
         positionDataArray.add(vertexData);
     }
 
+    /**
+     * Add some texel data to be processed later
+     *
+     * @since   1.0
+     */
     public void addTexelData(float texelData)
     {
         texelDataArray.add(texelData);
     }
 
+    /**
+     * Add some normal data to be processed later
+     *
+     * @since   1.0
+     */
     public void addNormalData(float normalData)
     {
         normalDataArray.add(normalData);
     }
 
+    /**
+     * Add some face data to be processed later
+     *
+     * @since   1.0
+     */
     public void addFaceData(int faceData)
     {
         faceDataArray.add(faceData);
     }
 
-    private int getNumberPositionElements()
-    {
-        switch (positionComponents)
-        {
-            case XYZW:
-                return 4;
-            case XYZ:
-                return 3;
-            case XY:
-                return 2;
-            case NONE:
-                default:
-                return 0;
-        }
-    }
-
+    /**
+     * Get the position dimensions
+     *
+     * @since   1.0
+     */
     private RenderObjectDataFormat.PositionDimensions_t getPositionDimensions()
     {
         switch (positionComponents)
@@ -240,11 +330,17 @@ public class RenderObjectData
         }
     }
 
-    public RenderObject processFaceData()
+    /**
+     * Process the data. The function produces the vertex data based on positional, texel and normal
+     * face data.
+     *
+     * @since   1.0
+     */
+    public RenderObject processData()
     {
         final int NUMBER_OF_FACE_DATA = faceDataArray.size() / dataStride;
 
-        final int NUMBER_OF_POSITION_ELEMENTS = getNumberPositionElements();
+        final int NUMBER_OF_POSITION_ELEMENTS = numberOfPositionComponents;
         final int POSITION_BUFFER_SIZE = NUMBER_OF_POSITION_ELEMENTS * NUMBER_OF_FACE_DATA;
 
         final int NUMBER_OF_TEXEL_ELEMENTS = 2;
@@ -257,7 +353,7 @@ public class RenderObjectData
 
         int vertexDataBufferIndex = 0;
         // Process the vertex data
-        for(int vertexIterator = vertexStartIndex;
+        for(int vertexIterator = positionStartIndex;
             vertexIterator != -1 && vertexIterator < faceDataArray.size();
             vertexIterator += dataStride)
         {
