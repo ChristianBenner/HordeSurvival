@@ -26,7 +26,7 @@ public class RenderObjectData
      *  POSITION_AND_TEXEL: The face data includes positional and texel vertex data
      *  POSITION_AND_NORMAL: The face data includes positional and normal vertex data
      *  POSITION_AND_TEXEL_AND_NORMAL: The face data includes positional, texel and normal vertex
-     *  data
+     *      data
      *  NONE: FaceData has not been determined to contain any vertex data
      *
      * @since       1.0
@@ -334,6 +334,7 @@ public class RenderObjectData
      * Process the data. The function produces the vertex data based on positional, texel and normal
      * face data.
      *
+     * @return  A RenderObject built from the processed data
      * @since   1.0
      */
     public RenderObject processData()
