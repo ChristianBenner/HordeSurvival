@@ -108,6 +108,7 @@ public class Colour
     /**
      * Set the value for the red channel (range 0.0 to 1.0)
      *
+     * @param red   New value for the red channel
      * @since   1.0
      */
     public void setRed(float red)
@@ -129,6 +130,7 @@ public class Colour
     /**
      * Set the value for the green channel (range 0.0 to 1.0)
      *
+     * @param green New value for the green channel
      * @since   1.0
      */
     public void setGreen(float green)
@@ -150,6 +152,7 @@ public class Colour
     /**
      * Set the value for the blue channel (range 0.0 to 1.0)
      *
+     * @param blue  New value for the blue channel
      * @since   1.0
      */
     public void setBlue(float blue)
@@ -171,6 +174,7 @@ public class Colour
     /**
      * Set the value for the alpha channel (range 0.0 to 1.0)
      *
+     * @param alpha New value for the alpha channel
      * @since   1.0
      */
     public void setAlpha(float alpha)

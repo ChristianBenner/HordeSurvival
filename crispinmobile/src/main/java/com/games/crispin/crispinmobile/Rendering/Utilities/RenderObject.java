@@ -1,6 +1,7 @@
 package com.games.crispin.crispinmobile.Rendering.Utilities;
 
 import android.opengl.Matrix;
+import android.util.Pair;
 
 import com.games.crispin.crispinmobile.Geometry.Point2D;
 import com.games.crispin.crispinmobile.Geometry.Point3D;
@@ -15,9 +16,13 @@ import com.games.crispin.crispinmobile.Rendering.Shaders.TextureShader;
 import com.games.crispin.crispinmobile.Utilities.Logger;
 import com.games.crispin.crispinmobile.Rendering.Shaders.UniformColourShader;
 
+import java.lang.reflect.Array;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
+import java.text.DateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 
 import static android.opengl.GLES20.GL_LINES;
 import static android.opengl.GLES20.GL_POINTS;
@@ -101,12 +106,264 @@ public class RenderObject
     protected Material material;
     protected Shader shader;
 
+    // Has the render object been provided multiple buffers (e.g. one buffer for position data and
+    // a separate bother for texel data)
+    private boolean multipleDataBuffers;
+    private ArrayList<Pair<Byte, ByteBuffer>> buffers;
+    private RenderMethod multiBufferRenderMethods;
+
     public enum RenderMethod
     {
         POINTS,
         LINES,
         TRIANGLES,
         NONE
+    }
+
+    public static final byte UNUSED_BUFFER = 0x0;
+    public static final byte POSITION_BUFFER_TYPE = 0x01;
+    public static final byte COLOUR_BUFFER_TYPE = 0x02;
+    public static final byte TEXEL_BUFFER_TYPE = 0x03;
+    public static final byte NORMAL_BUFFER_TYPE = 0x04;
+
+    /**
+     * Create a render object using multiple data buffers. This is if your data (e.g. position or
+     * texel data) is in separate buffers. You must use a buffer type so that the order of the
+     * buffers can be determined.
+     *
+     * @param vertexCount   The number of vertices in the data
+     * @param bufferOneType The type of the first buffer (e.g. POSITION_BUFFER_TYPE)
+     * @param bufferOne     The first data buffer
+     * @param bufferTwoType The type of the second buffer
+     * @param bufferTwo     The second data buffer
+     * @param material          Material to apply to the object
+     * @see RenderObjectDataFormat
+     * @since   1.0
+     */
+    public RenderObject(int vertexCount,
+                        RenderMethod renderMethod,
+                        byte bufferOneType,
+                        float[] bufferOne,
+                        byte bufferTwoType,
+                        float[] bufferTwo,
+                        Material material)
+    {
+        this.DATA_FORMAT = null;
+        this.VERTEX_COUNT = vertexCount;
+        this.multiBufferRenderMethods = renderMethod;
+        this.scale = new Scale3D();
+        this.position = new Point3D();
+        this.rotation = new Rotation3D();
+        this.totalStrideBytes = 0;
+
+        // User has provided more than one buffer
+        multipleDataBuffers = true;
+
+        buffers = new ArrayList<>();
+        buffers.add(new Pair<>(bufferOneType, convertToByteBuffer(bufferOne)));
+        buffers.add(new Pair<>(bufferTwoType, convertToByteBuffer(bufferTwo)));
+
+        setMaterial(material);
+    }
+
+    /**
+     * Create a render object using multiple data buffers. This is if your data (e.g. position or
+     * texel data) is in separate buffers. You must use a buffer type so that the order of the
+     * buffers can be determined.
+     *
+     * @param vertexCount       The number of vertices in the data
+     * @param bufferOneType     The type of the first buffer (e.g. POSITION_BUFFER_TYPE)
+     * @param bufferOne         The first data buffer
+     * @param bufferTwoType     The type of the second buffer
+     * @param bufferTwo         The second data buffer
+     * @param bufferThreeType   The type of the third buffer
+     * @param bufferThree       The third data buffer
+     * @param material          Material to apply to the object
+     * @see RenderObjectDataFormat
+     * @since   1.0
+     */
+    public RenderObject(int vertexCount,
+                        RenderMethod renderMethod,
+                        byte bufferOneType,
+                        float[] bufferOne,
+                        byte bufferTwoType,
+                        float[] bufferTwo,
+                        byte bufferThreeType,
+                        float[] bufferThree,
+                        Material material)
+    {
+        this.DATA_FORMAT = null;
+        this.VERTEX_COUNT = vertexCount;
+        this.multiBufferRenderMethods = renderMethod;
+        this.scale = new Scale3D();
+        this.position = new Point3D();
+        this.rotation = new Rotation3D();
+        this.totalStrideBytes = 0;
+
+        // User has provided more than one buffer
+        multipleDataBuffers = true;
+
+        buffers = new ArrayList<>();
+        buffers.add(new Pair<>(bufferOneType, convertToByteBuffer(bufferOne)));
+        buffers.add(new Pair<>(bufferTwoType, convertToByteBuffer(bufferTwo)));
+        buffers.add(new Pair<>(bufferThreeType, convertToByteBuffer(bufferThree)));
+
+        setMaterial(material);
+    }
+
+    /**
+     * Create a render object using multiple data buffers. This is if your data (e.g. position or
+     * texel data) is in separate buffers. You must use a buffer type so that the order of the
+     * buffers can be determined.
+     *
+     * @param vertexCount       The number of vertices in the data
+     * @param bufferOneType     The type of the first buffer (e.g. POSITION_BUFFER_TYPE)
+     * @param bufferOne         The first data buffer
+     * @param bufferTwoType     The type of the second buffer
+     * @param bufferTwo         The second data buffer
+     * @param bufferThreeType   The type of the third buffer
+     * @param bufferThree       The third data buffer
+     * @param bufferFourType    The type of the forth buffer
+     * @param bufferFour        The forth data buffer
+     * @param material          Material to apply to the object
+     * @see RenderObjectDataFormat
+     * @since   1.0
+     */
+    public RenderObject(int vertexCount,
+                        RenderMethod renderMethod,
+                        byte bufferOneType,
+                        float[] bufferOne,
+                        byte bufferTwoType,
+                        float[] bufferTwo,
+                        byte bufferThreeType,
+                        float[] bufferThree,
+                        byte bufferFourType,
+                        float[] bufferFour,
+                        Material material)
+    {
+        this.DATA_FORMAT = null;
+        this.VERTEX_COUNT = vertexCount;
+        this.multiBufferRenderMethods = renderMethod;
+        this.scale = new Scale3D();
+        this.position = new Point3D();
+        this.rotation = new Rotation3D();
+        this.totalStrideBytes = 0;
+
+        // User has provided more than one buffer
+        multipleDataBuffers = true;
+
+        buffers = new ArrayList<>();
+        buffers.add(new Pair<>(bufferOneType, convertToByteBuffer(bufferOne)));
+        buffers.add(new Pair<>(bufferTwoType, convertToByteBuffer(bufferTwo)));
+        buffers.add(new Pair<>(bufferThreeType, convertToByteBuffer(bufferThree)));
+        buffers.add(new Pair<>(bufferFourType, convertToByteBuffer(bufferFour)));
+
+        setMaterial(material);
+    }
+
+    /**
+     * Create a render object using multiple data buffers. This is if your data (e.g. position or
+     * texel data) is in separate buffers. You must use a buffer type so that the order of the
+     * buffers can be determined.
+     *
+     * @param vertexCount   The number of vertices in the data
+     * @param bufferOneType The type of the first buffer (e.g. POSITION_BUFFER_TYPE)
+     * @param bufferOne     The first data buffer
+     * @param bufferTwoType The type of the second buffer
+     * @param bufferTwo     The second data buffer
+     * @see RenderObjectDataFormat
+     * @since   1.0
+     */
+    public RenderObject(int vertexCount,
+                        RenderMethod renderMethod,
+                        byte bufferOneType,
+                        float[] bufferOne,
+                        byte bufferTwoType,
+                        float[] bufferTwo)
+    {
+        this(vertexCount,
+                renderMethod,
+                bufferOneType,
+                bufferOne,
+                bufferTwoType,
+                bufferTwo,
+                new Material());
+    }
+
+    /**
+     * Create a render object using multiple data buffers. This is if your data (e.g. position or
+     * texel data) is in separate buffers. You must use a buffer type so that the order of the
+     * buffers can be determined.
+     *
+     * @param vertexCount       The number of vertices in the data
+     * @param bufferOneType     The type of the first buffer (e.g. POSITION_BUFFER_TYPE)
+     * @param bufferOne         The first data buffer
+     * @param bufferTwoType     The type of the second buffer
+     * @param bufferTwo         The second data buffer
+     * @param bufferThreeType   The type of the third buffer
+     * @param bufferThree       The third data buffer
+     * @see RenderObjectDataFormat
+     * @since   1.0
+     */
+    public RenderObject(int vertexCount,
+                        RenderMethod renderMethod,
+                        byte bufferOneType,
+                        float[] bufferOne,
+                        byte bufferTwoType,
+                        float[] bufferTwo,
+                        byte bufferThreeType,
+                        float[] bufferThree)
+    {
+        this(vertexCount,
+                renderMethod,
+                bufferOneType,
+                bufferOne,
+                bufferTwoType,
+                bufferTwo,
+                bufferThreeType,
+                bufferThree,
+                new Material());
+    }
+
+    /**
+     * Create a render object using multiple data buffers. This is if your data (e.g. position or
+     * texel data) is in separate buffers. You must use a buffer type so that the order of the
+     * buffers can be determined.
+     *
+     * @param vertexCount       The number of vertices in the data
+     * @param bufferOneType     The type of the first buffer (e.g. POSITION_BUFFER_TYPE)
+     * @param bufferOne         The first data buffer
+     * @param bufferTwoType     The type of the second buffer
+     * @param bufferTwo         The second data buffer
+     * @param bufferThreeType   The type of the third buffer
+     * @param bufferThree       The third data buffer
+     * @param bufferFourType    The type of the forth buffer
+     * @param bufferFour        The forth data buffer
+     * @see RenderObjectDataFormat
+     * @since   1.0
+     */
+    public RenderObject(int vertexCount,
+                        RenderMethod renderMethod,
+                        byte bufferOneType,
+                        float[] bufferOne,
+                        byte bufferTwoType,
+                        float[] bufferTwo,
+                        byte bufferThreeType,
+                        float[] bufferThree,
+                        byte bufferFourType,
+                        float[] bufferFour)
+    {
+        this(vertexCount,
+                renderMethod,
+                bufferOneType,
+                bufferOne,
+                bufferTwoType,
+                bufferTwo,
+                bufferThreeType,
+                bufferThree,
+                bufferFourType,
+                bufferFour,
+                new Material());
     }
 
     public RenderObject(float[] vertexData,
@@ -118,6 +375,7 @@ public class RenderObject
         this.position = new Point3D();
         this.rotation = new Rotation3D();
         this.totalStrideBytes = 0;
+        this.multipleDataBuffers = false;
 
         // Figure out the stride
         resolveStride();
@@ -157,6 +415,27 @@ public class RenderObject
         this(vertexData, renderObjectDataFormat, new Material());
     }
 
+    public ByteBuffer convertToByteBuffer(float[] buffer)
+    {
+        // Initialise a vertex byte buffer for the shape float array
+        final ByteBuffer VERTICES_BYTE_BUFFER = ByteBuffer.allocateDirect(
+                buffer.length * BYTES_PER_FLOAT);
+
+        // Use the devices hardware's native byte order
+        VERTICES_BYTE_BUFFER.order(ByteOrder.nativeOrder());
+
+        // Create a Float buffer from the ByteBuffer
+        vertexBuffer = VERTICES_BYTE_BUFFER.asFloatBuffer();
+
+        // Add the array of floats to the buffer
+        vertexBuffer.put(buffer);
+
+        // Set buffer to read the first co-ordinate
+        vertexBuffer.position(0);
+
+        return VERTICES_BYTE_BUFFER;
+    }
+
     public void setMaterial(Material material)
     {
         this.material = material;
@@ -166,42 +445,67 @@ public class RenderObject
     {
         if(!hasCustomShader)
         {
-            // Check that the object has all of the components required to render a texture
-            final boolean SUPPORTS_TEXTURE = material.hasTexture() &&
-                    DATA_FORMAT.supportsTexelData() &&
-                    !material.isIgnoringTexelData();
+            boolean supportsTexture = false;
+            boolean supportsColourPerAttrib = false;
 
-            // Check if the object has all of the components required to render per vertex colour
-            final boolean SUPPORTS_COLOUR_PER_ATTRIB =
-                    DATA_FORMAT.supportsColourData() &&
-                    !material.isIgnoringColourData();
+            if(multipleDataBuffers)
+            {
+                for(int i = 0; i < buffers.size(); i++)
+                {
+                    if(buffers.get(i).first == COLOUR_BUFFER_TYPE)
+                    {
+                        // Check if the object has all of the components required to render per vertex colour
+                        supportsColourPerAttrib = !material.isIgnoringColourData();
+                    }
+                    else if(buffers.get(i).first == TEXEL_BUFFER_TYPE)
+                    {
+                        // Check that the object has all of the components required to render a texture
+                        supportsTexture = material.hasTexture() &&
+                                !material.isIgnoringTexelData();
+                    }
+                }
+            }
+            else
+            {
+                // Check that the object has all of the components required to render a texture
+                supportsTexture = material.hasTexture() &&
+                        DATA_FORMAT.supportsTexelData() &&
+                        !material.isIgnoringTexelData();
 
-//            // Determine the best shader to used depending on the material
-//            if(material.isLightingEnabled() && material.hasTexture() && material.hasNormalMap())
-//            {
-//                // Use lighting, texture/direction map supporting shader
-//            }
-//            else if(material.isLightingEnabled() && material.hasTexture())
-//            {
-//                // Use lighting, texture supporting shader
-//            }
-//            else if(material.isLightingEnabled())
-//            {
-//                // Use lighting supporting shader
-//            }
-//            else
+                // Check if the object has all of the components required to render per vertex colour
+                supportsColourPerAttrib =
+                        DATA_FORMAT.supportsColourData() &&
+                                !material.isIgnoringColourData();
 
-            if(SUPPORTS_COLOUR_PER_ATTRIB && SUPPORTS_TEXTURE)
+//                // Determine the best shader to used depending on the material
+//                if(material.isLightingEnabled() && material.hasTexture() && material.hasNormalMap())
+//                {
+//                    // Use lighting, texture/direction map supporting shader
+//                }
+//                else if(material.isLightingEnabled() && material.hasTexture())
+//                {
+//                    // Use lighting, texture supporting shader
+//                }
+//                else if(material.isLightingEnabled())
+//                {
+//                    // Use lighting supporting shader
+//                }
+//                else
+            }
+
+
+
+            if(supportsColourPerAttrib && supportsTexture)
             {
                 // A colour attribute and texture shader
                 shader = new TextureAttributeColourShader();
             }
-            else if(SUPPORTS_TEXTURE)
+            else if(supportsTexture)
             {
                 // Just a texture shader
                 shader = new TextureShader();
             }
-            else if(SUPPORTS_COLOUR_PER_ATTRIB)
+            else if(supportsColourPerAttrib)
             {
                 // Just a colour attribute shader
                 shader = new AttributeColourShader();
@@ -426,19 +730,66 @@ public class RenderObject
     // check if the data provided contains the data necessary for disable or enable an attribute
     protected void handleAttributes(boolean enable)
     {
-        if(!material.isIgnoringPositionData())
+        if(multipleDataBuffers)
         {
-            handlePositionDataAttribute(enable);
-        }
+            // Go through each buffer and upload the data to the GPU
+            for(int i = 0; i < buffers.size(); i++)
+            {
+                buffers.get(i).second.position(0);
 
-        if(!material.isIgnoringTexelData() && DATA_FORMAT.supportsTexelData())
-        {
-            handleTexelDataAttribute(enable);
-        }
+                switch (buffers.get(i).first)
+                {
+                    case POSITION_BUFFER_TYPE:
+                        glEnableVertexAttribArray(shader.getPositionAttributeHandle());
+                        glVertexAttribPointer(shader.getPositionAttributeHandle(),
+                                buffers.get(i).second.limit(),
+                                GL_FLOAT,
+                                true,
+                                totalStrideBytes,
+                                buffers.get(i).second);
+                        break;
+                    case COLOUR_BUFFER_TYPE:
+                        glEnableVertexAttribArray(shader.getColourAttributeHandle());
+                        glVertexAttribPointer(shader.getColourAttributeHandle(),
+                                buffers.get(i).second.limit(),
+                                GL_FLOAT,
+                                true,
+                                totalStrideBytes,
+                                buffers.get(i).second);
+                        break;
+                    case NORMAL_BUFFER_TYPE:
+                        // Not yet supported
+                        break;
+                    case TEXEL_BUFFER_TYPE:
+                        glEnableVertexAttribArray(shader.getTextureAttributeHandle());
+                        glVertexAttribPointer(shader.getTextureAttributeHandle(),
+                                buffers.get(i).second.limit(),
+                                GL_FLOAT,
+                                true,
+                                totalStrideBytes,
+                                buffers.get(i).second);
+                        break;
+                }
 
-        if(!material.isIgnoringColourData() && DATA_FORMAT.supportsColourData())
+                buffers.get(i).second.position(0);
+            }
+        }
+        else
         {
-            handleColourDataAttribute(enable);
+            if(!material.isIgnoringPositionData())
+            {
+                handlePositionDataAttribute(enable);
+            }
+
+            if(!material.isIgnoringTexelData() && DATA_FORMAT.supportsTexelData())
+            {
+                handleTexelDataAttribute(enable);
+            }
+
+            if(!material.isIgnoringColourData() && DATA_FORMAT.supportsColourData())
+            {
+                handleColourDataAttribute(enable);
+            }
         }
     }
 
@@ -542,18 +893,37 @@ public class RenderObject
         }
 
         handleAttributes(true);
-        switch (DATA_FORMAT.getRenderMethod())
+        if(multipleDataBuffers)
         {
-            case POINTS:
-                glDrawArrays(GL_POINTS, 0, VERTEX_COUNT);
-                break;
-            case LINES:
-                glDrawArrays(GL_LINES, 0, VERTEX_COUNT);
-                break;
-            case TRIANGLES:
-                glDrawArrays(GL_TRIANGLES, 0, VERTEX_COUNT);
-                break;
+            switch (multiBufferRenderMethods)
+            {
+                case POINTS:
+                    glDrawArrays(GL_POINTS, 0, VERTEX_COUNT);
+                    break;
+                case LINES:
+                    glDrawArrays(GL_LINES, 0, VERTEX_COUNT);
+                    break;
+                case TRIANGLES:
+                    glDrawArrays(GL_TRIANGLES, 0, VERTEX_COUNT);
+                    break;
+            }
         }
+        else
+        {
+            switch (DATA_FORMAT.getRenderMethod())
+            {
+                case POINTS:
+                    glDrawArrays(GL_POINTS, 0, VERTEX_COUNT);
+                    break;
+                case LINES:
+                    glDrawArrays(GL_LINES, 0, VERTEX_COUNT);
+                    break;
+                case TRIANGLES:
+                    glDrawArrays(GL_TRIANGLES, 0, VERTEX_COUNT);
+                    break;
+            }
+        }
+
         handleAttributes(false);
 
         glBindTexture(GL_TEXTURE_2D, 0);

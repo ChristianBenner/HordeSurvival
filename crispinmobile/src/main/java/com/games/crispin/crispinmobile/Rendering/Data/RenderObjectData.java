@@ -129,8 +129,11 @@ public class RenderObjectData
     }
 
     /**
-     * Set the position component type
+     * Attempt to set the position component type
      *
+     * @param positionComponents    Text
+     * @return  True if the position component type has been set, else false. The function will
+     *          return false if the data has already been assigned a position component type
      * @since   1.0
      */
     public boolean setPositionComponents(PositionComponents positionComponents)
@@ -174,6 +177,9 @@ public class RenderObjectData
     /**
      * Set the render method type
      *
+     * @param renderMethod  The new render method to set
+     * @return  True if render method changed successfully, else false. The function will return
+     *          false if the data has already been assigned a render method
      * @since   1.0
      */
     public boolean setRenderMethod(RenderObject.RenderMethod renderMethod)
@@ -214,6 +220,9 @@ public class RenderObjectData
     /**
      * Set the face data type
      *
+     * @param faceDataType  The new face data type
+     * @return  True if the face data type has been set successfully, else false. The function will
+     *          return false if the data has already been assigned a face data type
      * @since   1.0
      */
     public boolean setFaceDataType(FaceData faceDataType)
@@ -273,6 +282,7 @@ public class RenderObjectData
     /**
      * Add some position data to be processed later
      *
+     * @param vertexData    The vertex data as a float
      * @since   1.0
      */
     public void addPositionData(float vertexData)
@@ -283,6 +293,7 @@ public class RenderObjectData
     /**
      * Add some texel data to be processed later
      *
+     * @param texelData The texel data as a float
      * @since   1.0
      */
     public void addTexelData(float texelData)
@@ -293,6 +304,7 @@ public class RenderObjectData
     /**
      * Add some normal data to be processed later
      *
+     * @param normalData    The normal data as a float
      * @since   1.0
      */
     public void addNormalData(float normalData)
@@ -303,6 +315,7 @@ public class RenderObjectData
     /**
      * Add some face data to be processed later
      *
+     * @param faceData  The face data as a float
      * @since   1.0
      */
     public void addFaceData(int faceData)
@@ -313,6 +326,7 @@ public class RenderObjectData
     /**
      * Get the position dimensions
      *
+     * @return  The components that the position data is comprised of
      * @since   1.0
      */
     private RenderObjectDataFormat.PositionDimensions_t getPositionDimensions()

@@ -72,7 +72,8 @@ Code Checklist:
 - No use of System.out.print methods
 - TAG at the top for logging (unless there is no logging)
 - All class variables have comments
-- No magic numbers (unless 0)
+- All class variables have access identifiers
+- No magic numbers (unless 0 or raw vertex data)
 - If/while/for statements have comments explaining what they do
 - Scope starts are on new lines
 - If function signatures contain more than 2 parameters, put them on new lines

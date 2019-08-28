@@ -221,7 +221,7 @@ public class TestScene extends Scene {
 
         // Draw the cube
         cubeThree.draw(camera);
-        cubeTwo.draw(camera);
+        //cubeTwo.draw(camera);
 
         if(dinomodel != null)
         {
