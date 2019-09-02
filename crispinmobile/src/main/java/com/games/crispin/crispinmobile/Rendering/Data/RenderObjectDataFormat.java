@@ -135,6 +135,15 @@ public class RenderObjectDataFormat
     // The render method that is determined from the number of different face data present
     private final RenderObject.RenderMethod renderMethod;
 
+    // Whether or not the attribute order specifies the use of texel data
+    private boolean attributeOrderSupportsTexels;
+
+    // Whether or not the attribute order specifies the use of colour data
+    private boolean attributeOrderSupportsColour;
+
+    // Whether or not the attribute order specifies the use of normal data
+    private boolean attributeOrderSupportsNormals;
+
     /**
      * Create a RenderObjectDataFormat with all the parameters.
      *
@@ -384,7 +393,7 @@ public class RenderObjectDataFormat
      */
     public boolean supportsTexelData()
     {
-        return TEXEL_DIMENSIONS != TexelDimensions_t.NONE;
+        return (TEXEL_DIMENSIONS != null) && (TEXEL_DIMENSIONS != TexelDimensions_t.NONE);
     }
 
     /**
@@ -406,7 +415,7 @@ public class RenderObjectDataFormat
      */
     public boolean supportsColourData()
     {
-        return COLOUR_DIMENSIONS != ColourDimensions_t.NONE;
+        return (COLOUR_DIMENSIONS != null) && (COLOUR_DIMENSIONS != ColourDimensions_t.NONE);
     }
 
     /**
@@ -428,7 +437,7 @@ public class RenderObjectDataFormat
      */
     public boolean supportsNormalData()
     {
-        return NORMAL_DIMENSIONS != NormalDimensions_t.NONE;
+        return (NORMAL_DIMENSIONS != null) && (NORMAL_DIMENSIONS != NormalDimensions_t.NONE);
     }
 
     /**
@@ -450,6 +459,12 @@ public class RenderObjectDataFormat
      */
     public int getNumberPositionDimensions()
     {
+        // Check if position dimensions have not been specified
+        if(POSITION_DIMENSIONS == null)
+        {
+            return 0;
+        }
+
         switch (POSITION_DIMENSIONS)
         {
             case XYZW:
@@ -470,6 +485,12 @@ public class RenderObjectDataFormat
      */
     public int getNumberTexelDimensions()
     {
+        // Check if texel dimensions have not been specified
+        if(TEXEL_DIMENSIONS == null)
+        {
+            return 0;
+        }
+
         switch (TEXEL_DIMENSIONS)
         {
             default:
@@ -488,6 +509,12 @@ public class RenderObjectDataFormat
      */
     public int getNumberColourDimensions()
     {
+        // Check if colour dimensions have not been specified
+        if(COLOUR_DIMENSIONS == null)
+        {
+            return 0;
+        }
+
         switch (COLOUR_DIMENSIONS)
         {
             case RGBA:
@@ -508,6 +535,12 @@ public class RenderObjectDataFormat
      */
     public int getNumberNormalDimensions()
     {
+        // Check if normal dimensions have not been specified
+        if(NORMAL_DIMENSIONS == null)
+        {
+            return 0;
+        }
+
         switch (NORMAL_DIMENSIONS)
         {
             case XYZW:

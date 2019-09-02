@@ -26,18 +26,18 @@ public class MyScene extends Scene {
     public MyScene()
     {
         Crispin.setBackgroundColour(Colour.GREEN);
-        shotgunModel = OBJModelLoader.readObjFile(R.raw.shotty);
-        shotgunTexture = new Texture(R.drawable.shotgun);
-
-        Material m = new Material(shotgunTexture);
-        shotgunModel.setMaterial(m);
-
-        camera3D = new Camera3D();
-        camera3D.setPosition(new Point3D(0.0f, 0.0f, 7.0f));
-
-        camera2D = new Camera2D();
-
-        text = new Text(new Font(R.raw.chunkfiveprint, 64), "SHOTTY!", true, true, Crispin.getSurfaceWidth());
+//        shotgunModel = OBJModelLoader.readObjFile(R.raw.shotty);
+//        shotgunTexture = new Texture(R.drawable.shotgun);
+//
+//        Material m = new Material(shotgunTexture);
+//        shotgunModel.setMaterial(m);
+//
+//        camera3D = new Camera3D();
+//        camera3D.setPosition(new Point3D(0.0f, 0.0f, 7.0f));
+//
+//        camera2D = new Camera2D();
+//
+//        text = new Text(new Font(R.raw.chunkfiveprint, 64), "SHOTTY!", true, true, Crispin.getSurfaceWidth());
 
     }
 

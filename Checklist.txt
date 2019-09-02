@@ -32,9 +32,8 @@ Project Classes:
 			Light	- INCOMPLETE
 		Models >
 			Cube		- INCOMPLETE
-			CubeGrouped	- INCOMPLETE
 			FontSquare	- INCOMPLETE
-			Square
+			Square		- INCOMPLETE
 		Shaders >
 			AttributeColourShader			- INCOMPLETE
 			TextShader						- INCOMPLETE

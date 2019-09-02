@@ -69,7 +69,7 @@ public class TestScene extends Scene {
         mRed = new Material();
         mRed.setColour(Colour.RED);
 
-        mGreen = new Material(new Texture(R.drawable.shotgun));
+        //mGreen = new Material(new Texture(R.drawable.shotgun));
        // mGreen.setColour(Colour.GREEN);
 
         mBlue = new Material();
@@ -80,10 +80,10 @@ public class TestScene extends Scene {
         cubeTwo = new CubeGrouped(brickMaterial);
         cubeTwo.setPosition(new Point3D(-0.1f, 3.2f, -2.0f));
 
-        cubeThree = new Cube(brickMaterial);
+        cubeThree = new Cube(brickMaterial, true, true, false);
         cubeThree.setPosition(new Point3D(2.0f, 3.0f, 0.0f));
 
-        Font font = new Font(R.raw.alexbrush, 64);
+        Font font = new Font(R.raw.opensans, 64);
 
         text = new Text(font,
                 "This is some sample text",
@@ -97,7 +97,7 @@ public class TestScene extends Scene {
         text.setPosition((Crispin.getSurfaceWidth() / 2.0f),
                 Crispin.getSurfaceHeight() - text.getHeight());
 
-        Font fontTwo = new Font(R.raw.chunkfiveprint, 64);
+        Font fontTwo = new Font(R.raw.opensans, 64);
         fpsText = new Text(fontTwo,
                 "FPS: X",
                 true,
@@ -238,14 +238,14 @@ public class TestScene extends Scene {
             personmodel.draw(camera);
         }
 
-        text.renderText(camera2D);
-        fpsText.renderText(camera2D);
+       // text.renderText(camera2D);
+       // fpsText.renderText(camera2D);
 
         frames++;
 
         if(System.currentTimeMillis() - startF >= 1000)
         {
-            fpsText.setText("FPS: " + frames);
+          //  fpsText.setText("FPS: " + frames);
             startF = System.currentTimeMillis();
             frames = 0;
         }

@@ -5,6 +5,15 @@ import com.games.crispin.crispinmobile.Rendering.Data.RenderObjectDataFormat;
 import com.games.crispin.crispinmobile.Rendering.Utilities.Material;
 import com.games.crispin.crispinmobile.Rendering.Utilities.RenderObject;
 
+import static com.games.crispin.crispinmobile.Rendering.Data.RenderObjectDataFormat.AttributeOrder_t.POSITION;
+import static com.games.crispin.crispinmobile.Rendering.Data.RenderObjectDataFormat.AttributeOrder_t.POSITION_THEN_COLOUR;
+import static com.games.crispin.crispinmobile.Rendering.Data.RenderObjectDataFormat.AttributeOrder_t.POSITION_THEN_COLOUR_THEN_NORMAL;
+import static com.games.crispin.crispinmobile.Rendering.Data.RenderObjectDataFormat.AttributeOrder_t.POSITION_THEN_NORMAL;
+import static com.games.crispin.crispinmobile.Rendering.Data.RenderObjectDataFormat.AttributeOrder_t.POSITION_THEN_TEXEL;
+import static com.games.crispin.crispinmobile.Rendering.Data.RenderObjectDataFormat.AttributeOrder_t.POSITION_THEN_TEXEL_THEN_COLOUR;
+import static com.games.crispin.crispinmobile.Rendering.Data.RenderObjectDataFormat.AttributeOrder_t.POSITION_THEN_TEXEL_THEN_COLOUR_THEN_NORMAL;
+import static com.games.crispin.crispinmobile.Rendering.Data.RenderObjectDataFormat.AttributeOrder_t.POSITION_THEN_TEXEL_THEN_NORMAL;
+
 /**
  * Cube class is a default 3D model of a cube. It is a render object and therefor can be drawn to
  * the display. It contains texture, colour and positional data.
@@ -16,8 +25,8 @@ import com.games.crispin.crispinmobile.Rendering.Utilities.RenderObject;
  */
 public class Cube extends RenderObject
 {
-    // Position vertex data
-    private static final float POSITION_VERTEX_DATA[] =
+    // Position vertex data that contains XYZ components
+    private static final float POSITION_DATA[] =
     {
             -1.0f, -1.0f, -1.0f,
             -1.0f, -1.0f, 1.0f,
@@ -62,245 +71,210 @@ public class Cube extends RenderObject
             1.0f, -1.0f, 1.0f,
     };
 
-    private static final float COLOUR_VERTEX_DATA[] =
+    // Colour vertex data that contains RGB components
+    private static final float COLOUR_DATA[] =
     {
-            1.0f, 0.0f, 0.0f, 1.0f, //rgb
-            1.0f, 0.0f, 0.0f, 1.0f, //rgb
-            1.0f, 0.0f, 0.0f, 1.0f, //rgb
-            1.0f, 1.0f, 0.0f, 1.0f, //rgb
-            1.0f, 1.0f, 0.0f, 1.0f, //rgb
-            1.0f, 1.0f, 0.0f, 1.0f, //rgb
+            1.0f, 0.0f, 0.0f,
+            1.0f, 0.0f, 0.0f,
+            1.0f, 0.0f, 0.0f,
+            1.0f, 1.0f, 0.0f,
+            1.0f, 1.0f, 0.0f,
+            1.0f, 1.0f, 0.0f,
 
-            0.0f, 1.0f, 1.0f, 1.0f, //rgb
-            0.0f, 1.0f, 1.0f, 1.0f, //rgb
-            0.0f, 1.0f, 1.0f, 1.0f, //rgb
-            1.0f, 1.0f, 0.0f, 1.0f, //rgb
-            1.0f, 1.0f, 0.0f, 1.0f, //rgb
-            1.0f, 1.0f, 0.0f, 1.0f, //rgb
+            0.0f, 1.0f, 1.0f,
+            0.0f, 1.0f, 1.0f,
+            0.0f, 1.0f, 1.0f,
+            1.0f, 1.0f, 0.0f,
+            1.0f, 1.0f, 0.0f,
+            1.0f, 1.0f, 0.0f,
 
-            -1.0f, -1.0f, -1.0f,
-            1.0f, 0.0f, 0.0f, 1.0f, //rgb
-            1.0f, 0.0f, 0.0f, 1.0f, //rgb
-            1.0f, 0.0f, 0.0f, 1.0f, //rgb
-            0.0f, 1.0f, 1.0f, 1.0f, //rgb
-            0.0f, 1.0f, 1.0f, 1.0f, //rgb
-            0.0f, 1.0f, 1.0f, 1.0f, //rgb
+            1.0f, 0.0f, 0.0f,
+            1.0f, 0.0f, 0.0f,
+            1.0f, 0.0f, 0.0f,
+            0.0f, 1.0f, 1.0f,
+            0.0f, 1.0f, 1.0f,
+            0.0f, 1.0f, 1.0f,
 
-            1.0f, 0.0f, 1.0f, 1.0f, //rgb
-            1.0f, 0.0f, 1.0f, 1.0f, //rgb
-            1.0f, 0.0f, 1.0f, 1.0f, //rgb
-            0.0f, 1.0f, 0.0f, 1.0f, //rgb
-            0.0f, 1.0f, 0.0f, 1.0f, //rgb
-            0.0f, 1.0f, 0.0f, 1.0f, //rgb
+            1.0f, 0.0f, 1.0f,
+            1.0f, 0.0f, 1.0f,
+            1.0f, 0.0f, 1.0f,
+            0.0f, 1.0f, 0.0f,
+            0.0f, 1.0f, 0.0f,
+            0.0f, 1.0f, 0.0f,
 
-            0.0f, 1.0f, 0.0f, 1.0f, //rgb
-            0.0f, 1.0f, 0.0f, 1.0f, //rgb
-            0.0f, 1.0f, 0.0f, 1.0f, //rgb
-            0.0f, 0.0f, 1.0f, 1.0f, //rgb
-            0.0f, 0.0f, 1.0f, 1.0f, //rgb
-            0.0f, 0.0f, 1.0f, 1.0f, //rgb
+            0.0f, 1.0f, 0.0f,
+            0.0f, 1.0f, 0.0f,
+            0.0f, 1.0f, 0.0f,
+            0.0f, 0.0f, 1.0f,
+            0.0f, 0.0f, 1.0f,
+            0.0f, 0.0f, 1.0f,
 
-            0.0f, 0.0f, 1.0f, 1.0f, //rgb
-            0.0f, 0.0f, 1.0f, 1.0f, //rgb
-            0.0f, 0.0f, 1.0f, 1.0f, //rgb
-            1.0f, 0.0f, 1.0f, 1.0f, //rgb
-            1.0f, 0.0f, 1.0f, 1.0f, //rgb
-            1.0f, 0.0f, 1.0f, 1.0f, //rgb
+            0.0f, 0.0f, 1.0f,
+            0.0f, 0.0f, 1.0f,
+            0.0f, 0.0f, 1.0f,
+            1.0f, 0.0f, 1.0f,
+            1.0f, 0.0f, 1.0f,
+            1.0f, 0.0f, 1.0f,
     };
 
-    private static final float TEXEL_VERTEX_DATA[] =
+    // Texel vertex data that contains ST components
+    private static final float TEXEL_DATA[] =
     {
-            0.0f, 1.0f, //st
-            1.0f, 1.0f, //st
-            1.0f, 0.0f, //st
-            0.0f, 0.0f, //st
-            1.0f, 1.0f, //st
-            1.0f, 0.0f, //st
+            0.0f, 1.0f,
+            1.0f, 1.0f,
+            1.0f, 0.0f,
+            0.0f, 0.0f,
+            1.0f, 1.0f,
+            1.0f, 0.0f,
 
-            0.0f, 1.0f, //st
-            1.0f, 0.0f, //st
-            1.0f, 1.0f, //st
-            0.0f, 0.0f, //st
-            0.0f, 1.0f, //st
-            1.0f, 1.0f, //st
+            0.0f, 1.0f,
+            1.0f, 0.0f,
+            1.0f, 1.0f,
+            0.0f, 0.0f,
+            0.0f, 1.0f,
+            1.0f, 1.0f,
 
-            0.0f, 1.0f, //st
-            1.0f, 0.0f, //st
-            0.0f, 0.0f, //st
-            0.0f, 1.0f, //st
-            0.0f, 0.0f, //st
-            1.0f, 0.0f, //st
+            0.0f, 1.0f,
+            1.0f, 0.0f,
+            0.0f, 0.0f,
+            0.0f, 1.0f,
+            0.0f, 0.0f,
+            1.0f, 0.0f,
 
-            0.0f, 0.0f, //st
-            0.0f, 1.0f, //st
-            1.0f, 1.0f, //st
-            0.0f, 0.0f, //st
-            1.0f, 1.0f, //st
-            1.0f, 0.0f, //st
+            0.0f, 0.0f,
+            0.0f, 1.0f,
+            1.0f, 1.0f,
+            0.0f, 0.0f,
+            1.0f, 1.0f,
+            1.0f, 0.0f,
 
-            1.0f, 1.0f, //st
-            0.0f, 0.0f, //st
-            0.0f, 1.0f, //st
-            1.0f, 0.0f, //st
-            0.0f, 0.0f, //st
-            0.0f, 1.0f, //st
+            1.0f, 1.0f,
+            0.0f, 0.0f,
+            0.0f, 1.0f,
+            1.0f, 0.0f,
+            0.0f, 0.0f,
+            0.0f, 1.0f,
 
-            1.0f, 0.0f, //st
-            0.0f, 1.0f, //st
-            1.0f, 1.0f, //st
-            1.0f, 0.0f, //st
-            0.0f, 0.0f, //st
-            1.0f, 1.0f, //st
-    };
-    private static final float VERTEX_DATA_POSITION_COLOUR_AND_TEXEL[] =
-    {
-            -1.0f, -1.0f, -1.0f,
-            1.0f, 0.0f, 0.0f, 1.0f, //rgb
-            0.0f, 1.0f, //st
-            -1.0f, -1.0f, 1.0f,
-            1.0f, 0.0f, 0.0f, 1.0f, //rgb
-            1.0f, 1.0f, //st
-            -1.0f, 1.0f, 1.0f,
-            1.0f, 0.0f, 0.0f, 1.0f, //rgb
-            1.0f, 0.0f, //st
-            1.0f, 1.0f, -1.0f,
-            1.0f, 1.0f, 0.0f, 1.0f, //rgb
-            0.0f, 0.0f, //st
-            -1.0f, -1.0f, -1.0f,
-            1.0f, 1.0f, 0.0f, 1.0f, //rgb
-            1.0f, 1.0f, //st
-            -1.0f, 1.0f, -1.0f,
-            1.0f, 1.0f, 0.0f, 1.0f, //rgb
-            1.0f, 0.0f, //st
-
-            1.0f, -1.0f, 1.0f,
-            0.0f, 1.0f, 1.0f, 1.0f, //rgb
-            0.0f, 1.0f, //st
-            -1.0f, -1.0f, -1.0f,
-            0.0f, 1.0f, 1.0f, 1.0f, //rgb
-            1.0f, 0.0f, //st
-            1.0f, -1.0f, -1.0f,
-            0.0f, 1.0f, 1.0f, 1.0f, //rgb
-            1.0f, 1.0f, //st
-            1.0f, 1.0f, -1.0f,
-            1.0f, 1.0f, 0.0f, 1.0f, //rgb
-            0.0f, 0.0f, //st
-            1.0f, -1.0f, -1.0f,
-            1.0f, 1.0f, 0.0f, 1.0f, //rgb
-            0.0f, 1.0f, //st
-            -1.0f, -1.0f, -1.0f,
-            1.0f, 1.0f, 0.0f, 1.0f, //rgb
-            1.0f, 1.0f, //st
-
-            -1.0f, -1.0f, -1.0f,
-            1.0f, 0.0f, 0.0f, 1.0f, //rgb
-            0.0f, 1.0f, //st
-            -1.0f, 1.0f, 1.0f,
-            1.0f, 0.0f, 0.0f, 1.0f, //rgb
-            1.0f, 0.0f, //st
-            -1.0f, 1.0f, -1.0f,
-            1.0f, 0.0f, 0.0f, 1.0f, //rgb
-            0.0f, 0.0f, //st
-            1.0f, -1.0f, 1.0f,
-            0.0f, 1.0f, 1.0f, 1.0f, //rgb
-            0.0f, 1.0f, //st
-            -1.0f, -1.0f, 1.0f,
-            0.0f, 1.0f, 1.0f, 1.0f, //rgb
-            0.0f, 0.0f, //st
-            -1.0f, -1.0f, -1.0f,
-            0.0f, 1.0f, 1.0f, 1.0f, //rgb
-            1.0f, 0.0f, //st
-
-            -1.0f, 1.0f, 1.0f,
-            1.0f, 0.0f, 1.0f, 1.0f, //rgb
-            0.0f, 0.0f, //st
-            -1.0f, -1.0f, 1.0f,
-            1.0f, 0.0f, 1.0f, 1.0f, //rgb
-            0.0f, 1.0f, //st
-            1.0f, -1.0f, 1.0f,
-            1.0f, 0.0f, 1.0f, 1.0f, //rgb
-            1.0f, 1.0f, //st
-            1.0f, 1.0f, 1.0f,
-            0.0f, 1.0f, 0.0f, 1.0f, //rgb
-            0.0f, 0.0f, //st
-            1.0f, -1.0f, -1.0f,
-            0.0f, 1.0f, 0.0f, 1.0f, //rgb
-            1.0f, 1.0f, //st
-            1.0f, 1.0f, -1.0f,
-            0.0f, 1.0f, 0.0f, 1.0f, //rgb
-            1.0f, 0.0f, //st
-
-            1.0f, -1.0f, -1.0f,
-            0.0f, 1.0f, 0.0f, 1.0f, //rgb
-            1.0f, 1.0f, //st
-            1.0f, 1.0f, 1.0f,
-            0.0f, 1.0f, 0.0f, 1.0f, //rgb
-            0.0f, 0.0f, //st
-            1.0f, -1.0f, 1.0f,
-            0.0f, 1.0f, 0.0f, 1.0f, //rgb
-            0.0f, 1.0f, //st
-            1.0f, 1.0f, 1.0f,
-            0.0f, 0.0f, 1.0f, 1.0f, //rgb
-            1.0f, 0.0f, //st
-            1.0f, 1.0f, -1.0f,
-            0.0f, 0.0f, 1.0f, 1.0f, //rgb
-            0.0f, 0.0f, //st
-            -1.0f, 1.0f, -1.0f,
-            0.0f, 0.0f, 1.0f, 1.0f, //rgb
-            0.0f, 1.0f, //st
-
-            1.0f, 1.0f, 1.0f,
-            0.0f, 0.0f, 1.0f, 1.0f, //rgb
-            1.0f, 0.0f, //st
-            -1.0f, 1.0f, -1.0f,
-            0.0f, 0.0f, 1.0f, 1.0f, //rgb
-            0.0f, 1.0f, //st
-            -1.0f, 1.0f, 1.0f,
-            0.0f, 0.0f, 1.0f, 1.0f, //rgb
-            1.0f, 1.0f, //st
-            1.0f, 1.0f, 1.0f,
-            1.0f, 0.0f, 1.0f, 1.0f, //rgb
-            1.0f, 0.0f, //st
-            -1.0f, 1.0f, 1.0f,
-            1.0f, 0.0f, 1.0f, 1.0f, //rgb
-            0.0f, 0.0f, //st
-            1.0f, -1.0f, 1.0f,
-            1.0f, 0.0f, 1.0f, 1.0f, //rgb
-            1.0f, 1.0f, //st
+            1.0f, 0.0f,
+            0.0f, 1.0f,
+            1.0f, 1.0f,
+            1.0f, 0.0f,
+            0.0f, 0.0f,
+            1.0f, 1.0f,
     };
 
-    public Cube()
+    /**
+     * Get the attribute order of the model depending on a set of allowed data types
+     *
+     * @param renderTexels  True if the model is allowed to use texel data, else false
+     * @param renderColour  True if the model is allowed to use colour data, else false
+     * @param renderNormals True if the model is allowed to use normal data, else false
+     *
+     * @return  Returns an attribute order based on the set of allowed data types. Position will
+     *          always be part of the attribute order. In the attribute order, texel data takes 2nd
+     *          priority in the, colour data takes 3rd priority, and normal data takes 4th priority.
+     *          For example, if all data types are allowed then the attribute order is
+     *          <code>POSITION_THEN_TEXEL_THEN_COLOUR_THEN_NORMAL</code>
+     * @since   1.0
+     */
+    private static RenderObjectDataFormat.AttributeOrder_t getAtrributeOrder(boolean renderTexels,
+                                                                             boolean renderColour,
+                                                                             boolean renderNormals)
     {
-        super(VERTEX_DATA_POSITION_COLOUR_AND_TEXEL,
-                new RenderObjectDataFormat(
-                        RenderMethod.TRIANGLES,
-                        RenderObjectDataFormat.AttributeOrder_t.POSITION_THEN_COLOUR_THEN_TEXEL,
-                        RenderObjectDataFormat.UNGROUPED,
-                        RenderObjectDataFormat.PositionDimensions_t.XYZ,
-                        RenderObjectDataFormat.TexelDimensions_t.ST,
-                        RenderObjectDataFormat.ColourDimensions_t.RGBA));
+        // Check what attribute order to use depending on what data types are allowed
+        if (renderTexels && renderColour && renderNormals)
+        {
+            return POSITION_THEN_TEXEL_THEN_COLOUR_THEN_NORMAL;
+        }
+        else if (renderTexels && renderColour)
+        {
+            return POSITION_THEN_TEXEL_THEN_COLOUR;
+        }
+        else if (renderTexels && renderNormals)
+        {
+            return POSITION_THEN_TEXEL_THEN_NORMAL;
+        }
+        else if(renderColour && renderNormals)
+        {
+            return POSITION_THEN_COLOUR_THEN_NORMAL;
+        }
+        else if(renderTexels)
+        {
+            return POSITION_THEN_TEXEL;
+        }
+        else if(renderColour)
+        {
+            return POSITION_THEN_COLOUR;
+        }
+        else if(renderNormals)
+        {
+            return POSITION_THEN_NORMAL;
+        }
+
+        return POSITION;
     }
 
-    public Cube(Material material)
+    /**
+     * Create a cube with specifically allowed data types. This allows you to limit what data is
+     * uploaded to the GPU and rendered. This can prove efficient when making high performance
+     * software such as particle engines as it allows you to prevent the upload of un-required data.
+     *
+     * @param material      A material to apply to the rendered object
+     * @param renderTexels  True if the model is allowed to use texel data, else false
+     * @param renderColour  True if the model is allowed to use colour data, else false
+     * @param renderNormals True if the model is allowed to use normal data, else false
+     * @since   1.0
+     */
+    public Cube(Material material,
+                boolean renderTexels,
+                boolean renderColour,
+                boolean renderNormals)
     {
-/*        super(VERTEX_DATA_POSITION_COLOUR_AND_TEXEL,
+        super(POSITION_DATA,
+                renderTexels ? TEXEL_DATA : null,
+                renderColour ? COLOUR_DATA : null,
+                null,
                 new RenderObjectDataFormat(
                         RenderMethod.TRIANGLES,
-                        RenderObjectDataFormat.AttributeOrder_t.POSITION_THEN_COLOUR_THEN_TEXEL,
-                        RenderObjectDataFormat.UNGROUPED,
+                        getAtrributeOrder(renderTexels,
+                                renderColour,
+                                renderNormals),
+                        POSITION_DATA.length / 3,
                         RenderObjectDataFormat.PositionDimensions_t.XYZ,
-                        RenderObjectDataFormat.TexelDimensions_t.ST,
-                        RenderObjectDataFormat.ColourDimensions_t.RGBA),
-                material);*/
-
-        super(POSITION_VERTEX_DATA.length / 3,
-                RenderMethod.TRIANGLES,
-                POSITION_BUFFER_TYPE,
-                POSITION_VERTEX_DATA,
-                COLOUR_BUFFER_TYPE,
-                COLOUR_VERTEX_DATA,
-                TEXEL_BUFFER_TYPE,
-                TEXEL_VERTEX_DATA,
+                        renderTexels ? RenderObjectDataFormat.TexelDimensions_t.ST : null,
+                        renderColour ? RenderObjectDataFormat.ColourDimensions_t.RGB : null),
                 material);
+    }
+
+    /**
+     * Create a cube with specifically allowed data types. This allows you to limit what data is
+     * uploaded to the GPU and rendered. This can prove efficient when making high performance
+     * software such as particle engines as it allows you to prevent the upload of un-required data.
+     *
+     * @param renderTexels  True if the model is allowed to use texel data, else false
+     * @param renderColour  True if the model is allowed to use colour data, else false
+     * @param renderNormals True if the model is allowed to use normal data, else false
+     * @since   1.0
+     */
+    public Cube(boolean renderTexels,
+                boolean renderColour,
+                boolean renderNormals)
+    {
+        this(new Material(), renderTexels, renderColour, renderNormals);
+    }
+
+    /**
+     * Create a cube with default properties. By default, the cube will upload texel data
+     * (supporting textures) and normal data (supporting lighting). De-activating unused data types
+     * on the cube may result in more efficient rendering so it is recommended to use a different
+     * Cube constructor unless you know you want all the default data (or just don't care).
+     *
+     * @since   1.0
+     */
+    public Cube()
+    {
+        this(true,
+                false,
+                true);
     }
 }
