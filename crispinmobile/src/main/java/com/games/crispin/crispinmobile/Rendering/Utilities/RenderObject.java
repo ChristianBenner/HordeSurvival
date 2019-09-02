@@ -852,14 +852,22 @@ public class RenderObject
 
     public void draw(Camera3D camera)
     {
+        System.out.println("ROT started draw call");
+
         if(shader == null)
         {
             updateShader();
         }
 
+        System.out.println("ROT shader configured");
+
         updateModelMatrix();
 
+        System.out.println("ROT updated model matrix");
+
         shader.enableIt();
+
+        System.out.println("ROT shader enabled");
 
         float[] modelViewMatrix = new float[16];
         Matrix.multiplyMM(modelViewMatrix, 0, camera.getViewMatrix(), 0, modelMatrix, 0);
@@ -869,6 +877,8 @@ public class RenderObject
 
         glUniformMatrix4fv(shader.getMatrixUniformHandle(), 1, false, modelViewProjectionMatrix, 0);
 
+        System.out.println("ROT uploaded view matrix");
+
         if(shader.getColourUniformHandle() != -1)
         {
             glUniform4f(shader.getColourUniformHandle(),
@@ -876,6 +886,7 @@ public class RenderObject
                     material.getColour().getGreen(),
                     material.getColour().getBlue(),
                     material.getColour().getAlpha());
+            System.out.println("ROT uploaded colour data");
         }
 
         if(shader.getTextureUniformHandle() != -1 && material.hasTexture())
@@ -890,9 +901,14 @@ public class RenderObject
                         material.getUvMultiplier().x,
                         material.getUvMultiplier().y);
             }
+
+            System.out.println("ROT uploaded tex");
         }
 
+        System.out.println("ROT uniform");
         handleAttributes(true);
+        System.out.println("ROT handled attribute");
+
         if(multipleDataBuffers)
         {
             switch (multiBufferRenderMethods)
@@ -907,6 +923,7 @@ public class RenderObject
                     glDrawArrays(GL_TRIANGLES, 0, VERTEX_COUNT);
                     break;
             }
+            System.out.println("ROT drawn arrays mdb");
         }
         else
         {
@@ -922,13 +939,18 @@ public class RenderObject
                     glDrawArrays(GL_TRIANGLES, 0, VERTEX_COUNT);
                     break;
             }
+
+            System.out.println("ROT drawns arrays non mdb");
         }
 
         handleAttributes(false);
+        System.out.println("ROT deactivated attributes");
 
         glBindTexture(GL_TEXTURE_2D, 0);
+        System.out.println("ROT texture2d");
 
         shader.disableIt();
+        System.out.println("ROT disable");
     }
 
     private void resolveStride()

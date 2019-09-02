@@ -59,12 +59,12 @@ public class TestScene extends Scene {
         brickMaterial = new Material(new Texture(R.drawable.brick), new Scale2D(0.25f, 0.25f));
        // brickMaterial.ignoreData(Material.IGNORE_TEXEL_DATA_FLAG);
 
-        dinomodelThread = new OBJThreadTest(R.raw.dinomodel);
-        new Thread(dinomodelThread).start();
-        personmodelThread = new OBJThreadTest(R.raw.personmodel);
-        new Thread(personmodelThread).start();
-        carmodelThread = new OBJThreadTest(R.raw.shotty);
-        new Thread(carmodelThread).start();
+//        dinomodelThread = new OBJThreadTest(R.raw.dinomodel);
+//        new Thread(dinomodelThread).start();
+//        personmodelThread = new OBJThreadTest(R.raw.personmodel);
+//        new Thread(personmodelThread).start();
+//        carmodelThread = new OBJThreadTest(R.raw.shotty);
+//        new Thread(carmodelThread).start();
 
         mRed = new Material();
         mRed.setColour(Colour.RED);
@@ -128,83 +128,83 @@ public class TestScene extends Scene {
       //  text.setText("Rotations: " + (int)(angle / 360));
      //   text.setPosition(5.0f, Crispin.getSurfaceHeight() - text.getHeight() - 5f);
 
-        if(dinomodelThread.isComplete() && !onetimeDino)
-        {
-          //  renderObject = OBJModelLoader.readObjFile(R.raw.dragon);
-            dinomodel = dinomodelThread.getRenderObject();
-            dinomodel.setPosition(-2.0f, -2.5f, 0.0f);
-            dinomodel.setScale(0.005f, 0.005f, 0.005f);
-            dinomodel.setMaterial(mRed);
-            startModelFadeInDino = true;
-            onetimeDino = true;
-        }
-
-        if(dinomodelThread.isComplete())
-        {
-            dinomodel.setRotation(15.0f, angle, 0.0f);
-
-            if(startModelFadeInDino && modelFadeInDino != 1.0f)
-            {
-                modelFadeInDino += 0.03f;
-                if(modelFadeInDino >= 0.5f)
-                {
-                    modelFadeInDino = 0.5f;
-                }
-                dinomodel.getMaterial().getColour().setAlpha(modelFadeInDino);
-            }
-        }
-
-        if(carmodelThread.isComplete() && !onetimeCar)
-        {
-            //  renderObject = OBJModelLoader.readObjFile(R.raw.dragon);
-            carmodel = carmodelThread.getRenderObject();
-            carmodel.setPosition(0.0f, -2.5f, 0.0f);
-          //  carmodel.setScale(0.025f, 0.025f, 0.025f);
-            carmodel.setMaterial(mGreen);
-            startModelFadeInCar = true;
-            onetimeCar = true;
-        }
-
-        if(carmodelThread.isComplete())
-        {
-            carmodel.setRotation(15.0f, angle, 0.0f);
-
-            if(startModelFadeInCar && modelFadeInCar != 1.0f)
-            {
-                modelFadeInCar += 0.03f;
-                if(modelFadeInCar >= 1f)
-                {
-                    modelFadeInCar = 1f;
-                }
-                carmodel.getMaterial().getColour().setAlpha(modelFadeInCar);
-            }
-        }
-
-        if(personmodelThread.isComplete() && !onetimePerson)
-        {
-            //  renderObject = OBJModelLoader.readObjFile(R.raw.dragon);
-            personmodel = personmodelThread.getRenderObject();
-            personmodel.setPosition(2.0f, -2.5f, 0.0f);
-            personmodel.setScale(0.01f, 0.01f, 0.01f);
-            personmodel.setMaterial(mBlue);
-            startModelFadeInPerson = true;
-            onetimePerson = true;
-        }
-
-        if(personmodelThread.isComplete())
-        {
-            personmodel.setRotation(15.0f, angle, 0.0f);
-
-            if(startModelFadeInPerson && modelFadeInPerson != 1.0f)
-            {
-                modelFadeInPerson += 0.03f;
-                if(modelFadeInPerson >= 0.5f)
-                {
-                    modelFadeInPerson = 0.5f;
-                }
-                personmodel.getMaterial().getColour().setAlpha(modelFadeInPerson);
-            }
-        }
+//        if(dinomodelThread.isComplete() && !onetimeDino)
+//        {
+//          //  renderObject = OBJModelLoader.readObjFile(R.raw.dragon);
+//            dinomodel = dinomodelThread.getRenderObject();
+//            dinomodel.setPosition(-2.0f, -2.5f, 0.0f);
+//            dinomodel.setScale(0.005f, 0.005f, 0.005f);
+//            dinomodel.setMaterial(mRed);
+//            startModelFadeInDino = true;
+//            onetimeDino = true;
+//        }
+//
+//        if(dinomodelThread.isComplete())
+//        {
+//            dinomodel.setRotation(15.0f, angle, 0.0f);
+//
+//            if(startModelFadeInDino && modelFadeInDino != 1.0f)
+//            {
+//                modelFadeInDino += 0.03f;
+//                if(modelFadeInDino >= 0.5f)
+//                {
+//                    modelFadeInDino = 0.5f;
+//                }
+//                dinomodel.getMaterial().getColour().setAlpha(modelFadeInDino);
+//            }
+//        }
+//
+//        if(carmodelThread.isComplete() && !onetimeCar)
+//        {
+//            //  renderObject = OBJModelLoader.readObjFile(R.raw.dragon);
+//            carmodel = carmodelThread.getRenderObject();
+//            carmodel.setPosition(0.0f, -2.5f, 0.0f);
+//          //  carmodel.setScale(0.025f, 0.025f, 0.025f);
+//            carmodel.setMaterial(mGreen);
+//            startModelFadeInCar = true;
+//            onetimeCar = true;
+//        }
+//
+//        if(carmodelThread.isComplete())
+//        {
+//            carmodel.setRotation(15.0f, angle, 0.0f);
+//
+//            if(startModelFadeInCar && modelFadeInCar != 1.0f)
+//            {
+//                modelFadeInCar += 0.03f;
+//                if(modelFadeInCar >= 1f)
+//                {
+//                    modelFadeInCar = 1f;
+//                }
+//                carmodel.getMaterial().getColour().setAlpha(modelFadeInCar);
+//            }
+//        }
+//
+//        if(personmodelThread.isComplete() && !onetimePerson)
+//        {
+//            //  renderObject = OBJModelLoader.readObjFile(R.raw.dragon);
+//            personmodel = personmodelThread.getRenderObject();
+//            personmodel.setPosition(2.0f, -2.5f, 0.0f);
+//            personmodel.setScale(0.01f, 0.01f, 0.01f);
+//            personmodel.setMaterial(mBlue);
+//            startModelFadeInPerson = true;
+//            onetimePerson = true;
+//        }
+//
+//        if(personmodelThread.isComplete())
+//        {
+//            personmodel.setRotation(15.0f, angle, 0.0f);
+//
+//            if(startModelFadeInPerson && modelFadeInPerson != 1.0f)
+//            {
+//                modelFadeInPerson += 0.03f;
+//                if(modelFadeInPerson >= 0.5f)
+//                {
+//                    modelFadeInPerson = 0.5f;
+//                }
+//                personmodel.getMaterial().getColour().setAlpha(modelFadeInPerson);
+//            }
+//        }
     }
 
     float time = 0.0f;
