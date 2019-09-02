@@ -267,13 +267,35 @@ public class Cube extends RenderObject
      * Create a cube with default properties. By default, the cube will upload texel data
      * (supporting textures) and normal data (supporting lighting). De-activating unused data types
      * on the cube may result in more efficient rendering so it is recommended to use a different
-     * Cube constructor unless you know you want all the default data (or just don't care).
+     * Cube constructor unless you know you want all the default data (or just don't care). You
+     * could also use ignore data flags on an attached material, however this wouldn't provide the
+     * efficiency of not uploading the data in the first place.
+     *
+     * @param material  Material to apply to the object
+     * @since 1.0
+     */
+    public Cube(Material material)
+    {
+        this(material,
+                true,
+                false,
+                true);
+    }
+
+    /**
+     * Create a cube with default properties. By default, the cube will upload texel data
+     * (supporting textures) and normal data (supporting lighting). De-activating unused data types
+     * on the cube may result in more efficient rendering so it is recommended to use a different
+     * Cube constructor unless you know you want all the default data (or just don't care). You
+     * could also use ignore data flags on an attached material, however this wouldn't provide the
+     * efficiency of not uploading the data in the first place.
      *
      * @since   1.0
      */
     public Cube()
     {
-        this(true,
+        this(new Material(),
+                true,
                 false,
                 true);
     }

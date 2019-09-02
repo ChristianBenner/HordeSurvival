@@ -46,12 +46,12 @@ public class MyScene extends Scene {
     @Override
     public void update(float deltaTime) {
         angle += 3f;
-        shotgunModel.setRotation(0.0f, angle, 0.0f);
+     //   shotgunModel.setRotation(0.0f, angle, 0.0f);
     }
 
     @Override
     public void render() {
-        shotgunModel.draw(camera3D);
-        text.renderText(camera2D);
+    //    shotgunModel.draw(camera3D);
+   //     text.renderText(camera2D);
     }
 }
