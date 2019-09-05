@@ -16,6 +16,12 @@ public class Font
     private Map<Character, FreeTypeCharData> characters;
     private int size;
 
+    // The index of characters to start loading from
+    private static char ASCII_START_INDEX = 0;
+
+    // The index of characters to load up to
+    private static char ASCII_END_INDEX = 128;
+
     public static byte[] convertStreamToByteArray(InputStream is) throws IOException
     {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -45,7 +51,7 @@ public class Font
             textureOptions.monochrome = true;
             textureOptions.format = GL_LUMINANCE;
 
-            for(char i = 0; i < 128; i++)
+            for(char i = ASCII_START_INDEX; i < ASCII_END_INDEX; i++)
             {
                 System.out.println("Loading glyph: " + i);
 

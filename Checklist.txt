@@ -20,36 +20,36 @@ Project Classes:
 		Vector3D	- CHECKLIST(5b852fd)
 
 	Native >
-		FreeTypeMethods	- INCOMPLETE
+		FreeTypeMethods	- VERIFY
 		
 	Rendering >
 		Data >
-			Colour					- INCOMPLETE: Colours take up too much data (should be 4 bytes not 16 bytes)
-			FreeTypeCharData		- INCOMPLETE
-			RenderObjectData		- INCOMPLETE
-			RenderObjectDataFormat	- INCOMPLETE
+			Colour					- VERIFY: Colours take up too much data (should be 4 bytes not 16 bytes)
+			FreeTypeCharData		- VERIFY
+			RenderObjectData		- VERIFY
+			RenderObjectDataFormat	- VERIFY
 		Entities >
-			Light	- INCOMPLETE
+			Light	- VERIFY
 		Models >
-			Cube		- INCOMPLETE
-			FontSquare	- INCOMPLETE
-			Square		- INCOMPLETE
+			Cube		- VERIFY
+			FontSquare	- VERIFY
+			Square		- VERIFY
 		Shaders >
-			AttributeColourShader			- INCOMPLETE
-			TextShader						- INCOMPLETE
-			TextureAttributeColourShader	- INCOMPLETE
-			TextureShader					- INCOMPLETE
-			UniformColourShader				- INCOMPLETE
+			AttributeColourShader			- VERIFY
+			TextShader						- VERIFY
+			TextureAttributeColourShader	- VERIFY
+			TextureShader					- VERIFY
+			UniformColourShader				- VERIFY
 		UserInterface >
 			Text		- INCOMPLETE
 			UIObject	- INCOMPLETE
 		Utilities >
-			Camera2D		- INCOMPLETE
-			Camera3D		- INCOMPLETE
+			Camera2D		- VERIFY
+			Camera3D		- VERIFY
 			Font			- INCOMPLETE
-			Material		- INCOMPLETE
+			Material		- VERIFY
 			RenderObject	- INCOMPLETE
-			Shader			- INCOMPLETE
+			Shader			- VERIFY
 			Texture			- INCOMPLETE
 			TextureOptions	- INCOMPLETE
 			
@@ -59,12 +59,12 @@ Project Classes:
 		OBJModelLoader		- INCOMPLETE
 		OBJThreadTest		- INCOMPLETE
 		Scene				- INCOMPLETE
-		SceneManager		- INCOMPLETE
+		SceneManager		- VERIFY
 		ShaderCache			- INCOMPLETE
 		TextureCache		- INCOMPLETE
 		
-	Crispin
-	UnsupprtedDevice
+	Crispin				- VERIFY
+	UnsupprtedDevice	- VERIFY
 
 Code Checklist:
 - JavaDoc Documentation
