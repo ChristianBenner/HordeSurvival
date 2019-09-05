@@ -58,10 +58,10 @@ Project Classes:
 		Logger				- INCOMPLETE
 		OBJModelLoader		- INCOMPLETE
 		OBJThreadTest		- INCOMPLETE
-		Scene				- INCOMPLETE
+		Scene				- VERIFY
 		SceneManager		- VERIFY
-		ShaderCache			- INCOMPLETE
-		TextureCache		- INCOMPLETE
+		ShaderCache			- VERIFY
+		TextureCache		- VERIFY
 		
 	Crispin				- VERIFY
 	UnsupprtedDevice	- VERIFY
