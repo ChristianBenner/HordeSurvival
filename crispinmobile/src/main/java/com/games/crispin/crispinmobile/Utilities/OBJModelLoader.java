@@ -37,27 +37,6 @@ public class OBJModelLoader
 
     private static final int NO_START_INDEX = -1;
 
-    private static final int NUM_VERTEX_QUADS = 4;
-    private static final int NUM_VERTEX_TRIANGLES = 3;
-    private static final int NUM_VERTEX_LINES = 2;
-    private static final int NUM_VERTEX_POINTS = 1;
-    private static final int NUM_FACE_DATA_ELEMENTS_VERTEX_TEXEL = 2;
-    private static final int NUM_FACE_DATA_ELEMENTS_VERTEX_TEXEL_NORMAL = 3;
-    private static final int NUM_COMPONENTS_XYZW = 4;
-    private static final int NUM_COMPONENTS_XYZ = 3;
-    private static final int NUM_COMPONENTS_XY = 2;
-
-    enum LineType_t
-    {
-        FACE,
-        POSITION,
-        TEXEL,
-        NORMAL,
-        VERTEX,
-        COMMENT,
-        NONE
-    }
-
     public static RenderObject processObj(byte[] theFile, RenderObjectData renderObjectData)
     {
         // Keep track of the type of data we are looking at

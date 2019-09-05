@@ -51,7 +51,7 @@ Project Classes:
 			RenderObject	- INCOMPLETE
 			Shader			- VERIFY
 			Texture			- INCOMPLETE
-			TextureOptions	- INCOMPLETE
+			TextureOptions	- VERIFY
 			
 	Utilities >
 		FileResourceReader	- INCOMPLETE
