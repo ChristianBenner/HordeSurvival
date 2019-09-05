@@ -1,18 +1,25 @@
 package com.games.crispin.crispinmobile.Rendering.Models;
 
-import com.games.crispin.crispinmobile.R;
 import com.games.crispin.crispinmobile.Rendering.Data.RenderObjectDataFormat;
 import com.games.crispin.crispinmobile.Rendering.Utilities.Material;
 import com.games.crispin.crispinmobile.Rendering.Utilities.RenderObject;
 
-import static com.games.crispin.crispinmobile.Rendering.Data.RenderObjectDataFormat.AttributeOrder_t.POSITION;
-import static com.games.crispin.crispinmobile.Rendering.Data.RenderObjectDataFormat.AttributeOrder_t.POSITION_THEN_COLOUR;
-import static com.games.crispin.crispinmobile.Rendering.Data.RenderObjectDataFormat.AttributeOrder_t.POSITION_THEN_COLOUR_THEN_NORMAL;
-import static com.games.crispin.crispinmobile.Rendering.Data.RenderObjectDataFormat.AttributeOrder_t.POSITION_THEN_NORMAL;
-import static com.games.crispin.crispinmobile.Rendering.Data.RenderObjectDataFormat.AttributeOrder_t.POSITION_THEN_TEXEL;
-import static com.games.crispin.crispinmobile.Rendering.Data.RenderObjectDataFormat.AttributeOrder_t.POSITION_THEN_TEXEL_THEN_COLOUR;
-import static com.games.crispin.crispinmobile.Rendering.Data.RenderObjectDataFormat.AttributeOrder_t.POSITION_THEN_TEXEL_THEN_COLOUR_THEN_NORMAL;
-import static com.games.crispin.crispinmobile.Rendering.Data.RenderObjectDataFormat.AttributeOrder_t.POSITION_THEN_TEXEL_THEN_NORMAL;
+import static com.games.crispin.crispinmobile.Rendering.Data.RenderObjectDataFormat.
+        AttributeOrder_t.POSITION;
+import static com.games.crispin.crispinmobile.Rendering.Data.RenderObjectDataFormat.
+        AttributeOrder_t.POSITION_THEN_COLOUR;
+import static com.games.crispin.crispinmobile.Rendering.Data.RenderObjectDataFormat.
+        AttributeOrder_t.POSITION_THEN_COLOUR_THEN_NORMAL;
+import static com.games.crispin.crispinmobile.Rendering.Data.RenderObjectDataFormat.
+        AttributeOrder_t.POSITION_THEN_NORMAL;
+import static com.games.crispin.crispinmobile.Rendering.Data.RenderObjectDataFormat.
+        AttributeOrder_t.POSITION_THEN_TEXEL;
+import static com.games.crispin.crispinmobile.Rendering.Data.RenderObjectDataFormat.
+        AttributeOrder_t.POSITION_THEN_TEXEL_THEN_COLOUR;
+import static com.games.crispin.crispinmobile.Rendering.Data.RenderObjectDataFormat.
+        AttributeOrder_t.POSITION_THEN_TEXEL_THEN_COLOUR_THEN_NORMAL;
+import static com.games.crispin.crispinmobile.Rendering.Data.RenderObjectDataFormat.
+        AttributeOrder_t.POSITION_THEN_TEXEL_THEN_NORMAL;
 
 /**
  * Cube class is a default 3D model of a cube. It is a render object and therefor can be drawn to
@@ -25,6 +32,9 @@ import static com.games.crispin.crispinmobile.Rendering.Data.RenderObjectDataFor
  */
 public class Cube extends RenderObject
 {
+    // The number of position components in the position data (3 because its XYZ)
+    private static final int NUMBER_POSITION_COMPONENTS = 3;
+
     // Position vertex data that contains XYZ components
     private static final float POSITION_DATA[] =
     {
@@ -182,7 +192,9 @@ public class Cube extends RenderObject
                                                                              boolean renderNormals)
     {
         // Check what attribute order to use depending on what data types are allowed
-        if (renderTexels && renderColour && renderNormals)
+        if (renderTexels &&
+                renderColour &&
+                renderNormals)
         {
             return POSITION_THEN_TEXEL_THEN_COLOUR_THEN_NORMAL;
         }
@@ -238,7 +250,7 @@ public class Cube extends RenderObject
                         getAtrributeOrder(renderTexels,
                                 renderColour,
                                 false),
-                        POSITION_DATA.length / 3,
+                        POSITION_DATA.length / NUMBER_POSITION_COMPONENTS,
                         RenderObjectDataFormat.PositionDimensions_t.XYZ,
                         renderTexels ? RenderObjectDataFormat.TexelDimensions_t.ST : null,
                         renderColour ? RenderObjectDataFormat.ColourDimensions_t.RGB : null),

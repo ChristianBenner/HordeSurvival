@@ -4,8 +4,8 @@ import com.games.crispin.crispinmobile.Crispin;
 import com.games.crispin.crispinmobile.Geometry.Point2D;
 import com.games.crispin.crispinmobile.Geometry.Point3D;
 import com.games.crispin.crispinmobile.Geometry.Scale2D;
+import com.games.crispin.crispinmobile.Rendering.Data.FreeTypeCharData;
 import com.games.crispin.crispinmobile.Rendering.Data.Colour;
-import com.games.crispin.crispinmobile.Rendering.Data.FreeTypeCharacter;
 import com.games.crispin.crispinmobile.Rendering.Data.RenderObjectDataFormat;
 import com.games.crispin.crispinmobile.Rendering.Models.FontSquare;
 import com.games.crispin.crispinmobile.Rendering.Shaders.TextShader;
@@ -18,12 +18,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import static android.opengl.GLES20.GL_BLEND;
-import static android.opengl.GLES20.GL_CULL_FACE;
 import static android.opengl.GLES20.GL_DEPTH_TEST;
-import static android.opengl.GLES20.GL_ONE_MINUS_SRC_ALPHA;
-import static android.opengl.GLES20.GL_SRC_ALPHA;
-import static android.opengl.GLES20.glBlendFunc;
 import static android.opengl.GLES20.glDisable;
 import static android.opengl.GLES20.glEnable;
 
@@ -118,22 +113,22 @@ public class Text extends UIObject
             this(0.0f);
         }
 
-        public float addCharacter(FreeTypeCharacter character)
+        public float addCharacter(FreeTypeCharData character)
         {
             characters.add(character);
 
-            final float X_POS = startX + (character.bearingX * scale);
-            final float WIDTH = character.width * scale;
+            final float X_POS = startX + (character.getBearingX() * scale);
+            final float WIDTH = character.getWidth() * scale;
             length = X_POS + WIDTH;
 
             // The advance for the next character
-            startX += (character.advance >> 6) * scale;
+            startX += (character.getAdvance() >> 6) * scale;
 
             // Return the last x advance so we can consider where the next word starts
-            return (character.advance >> 6) * scale;
+            return (character.getAdvance() >> 6) * scale;
         }
 
-        private ArrayList<FreeTypeCharacter> characters;
+        private ArrayList<FreeTypeCharData> characters;
         private float startX;
         private float length;
     }
@@ -218,7 +213,7 @@ public class Text extends UIObject
                     System.out.print("Test Word: '");
                     for(int i = 0; i < w.characters.size(); i++)
                     {
-                        System.out.print((char)w.characters.get(i).ascii);
+                        System.out.print((char)w.characters.get(i).getAscii());
                     }
                     System.out.println("', Length: " + w.length);
 
@@ -254,17 +249,17 @@ public class Text extends UIObject
                 ArrayList<Word> pWords = lines.get(pLine).getWords();
                 for(int pWord = 0; pWord < pWords.size(); pWord++)
                 {
-                    ArrayList<FreeTypeCharacter> pCharacters = pWords.get(pWord).characters;
+                    ArrayList<FreeTypeCharData> pCharacters = pWords.get(pWord).characters;
 
                     for(int pCharacter = 0; pCharacter < pCharacters.size(); pCharacter++)
                     {
-                        System.out.print((char)pCharacters.get(pCharacter).ascii);
+                        System.out.print((char)pCharacters.get(pCharacter).getAscii());
 
-                        FreeTypeCharacter theChar = pCharacters.get(pCharacter);
-                        float xpos = theX + theChar.bearingX * scale;
-                        float ypos = theY - ((theChar.height - theChar.bearingY) * scale);
-                        float width = theChar.width * scale;
-                        float height = theChar.height * scale;
+                        FreeTypeCharData theChar = pCharacters.get(pCharacter);
+                        float xpos = theX + theChar.getBearingX() * scale;
+                        float ypos = theY - ((theChar.getHeight() - theChar.getBearingY()) * scale);
+                        float width = theChar.getWidth() * scale;
+                        float height = theChar.getHeight() * scale;
 
                         FontSquare square = new FontSquare(new Material(theChar.texture, Colour.BLACK),
                                 position, new Point2D(xpos, ypos));
@@ -272,7 +267,7 @@ public class Text extends UIObject
                         square.setScale(new Scale2D(width, height));
                         squares.add(square);
 
-                        theX += (theChar.advance >> 6) * scale;
+                        theX += (theChar.getAdvance() >> 6) * scale;
                     }
                 }
 
@@ -296,18 +291,18 @@ public class Text extends UIObject
 
                 for(int i = 0; i < textString.length(); i++)
                 {
-                    FreeTypeCharacter freeTypeCharacter = font.getCharacter(textString.charAt(i));
-                    float xpos = theX + freeTypeCharacter.bearingX * scale;
-                    float ypos = currentY - (freeTypeCharacter.height - freeTypeCharacter.bearingY) * scale;
-                    float width = freeTypeCharacter.width * scale;
-                    float height = freeTypeCharacter.height * scale;
+                    FreeTypeCharData freeTypeCharacter = font.getCharacter(textString.charAt(i));
+                    float xpos = theX + freeTypeCharacter.getBearingX() * scale;
+                    float ypos = currentY - (freeTypeCharacter.getHeight() - freeTypeCharacter.getBearingY()) * scale;
+                    float width = freeTypeCharacter.getWidth() * scale;
+                    float height = freeTypeCharacter.getHeight() * scale;
 
                     FontSquare square = new FontSquare(new Material(freeTypeCharacter.texture, Colour.BLACK),
                             position, new Point2D(xpos, ypos));
                     square.useCustomShader(textShader);
                     square.setScale(new Scale2D(width, height));
                     squares.add(square);
-                    theX += (freeTypeCharacter.advance >> 6) * scale;
+                    theX += (freeTypeCharacter.getAdvance() >> 6) * scale;
                     System.out.println("*************** PLACED: " + textString.charAt(i) + "**********************");
                 }
 
