@@ -5,7 +5,17 @@ import com.games.crispin.crispinmobile.Geometry.Point3D;
 import com.games.crispin.crispinmobile.Rendering.Utilities.Material;
 import com.games.crispin.crispinmobile.Rendering.Utilities.RenderObject;
 
-
+/**
+ * FontSquare class derived from the Square class. It is a square render object with some extra
+ * functionality to make it more usable in rendering a text UI object.
+ *
+ * @author      Christian Benner
+ * @version     %I%, %G%
+ * @see         RenderObject
+ * @see         Square
+ * @see         com.games.crispin.crispinmobile.Rendering.UserInterface.Text
+ * @since       1.0
+ */
 public class FontSquare extends Square
 {
     // The position of the text UI object associated to the character
@@ -71,6 +81,7 @@ public class FontSquare extends Square
      * Set the text position. This should be done if the position of the associated text UI object
      * has been changed. This causes a position update.
      *
+     * @param textPosition  The new position of the text
      * @since 1.0
      */
     public void setTextPosition(Point3D textPosition)
@@ -79,7 +90,18 @@ public class FontSquare extends Square
         updatePosition();
     }
 
-    public void setTextPosition(float x, float y, float z)
+    /**
+     * Set the text position. This should be done if the position of the associated text UI object
+     * has been changed. This causes a position update.
+     *
+     * @param x The text x position
+     * @param y The text y position
+     * @param z The text z position
+     * @since 1.0
+     */
+    public void setTextPosition(float x,
+                                float y,
+                                float z)
     {
         this.textPosition.x = x;
         this.textPosition.y = y;
@@ -87,6 +109,13 @@ public class FontSquare extends Square
         updatePosition();
     }
 
+    /**
+     * Set the text position. This should be done if the position of the associated text UI object
+     * has been changed. This causes a position update.
+     *
+     * @param textPosition  The new position of the text
+     * @since 1.0
+     */
     public void setTextPosition(Point2D textPosition)
     {
         this.textPosition.x = textPosition.x;
@@ -94,6 +123,14 @@ public class FontSquare extends Square
         updatePosition();
     }
 
+    /**
+     * Set the text position. This should be done if the position of the associated text UI object
+     * has been changed. This causes a position update.
+     *
+     * @param x The text x position
+     * @param y The text y position
+     * @since 1.0
+     */
     public void setTextPosition(float x, float y)
     {
         this.textPosition.x = x;
@@ -101,12 +138,38 @@ public class FontSquare extends Square
         updatePosition();
     }
 
+    /**
+     * Get the text position
+     *
+     * @return The position of the text as a Point3D object
+     * @since 1.0
+     */
+    public Point3D getTextPosition()
+    {
+        return this.textPosition;
+    }
+
+    /**
+     * Set the character offset. This should be if the character position relative to the text UI
+     * objects position changes. This function causes a position update.
+     *
+     * @param characterOffset The new character offset
+     * @since 1.0
+     */
     public void setCharacterOffset(Point2D characterOffset)
     {
         this.characterOffset = characterOffset;
         updatePosition();
     }
 
+    /**
+     * Set the character offset. This should be if the character position relative to the text UI
+     * objects position changes. This function causes a position update.
+     *
+     * @param x The character x offset
+     * @param y The character y offset
+     * @since 1.0
+     */
     public void setCharacterOffset(float x, float y)
     {
         this.characterOffset.x = x;
@@ -114,13 +177,14 @@ public class FontSquare extends Square
         updatePosition();
     }
 
+    /**
+     * Get the character offset
+     *
+     * @return The character offset as a Point2D object
+     * @since 1.0
+     */
     public Point2D getCharacterOffset()
     {
         return this.characterOffset;
-    }
-
-    public Point3D getTextPosition()
-    {
-        return this.textPosition;
     }
 }

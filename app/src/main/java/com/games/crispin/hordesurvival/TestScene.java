@@ -2,6 +2,7 @@ package com.games.crispin.hordesurvival;
 
 import com.games.crispin.crispinmobile.Geometry.Point2D;
 import com.games.crispin.crispinmobile.Geometry.Scale2D;
+import com.games.crispin.crispinmobile.Rendering.Models.Square;
 import com.games.crispin.crispinmobile.Rendering.Utilities.Camera2D;
 import com.games.crispin.crispinmobile.Rendering.Utilities.Camera3D;
 import com.games.crispin.crispinmobile.Rendering.Data.Colour;
@@ -42,6 +43,7 @@ public class TestScene extends Scene {
     private OBJThreadTest personmodelThread;
     private RenderObject personmodel;
 
+    private Square square;
     public TestScene()
     {
         // Set the background colour to yellow
@@ -79,7 +81,7 @@ public class TestScene extends Scene {
         cubeTwo = new Cube(brickMaterial);
         cubeTwo.setPosition(new Point3D(-0.1f, 3.2f, -2.0f));
 
-        cubeThree = new Cube(brickMaterial, true, true, false);
+        cubeThree = new Cube(brickMaterial, true, true);
         cubeThree.setPosition(new Point3D(2.0f, 3.0f, 0.0f));
 
         Font font = new Font(R.raw.opensans, 64);
@@ -103,6 +105,18 @@ public class TestScene extends Scene {
                 false,
                 Crispin.getSurfaceWidth());
         fpsText.setPosition(5.0f, 5.0f);
+
+   /* public Square(Material material, boolean renderTexels)
+    public Square(boolean renderTexels)
+    public Square(Material material)
+    public Square()*/
+
+    //    square = new Square(brickMaterial, true);
+     //   square = new Square(brickMaterial);
+        // square = new Square(true);
+
+        square = new Square();
+        square.setMaterial(brickMaterial);
     }
 
     boolean onetimeDino = false;
@@ -123,6 +137,7 @@ public class TestScene extends Scene {
         angle += 1.0f;
         cubeTwo.setRotation(0.0f, angle, angle);
         cubeThree.setRotation( angle, 0.0f, angle);
+        square.setRotation(angle, 0.0f, angle);
 
       //  text.setText("Rotations: " + (int)(angle / 360));
      //   text.setPosition(5.0f, Crispin.getSurfaceHeight() - text.getHeight() - 5f);
@@ -220,6 +235,7 @@ public class TestScene extends Scene {
 
         // Draw the cube
         cubeThree.draw(camera);
+        square.draw(camera);
         //cubeTwo.draw(camera);
 
         if(dinomodel != null)
@@ -237,7 +253,7 @@ public class TestScene extends Scene {
             personmodel.draw(camera);
         }
 
-       // text.renderText(camera2D);
+        text.renderText(camera2D);
        // fpsText.renderText(camera2D);
 
         frames++;

@@ -215,20 +215,19 @@ public class Cube extends RenderObject
     }
 
     /**
-     * Create a cube with specifically allowed data types. This allows you to limit what data is
-     * uploaded to the GPU and rendered. This can prove efficient when making high performance
-     * software such as particle engines as it allows you to prevent the upload of un-required data.
+     * Create a cube with specifically allowed data types. This means that on creation of the object
+     * that a controllable amount of vertex data is submitted to a buffer. This can prove efficient
+     * in scenarios where multiple cubes are going to be created in a short amount of time such as
+     * particle engines as it allows you to prevent the handling of un-required data.
      *
      * @param material      A material to apply to the rendered object
      * @param renderTexels  True if the model is allowed to use texel data, else false
      * @param renderColour  True if the model is allowed to use colour data, else false
-     * @param renderNormals True if the model is allowed to use normal data, else false
      * @since   1.0
      */
     public Cube(Material material,
                 boolean renderTexels,
-                boolean renderColour,
-                boolean renderNormals)
+                boolean renderColour)
     {
         super(POSITION_DATA,
                 renderTexels ? TEXEL_DATA : null,
@@ -238,7 +237,7 @@ public class Cube extends RenderObject
                         RenderMethod.TRIANGLES,
                         getAtrributeOrder(renderTexels,
                                 renderColour,
-                                renderNormals),
+                                false),
                         POSITION_DATA.length / 3,
                         RenderObjectDataFormat.PositionDimensions_t.XYZ,
                         renderTexels ? RenderObjectDataFormat.TexelDimensions_t.ST : null,
@@ -247,26 +246,25 @@ public class Cube extends RenderObject
     }
 
     /**
-     * Create a cube with specifically allowed data types. This allows you to limit what data is
-     * uploaded to the GPU and rendered. This can prove efficient when making high performance
-     * software such as particle engines as it allows you to prevent the upload of un-required data.
+     * Create a cube with specifically allowed data types. This means that on creation of the object
+     * that a controllable amount of vertex data is submitted to a buffer. This can prove efficient
+     * in scenarios where multiple cubes are going to be created in a short amount of time such as
+     * particle engines as it allows you to prevent the handling of un-required data.
      *
      * @param renderTexels  True if the model is allowed to use texel data, else false
      * @param renderColour  True if the model is allowed to use colour data, else false
-     * @param renderNormals True if the model is allowed to use normal data, else false
      * @since   1.0
      */
     public Cube(boolean renderTexels,
-                boolean renderColour,
-                boolean renderNormals)
+                boolean renderColour)
     {
-        this(new Material(), renderTexels, renderColour, renderNormals);
+        this(new Material(), renderTexels, renderColour);
     }
 
     /**
      * Create a cube with default properties. By default, the cube will upload texel data
      * (supporting textures) and normal data (supporting lighting). De-activating unused data types
-     * on the cube may result in more efficient rendering so it is recommended to use a different
+     * on the cube may result in more efficient construction so it is recommended to use a different
      * Cube constructor unless you know you want all the default data (or just don't care). You
      * could also use ignore data flags on an attached material, however this wouldn't provide the
      * efficiency of not uploading the data in the first place.
@@ -278,14 +276,13 @@ public class Cube extends RenderObject
     {
         this(material,
                 true,
-                false,
-                true);
+                false);
     }
 
     /**
      * Create a cube with default properties. By default, the cube will upload texel data
      * (supporting textures) and normal data (supporting lighting). De-activating unused data types
-     * on the cube may result in more efficient rendering so it is recommended to use a different
+     * on the cube may result in more efficient construction so it is recommended to use a different
      * Cube constructor unless you know you want all the default data (or just don't care). You
      * could also use ignore data flags on an attached material, however this wouldn't provide the
      * efficiency of not uploading the data in the first place.
@@ -296,7 +293,6 @@ public class Cube extends RenderObject
     {
         this(new Material(),
                 true,
-                false,
-                true);
+                false);
     }
 }

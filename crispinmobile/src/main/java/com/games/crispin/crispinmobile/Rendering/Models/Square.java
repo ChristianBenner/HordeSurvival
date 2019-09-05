@@ -4,44 +4,108 @@ import com.games.crispin.crispinmobile.Rendering.Data.RenderObjectDataFormat;
 import com.games.crispin.crispinmobile.Rendering.Utilities.Material;
 import com.games.crispin.crispinmobile.Rendering.Utilities.RenderObject;
 
+/**
+ * Square class is a default render object model that allows you to render a 2-dimensional square.
+ * It contains position and texture data.
+ *
+ * @author      Christian Benner
+ * @version     %I%, %G%
+ * @see         RenderObject
+ * @see         Square
+ * @see         com.games.crispin.crispinmobile.Rendering.UserInterface.Text
+ * @since       1.0
+ */
 public class Square extends RenderObject
 {
-    private static final float[] VERTEX_DATA =
+    // Position vertex data that contains XY components
+    private static final float[] POSITION_DATA =
     {
             0.0f, 1.0f,
-            0.0f, 0.0f, //st
             0.0f, 0.0f,
-            0.0f, 1.0f, //st
             1.0f, 0.0f,
-            1.0f, 1.0f, //st
             1.0f, 1.0f,
-            1.0f, 0.0f, //st
             0.0f, 1.0f,
-            0.0f, 0.0f, //st
-            1.0f, 0.0f,
-            1.0f, 1.0f, //st
+            1.0f, 0.0f
     };
 
-    public Square()
+    // Texel vertex data that contains ST components
+    private static final float[] TEXEL_DATA =
     {
-        super(VERTEX_DATA,
+            0.0f, 0.0f,
+            0.0f, 1.0f,
+            1.0f, 1.0f,
+            1.0f, 0.0f,
+            0.0f, 0.0f,
+            1.0f, 1.0f
+    };
+
+    /**
+     * Create a square with specifically allowed data types. This allows you to limit what data is
+     * uploaded to the GPU and rendered. This means that a vertex buffer of the minimum size is
+     * created when the render object is initialised, minimising the time it takes to a construct a
+     * square. This can prove efficient when making high performance software such as particle
+     * engines as it allows you to prevent the handling of un-required data.
+     *
+     * @param material      A material to apply to the rendered object
+     * @param renderTexels  True if the model is allowed to use texel data, else false
+     * @since   1.0
+     */
+    public Square(Material material,
+                  boolean renderTexels)
+    {
+        super(POSITION_DATA,
+                renderTexels ? TEXEL_DATA : null,
+                null,
+                null,
                 new RenderObjectDataFormat(
                         RenderMethod.TRIANGLES,
-                        RenderObjectDataFormat.AttributeOrder_t.POSITION_THEN_TEXEL,
-                        RenderObjectDataFormat.UNGROUPED,
+                        renderTexels ? RenderObjectDataFormat.AttributeOrder_t.POSITION_THEN_TEXEL :
+                                RenderObjectDataFormat.AttributeOrder_t.POSITION,
+                        POSITION_DATA.length / 2,
                         RenderObjectDataFormat.PositionDimensions_t.XY,
-                        RenderObjectDataFormat.TexelDimensions_t.ST));
+                        renderTexels ? RenderObjectDataFormat.TexelDimensions_t.ST : null),
+                material);
     }
 
+    /**
+     * Create a square with specifically allowed data types. This allows you to limit what data is
+     * uploaded to the GPU and rendered. This means that a vertex buffer of the minimum size is
+     * created when the render object is initialised, minimising the time it takes to a construct a
+     * square. This can prove efficient when making high performance software such as particle
+     * engines as it allows you to prevent the handling of un-required data.
+     *
+     * @param renderTexels  True if the model is allowed to use texel data, else false
+     * @since   1.0
+     */
+    public Square(boolean renderTexels)
+    {
+        this(new Material(), renderTexels);
+    }
+
+    /**
+     * Create a square render object. By default the object supports textures, meaning that texel
+     * data is included in the vertex buffer construction. If not using textures on the object it
+     * may be more efficient to construct an object without texel data using a different square
+     * constructor.
+     *
+     * @param material      A material to apply to the rendered object
+     * @since   1.0
+     */
     public Square(Material material)
     {
-        super(VERTEX_DATA,
-                new RenderObjectDataFormat(
-                        RenderMethod.TRIANGLES,
-                        RenderObjectDataFormat.AttributeOrder_t.POSITION_THEN_TEXEL,
-                        RenderObjectDataFormat.UNGROUPED,
-                        RenderObjectDataFormat.PositionDimensions_t.XY,
-                        RenderObjectDataFormat.TexelDimensions_t.ST),
-                material);
+        this(material, true);
+    }
+
+    /**
+     * Create a square render object. By default the object supports textures, meaning that texel
+     * data is included in the vertex buffer construction. If not using textures on the object it
+     * may be more efficient to construct an object without texel data using a different square
+     * constructor.
+     *
+     * @since   1.0
+     */
+    public Square()
+    {
+        this(new Material(), true);
     }
 }
