@@ -1,6 +1,7 @@
 package com.games.crispin.crispinmobile.Rendering.UserInterface;
 
 import com.games.crispin.crispinmobile.Crispin;
+import com.games.crispin.crispinmobile.Geometry.Geometry;
 import com.games.crispin.crispinmobile.Geometry.Point2D;
 import com.games.crispin.crispinmobile.Geometry.Point3D;
 import com.games.crispin.crispinmobile.Geometry.Scale2D;
@@ -22,31 +23,26 @@ import static android.opengl.GLES20.GL_DEPTH_TEST;
 import static android.opengl.GLES20.glDisable;
 import static android.opengl.GLES20.glEnable;
 
+/**
+ * Text class is a UIObject designed to render text strings. It requires a Font to be loaded before
+ * use.
+ *
+ * @see         Font
+ * @see         UIObject
+ * @author      Christian Benner
+ * @version     %I%, %G%
+ * @since       1.0
+ */
 public class Text extends UIObject
 {
+    // The font that the text string is in
     private Font font;
+
+    // The text string to display
     private String textString;
 
-    class Glyph extends RenderObject
-    {
-        Glyph(float[] vertexData, Material m)
-        {
-            super(vertexData,
-                    new RenderObjectDataFormat(
-                            RenderMethod.TRIANGLES,
-                            RenderObjectDataFormat.AttributeOrder_t.POSITION_THEN_TEXEL,
-                            RenderObjectDataFormat.UNGROUPED,
-                            RenderObjectDataFormat.PositionDimensions_t.XY,
-                            RenderObjectDataFormat.TexelDimensions_t.ST),
-                    m);
-        }
-    }
-
-    private ArrayList<Glyph> glyphs;
-
+    // Scale multiplier
     private float scale;
-
-    private Camera2D camera;
 
     private TextShader textShader;
 
@@ -54,9 +50,11 @@ public class Text extends UIObject
     private boolean wrapWords;
     private boolean centerText;
     private float maxLineWidth;
-    private float height;
     private float wiggleAmountPixels;
     private boolean wiggle;
+
+    private float width;
+    private float height;
 
     public enum WiggleSpeed_E
     {
@@ -73,19 +71,29 @@ public class Text extends UIObject
         this.wrapWords = wrapWords;
         this.centerText = centerText;
         this.maxLineWidth = maxLineWidth;
-        this.height = 0.0f;
         this.wiggleAmountPixels = 0.0f;
         this.wiggle = false;
+
+        this.width = 0.0f;
+        this.height = 0.0f;
 
         textShader = new TextShader();
 
         position = new Point3D();
         scale = 1.0f;
-
-        camera = new Camera2D();
         squares = new ArrayList<>();
 
         setText(textString);
+    }
+
+    public float getWidth()
+    {
+        return this.width;
+    }
+
+    public float getHeight()
+    {
+        return this.height;
     }
 
     public void setText(String text)
@@ -167,152 +175,221 @@ public class Text extends UIObject
         private float length;
     }
 
-    void generateText()
+    private void generateWrappedWords(boolean centerText)
     {
-        if(wrapWords)
+        // Save a queue with all the words in
+        Queue<Word> words = new LinkedList<>();
+
+        // Temp current word
+        Word tempWord = new Word();
+
+        // Iterate through the text string
+        for(int i = 0; i < textString.length(); i++)
         {
-// Save a queue with all the words in
-            Queue<Word> words = new LinkedList<>();
+            // Get the x advance so that when we create the next word, we know how much to offset
+            // it. This will likely just be the x advance of a space ' ',
+            float xAdvance = tempWord.addCharacter(font.getCharacter(textString.charAt(i)));
 
-            // Temp current word
-            Word tempWord = new Word();
-
-            // Iterate through the text string
-            for(int i = 0; i < textString.length(); i++)
+            // If the character isn't a space, add it to the temp word. Also check if it is the last
+            // character in the string, if it is we might want to push he word current word into the
+            // word list.
+            if(((textString.charAt(i) == ' ') && (!tempWord.characters.isEmpty())) ||
+                    ((i == textString.length() - 1 && !tempWord.characters.isEmpty())))
             {
-                // Get the x advance so that when we create the next word, we know how much to offset
-                // it. This will likely just be the x advance of a space ' ',
-                float xAdvance = tempWord.addCharacter(font.getCharacter(textString.charAt(i)));
+                // If the character is a space and the current word is not empty, add it to the
+                // word array
+                words.add(tempWord);
 
-                // If the character isn't a space, add it to the temp word. Also check if it is the last
-                // character in the string, if it is we might want to push he word current word into the
-                // word list.
-                if(((textString.charAt(i) == ' ') && (!tempWord.characters.isEmpty())) ||
-                        ((i == textString.length() - 1 && !tempWord.characters.isEmpty())))
-                {
-                    // If the character is a space and the current word is not empty, add it to the
-                    // word array
-                    words.add(tempWord);
-
-                    // Create a new word for next iteration
-                    tempWord = new Word(xAdvance);
-                }
+                // Create a new word for next iteration
+                tempWord = new Word(xAdvance);
             }
-
-            // Array list of lines
-            LinkedList<Line> lines = new LinkedList<>();
-
-            // The current line
-            Line tempLine = new Line();
-
-            while(!words.isEmpty())
-            {
-                if(tempLine.addWord(words.peek(), maxLineWidth))
-                {
-                    Word w = words.peek();
-                    System.out.print("Test Word: '");
-                    for(int i = 0; i < w.characters.size(); i++)
-                    {
-                        System.out.print((char)w.characters.get(i).getAscii());
-                    }
-                    System.out.println("', Length: " + w.length);
-
-                    // Word has been added to the line, we can now remove the word from the queue
-                    words.remove();
-
-                    // If the word was the last one, add the line (because the loop wont run again)
-                    if(words.isEmpty())
-                    {
-                        lines.add(tempLine);
-                    }
-                }
-                else
-                {
-                    // Add the temp line
-                    lines.add(tempLine);
-
-                    // Create a new line object that has a length of 0
-                    tempLine = new Line();
-                }
-            }
-
-            final boolean centered = false;
-
-            squares = new ArrayList<>();
-            System.out.println("PRINTING WORD WRAPPED TEXT OUTPUT!****");
-            float theY = 0.0f;
-            for(int pLine = lines.size() - 1; pLine >= 0; pLine--)
-            {
-                System.out.println("Line length: " + lines.get(pLine).length);
-                float theX = centered ? (maxLineWidth - lines.get(pLine).length) / 2.0f : 0.0f;
-
-                ArrayList<Word> pWords = lines.get(pLine).getWords();
-                for(int pWord = 0; pWord < pWords.size(); pWord++)
-                {
-                    ArrayList<FreeTypeCharData> pCharacters = pWords.get(pWord).characters;
-
-                    for(int pCharacter = 0; pCharacter < pCharacters.size(); pCharacter++)
-                    {
-                        System.out.print((char)pCharacters.get(pCharacter).getAscii());
-
-                        FreeTypeCharData theChar = pCharacters.get(pCharacter);
-                        float xpos = theX + theChar.getBearingX() * scale;
-                        float ypos = theY - ((theChar.getHeight() - theChar.getBearingY()) * scale);
-                        float width = theChar.getWidth() * scale;
-                        float height = theChar.getHeight() * scale;
-
-                        FontSquare square = new FontSquare(new Material(theChar.texture, Colour.BLACK),
-                                position, new Point2D(xpos, ypos));
-                        square.useCustomShader(textShader);
-                        square.setScale(new Scale2D(width, height));
-                        squares.add(square);
-
-                        theX += (theChar.getAdvance() >> 6) * scale;
-                    }
-                }
-
-                theY += font.getSize();
-                System.out.println();
-            }
-
-            // The height of the text is the number of lines * the height of one line (the font
-            // size)
-            height = lines.size() * font.getSize();
-
-            System.out.println("WORD WRAPPED OUTPUT FINISHED!****");
         }
-        else
+
+        // Array list of lines
+        LinkedList<Line> lines = new LinkedList<>();
+
+        // The current line
+        Line tempLine = new Line();
+
+        while(!words.isEmpty())
         {
-            if(maxLineWidth == 0.0f)
+            if(tempLine.addWord(words.peek(), maxLineWidth))
             {
-                // The position x position for the current line
-                float theX = 0.0f;
-                float currentY = 0.0f;
+                Word w = words.peek();
 
-                for(int i = 0; i < textString.length(); i++)
+                // Word has been added to the line, we can now remove the word from the queue
+                words.remove();
+
+                // If the word was the last one, add the line (because the loop wont run again)
+                if(words.isEmpty())
                 {
-                    FreeTypeCharData freeTypeCharacter = font.getCharacter(textString.charAt(i));
-                    float xpos = theX + freeTypeCharacter.getBearingX() * scale;
-                    float ypos = currentY - (freeTypeCharacter.getHeight() - freeTypeCharacter.getBearingY()) * scale;
-                    float width = freeTypeCharacter.getWidth() * scale;
-                    float height = freeTypeCharacter.getHeight() * scale;
-
-                    FontSquare square = new FontSquare(new Material(freeTypeCharacter.texture, Colour.BLACK),
-                            position, new Point2D(xpos, ypos));
-                    square.useCustomShader(textShader);
-                    square.setScale(new Scale2D(width, height));
-                    squares.add(square);
-                    theX += (freeTypeCharacter.getAdvance() >> 6) * scale;
-                    System.out.println("*************** PLACED: " + textString.charAt(i) + "**********************");
+                    lines.add(tempLine);
                 }
-
-                // The height of the text (one line)
-                height = font.getSize();
             }
             else
             {
-                // Character wrap text
-                // don't actually do this here, do it in the for loop above/look at older commits
+                // Add the temp line
+                lines.add(tempLine);
+
+                // Create a new line object that has a length of 0
+                tempLine = new Line();
+            }
+        }
+
+        squares = new ArrayList<>();
+        float theY = 0.0f;
+        for(int pLine = lines.size() - 1; pLine >= 0; pLine--)
+        {
+            float theX = centerText ? (maxLineWidth - lines.get(pLine).length) / 2.0f : 0.0f;
+
+            ArrayList<Word> pWords = lines.get(pLine).getWords();
+            for(int pWord = 0; pWord < pWords.size(); pWord++)
+            {
+                ArrayList<FreeTypeCharData> pCharacters = pWords.get(pWord).characters;
+
+                for(int pCharacter = 0; pCharacter < pCharacters.size(); pCharacter++)
+                {
+                    FreeTypeCharData theChar = pCharacters.get(pCharacter);
+                    final float CHAR_X = theX + theChar.getBearingX() * scale;
+                    final float CHAR_Y = theY - ((theChar.getHeight() - theChar.getBearingY()) * scale);
+                    final float CHAR_WIDTH = theChar.getWidth() * scale;
+                    final float CHAR_HEIGHT = theChar.getHeight() * scale;
+
+                    // If the character exceeds the current width, set the width as its pos + width
+                    if(CHAR_X + CHAR_WIDTH > width)
+                    {
+                        width = CHAR_X + CHAR_WIDTH;
+                    }
+
+                    FontSquare square = new FontSquare(new Material(theChar.texture, Colour.BLACK),
+                            position, new Point2D(CHAR_X, CHAR_Y));
+                    square.useCustomShader(textShader);
+                    square.setScale(new Scale2D(CHAR_WIDTH, CHAR_HEIGHT));
+                    squares.add(square);
+
+                    theX += (theChar.getAdvance() >> 6) * scale;
+                }
+            }
+
+            theY += font.getSize();
+        }
+
+        // The height of the text is the number of lines * the height of one line (the font
+        // size)
+        height = lines.size() * font.getSize();
+
+        if(centerText)
+        {
+            width = maxLineWidth;
+        }
+    }
+
+    private void generateCentered()
+    {
+
+    }
+
+    /**
+     * Read a file from a resource ID.
+
+     * @return  The file as an array of bytes
+     * @since   1.0
+     */
+    private void generate()
+    {
+        // This is text that is not wrapped or centered. Start from the position and just keep
+        // adding more letters until the max line width is met (if there is line width defined)
+
+        // X position of the cursor
+        float cursorX = 0.0f;
+
+        // Y position of the cursor
+        float cursorY = 0.0f;
+
+        // Used while calculating the height of the text
+        float heightCalc = font.getSize() * scale;
+
+        // Iterate through the text string
+        for(int i = 0; i < textString.length(); i++)
+        {
+            // Get the data of the current character
+            final FreeTypeCharData FREE_TYPE_CHAR_DATA = font.getCharacter(textString.charAt(i));
+
+            // If there is a max line width, see if the character x position + width is greater than
+            // the line width. If it is, put it on a new line
+            if(maxLineWidth != 0.0f &&
+                    (cursorX + FREE_TYPE_CHAR_DATA.getBearingX() * scale) +
+                            (FREE_TYPE_CHAR_DATA.getWidth() * scale) >= maxLineWidth)
+            {
+                cursorX = 0.0f;
+
+                for(int squareIt = 0; squareIt < squares.size(); squareIt++)
+                {
+                    squares.get(squareIt).setCharacterOffset(Geometry.translate(squares.get(squareIt).getCharacterOffset(), 0.0f, font.getSize() * scale));
+                }
+
+                heightCalc += font.getSize() * scale;
+            }
+
+            // Calculate the x-position
+            final float CHAR_X = cursorX + FREE_TYPE_CHAR_DATA.getBearingX() * scale;
+
+            // Move the cursor along now that we have calculated the x position
+            cursorX += (FREE_TYPE_CHAR_DATA.getAdvance() >> 6) * scale;
+
+            // Calculate the y-position
+            final float CHAR_Y = cursorY - (FREE_TYPE_CHAR_DATA.getHeight() -
+                    FREE_TYPE_CHAR_DATA.getBearingY()) * scale;
+
+            // Calculate the width
+            final float CHAR_WIDTH = FREE_TYPE_CHAR_DATA.getWidth() * scale;
+
+            // If the character exceeds the known width, set its pos + width as the new width
+            if(CHAR_X + CHAR_WIDTH >= width)
+            {
+                width = CHAR_X + CHAR_WIDTH;
+            }
+
+            // Calculate the height
+            final float CHAR_HEIGHT = FREE_TYPE_CHAR_DATA.getHeight() * scale;
+
+            // Create the render object square
+            FontSquare square = new FontSquare(new Material(FREE_TYPE_CHAR_DATA.texture,
+                    Colour.BLACK), position, new Point2D(CHAR_X, CHAR_Y));
+
+            // Force the use of the text shader (optimised for text rendering)
+            square.useCustomShader(textShader);
+
+            // Scale the square to the width and height of the character
+            square.setScale(new Scale2D(CHAR_WIDTH, CHAR_HEIGHT));
+
+            // Add the square to the square array for rendering later
+            squares.add(square);
+        }
+
+        height = heightCalc;
+    }
+
+    /**
+     * Wrapped and centered sets text width to the length of the line as you are centering in regards to the line length
+
+     * @return  The file as an array of bytes
+     * @since   1.0
+     */
+    private void generateText()
+    {
+        if(wrapWords)
+        {
+            generateWrappedWords(centerText);
+        }
+        {
+            if(centerText)
+            {
+
+            }
+            else
+            {
+                generate();
             }
 
         }
@@ -379,11 +456,6 @@ public class Text extends UIObject
             updateSquarePositions();
             System.out.println("UPDATED POSITION");
         }
-    }
-
-    public float getHeight()
-    {
-        return this.height;
     }
 
     float time = 0.0f;

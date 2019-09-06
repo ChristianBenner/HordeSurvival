@@ -103,8 +103,8 @@ public class Geometry
      *
      * @param point3D   The point to translate
      * @param x         Amount to translate the x co-ordinate
-     * @param y         Amount to translate the x co-ordinate
-     * @param z         Amount to translate the x co-ordinate
+     * @param y         Amount to translate the y co-ordinate
+     * @param z         Amount to translate the z co-ordinate
      * @return          The translated point
      * @since 1.0
      */
@@ -117,6 +117,39 @@ public class Geometry
                 point3D.x + x,
                 point3D.y + y,
                 point3D.z + z);
+    }
+
+    /**
+     * Translate a 2D point by a vector
+     *
+     * @param point2D   The point to translate
+     * @param vector    The vector to translate the point by
+     * @return          The translated point
+     * @since 1.0
+     */
+    public static Point2D translate(Point2D point2D, Vector2D vector)
+    {
+        return new Point2D(
+                point2D.x + vector.x,
+                point2D.y + vector.y);
+    }
+
+    /**
+     * Translate a point by floats
+     *
+     * @param point2D   The point to translate
+     * @param x         Amount to translate the x co-ordinate
+     * @param y         Amount to translate the y co-ordinate
+     * @return          The translated point
+     * @since 1.0
+     */
+    public static Point2D translate(Point2D point2D,
+                                    float x,
+                                    float y)
+    {
+        return new Point2D(
+                point2D.x + x,
+                point2D.y + y);
     }
 
     /**

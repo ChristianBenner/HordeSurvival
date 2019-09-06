@@ -87,15 +87,15 @@ public class TestScene extends Scene {
         Font font = new Font(R.raw.opensans, 64);
 
         text = new Text(font,
-                "This is some sample text",
+                "Testing unwrapped words on the full length of the display testing testing Testing unwrapped words on the full length of the display testing testing",
                 true,
                 true,
-                Crispin.getSurfaceWidth());
+                Crispin.getSurfaceWidth() / 2.0f);
 
         text.enableWiggle(-text.getHeight() / 2.0f, Text.WiggleSpeed_E.VERY_FAST);
 
         // Position the text to the top right corner
-        text.setPosition((Crispin.getSurfaceWidth() / 2.0f),
+        text.setPosition((Crispin.getSurfaceWidth() / 2.0f) - (text.getWidth() / 2.0f),
                 Crispin.getSurfaceHeight() - text.getHeight());
 
         Font fontTwo = new Font(R.raw.opensans, 64);
