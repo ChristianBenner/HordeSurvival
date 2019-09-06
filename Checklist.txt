@@ -46,18 +46,18 @@ Project Classes:
 		Utilities >
 			Camera2D		- VERIFY
 			Camera3D		- VERIFY
-			Font			- INCOMPLETE
+			Font			- VERIFY
 			Material		- VERIFY
 			RenderObject	- INCOMPLETE
 			Shader			- VERIFY
-			Texture			- INCOMPLETE
+			Texture			- VERIFY
 			TextureOptions	- VERIFY
 			
 	Utilities >
-		FileResourceReader	- INCOMPLETE
-		Logger				- INCOMPLETE
-		OBJModelLoader		- INCOMPLETE
-		OBJThreadTest		- INCOMPLETE
+		FileResourceReader	- VERIFY
+		Logger				- VERIFY
+		OBJModelLoader		- VERIFY
+		OBJThreadTest		- VERIFY
 		Scene				- VERIFY
 		SceneManager		- VERIFY
 		ShaderCache			- VERIFY
@@ -65,6 +65,10 @@ Project Classes:
 		
 	Crispin				- VERIFY
 	UnsupprtedDevice	- VERIFY
+	
+Native Classes:
+	crispinni >
+		funcs.cpp	- INCOMPLETE
 
 Code Checklist:
 - JavaDoc Documentation

@@ -58,7 +58,7 @@ public class TextureCache
         {
             try
             {
-                textures.get(i).reconstruct();
+                textures.get(i).reload();
             }
             catch(Exception e)
             {

@@ -1,20 +1,28 @@
 package com.games.crispin.crispinmobile.Utilities;
 
 import android.content.res.Resources;
-
 import com.games.crispin.crispinmobile.Crispin;
-
-import java.io.BufferedReader;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 
+/**
+ * FileResourceReader is a class comprised of only static function designed to read resource files.
+ *
+ * @author      Christian Benner
+ * @version     %I%, %G%
+ * @since       1.0
+ */
 public class FileResourceReader
 {
+    // Tag used for logging
     private static final String TAG = "FileResourceReader";
 
-    // Read a file from resource ID to a string
+    /**
+     * Read a file from a resource ID.
+     *
+     * @param resourceId    The resource ID
+     * @return  The file as an array of bytes
+     * @since   1.0
+     */
     public static byte[] readRawResource(int resourceId)
     {
         try
@@ -26,11 +34,8 @@ public class FileResourceReader
             byte[] bytes = new byte[SIZE_BYTES];
             inputStream.read(bytes);
 
-            System.out.println("Read resource file: ID[" +
-                    resourceId +
-                    "], Bytes[" +
-                    SIZE_BYTES +
-                    "]");
+            Logger.debug(TAG, "Read resource file: ID[" + resourceId + "], Bytes[" +
+                    SIZE_BYTES + "]");
 
             return bytes;
         }

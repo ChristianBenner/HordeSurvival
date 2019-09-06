@@ -60,8 +60,8 @@ public class TestScene extends Scene {
         brickMaterial = new Material(new Texture(R.drawable.brick), new Scale2D(0.25f, 0.25f));
        // brickMaterial.ignoreData(Material.IGNORE_TEXEL_DATA_FLAG);
 
-//        dinomodelThread = new OBJThreadTest(R.raw.dinomodel);
-//        new Thread(dinomodelThread).start();
+       // dinomodelThread = new OBJThreadTest(R.raw.);
+        new Thread(dinomodelThread).start();
 //        personmodelThread = new OBJThreadTest(R.raw.personmodel);
 //        new Thread(personmodelThread).start();
 //        carmodelThread = new OBJThreadTest(R.raw.shotty);

@@ -8,37 +8,144 @@ import com.games.crispin.crispinmobile.Rendering.Utilities.RenderObject;
 
 import java.io.InputStream;
 
+/**
+ * Designed to read OBJ model files and produce a RenderObject that can be drawn on a
+ * scene. OBJ models loaded with the class must have triangulated faces. It also doesn't support
+ * multiple OBJ models within one file. The class is comprised of static only functions.
+ *
+ * @see         RenderObject
+ * @author      Christian Benner
+ * @version     %I%, %G%
+ * @since       1.0
+ */
 public class OBJModelLoader
 {
     // Tag used in logging output
     private static final String TAG = "OBJModelLoader";
 
+    // Identifier for face data
     private static final byte FACE = 0x01;
+
+    // Identifier for position data
     private static final byte POSITION = 0x02;
+
+    // Identifier for texel data
     private static final byte TEXEL = 0x03;
+
+    // Identifier for normal data
     private static final byte NORMAL = 0x04;
+
+    // Identifier for vertex type data (e.g. position, texel and normal)
     private static final byte VERTEX = 0x05;
+
+    // Identifier for comment
     private static final byte COMMENT = 0x06;
+
+    // Identifier for undefined data type
     private static final byte NONE = 0x07;
 
+    // ASCII value of hash-tag character (this appears before comments)
     private static final byte ASCII_HASHTAG = 0x23;
+
+    // ASCII value of the 'f' character
     private static final byte ASCII_F = 0x66;
+
+    // ASCII value of the 'v' character
     private static final byte ASCII_V = 0x76;
+
+    // ASCII value of the space character
     private static final byte ASCII_SPACE = 0x20;
+
+    // ASCII value of the 't' character
     private static final byte ASCII_T = 0x74;
+
+    // ASCII value of the 'n' character
     private static final byte ASCII_N = 0x6E;
+
+    // ASCII value of the '0' character
     private static final byte ASCII_0 = 0x30;
+
+    // ASCII value of the '9' character
     private static final byte ASCII_9 = 0x39;
+
+    // ASCII value of the '.' character
     private static final byte ASCII_POINT = 0x2E;
+
+    // ASCII value of the '-' character
     private static final byte ASCII_MINUS = 0x2D;
+
+    // ASCII value of the '/' character
     private static final byte ASCII_FORWARD_SLASH = 0x2F;
+
+    // ASCII value of the new line character
     private static final byte ASCII_NEW_LINE = 0x0A;
+
+    // ASCII value of the carriage return character
     private static final byte ASCII_CARRIAGE_RETURN = 0x0D;
 
+    // Represent that the data subject (if there is one) hasn't been assigned a start index
     private static final int NO_START_INDEX = -1;
 
-    public static RenderObject processObj(byte[] theFile, RenderObjectData renderObjectData)
+    /**
+     * Read an OBJ file from a resource ID
+     *
+     * @param resourceId    The OBJ model file resource ID
+     * @return  A RenderObject built from the model data. The model can be rendered to a scene
+     * @see     RenderObject
+     * @since   1.0
+     */
+    public static RenderObject readObjFile(int resourceId)
     {
+
+        try {
+            Resources resources = Crispin.getApplicationContext().getResources();
+
+            InputStream inputStream;
+            long start = System.nanoTime();
+            inputStream = resources.openRawResource(resourceId);
+    /*        InputStreamReader inputStreamReader = new InputStreamReader(inputStream,
+                    "ASCII");
+            BufferedReader reader = new BufferedReader(inputStreamReader);
+
+            String line = reader.readLine();
+            while(line != null)
+            {
+                testLine(line, renderObjectData);
+                line = reader.readLine();
+            }*/
+
+            long end = System.nanoTime();
+            System.out.println("TimeTaken: " + ((end - start) / 1000000) + "ms");
+
+            inputStream.reset();
+            long b = System.nanoTime();
+            byte[] theFile = new byte[inputStream.available()];
+            inputStream.read(theFile);
+            RenderObject ro = processObj(theFile);
+            System.out.println("TK: " + ((System.nanoTime() - b) / 1000000) + "ms");
+
+            return ro;
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    /**
+     * Process the OBJ model
+     *
+     * @param theFile   The model file as an array of bytes
+     * @return  A RenderObject built from the model data. The model can be rendered to a scene
+     * @see     RenderObject
+     * @since   1.0
+     */
+    private static RenderObject processObj(byte[] theFile)
+    {
+        RenderObjectData renderObjectData = new RenderObjectData();
+
         // Keep track of the type of data we are looking at
         byte lineType = NONE;
 
@@ -66,6 +173,7 @@ public class OBJModelLoader
         // Whether or not to count the number of face data per line
         boolean countFaceDataPerLine = false;
 
+        // Iterate through all the bytes in the file
         for(int i = 0; i < theFile.length; i++)
         {
             final byte theByte = theFile[i];
@@ -350,46 +458,5 @@ public class OBJModelLoader
         }
 
         return renderObjectData.processData();
-    }
-
-    public static RenderObject readObjFile(int resourceId)
-    {
-        RenderObjectData renderObjectData = new RenderObjectData();
-
-        try {
-            Resources resources = Crispin.getApplicationContext().getResources();
-
-            InputStream inputStream;
-            long start = System.nanoTime();
-            inputStream = resources.openRawResource(resourceId);
-    /*        InputStreamReader inputStreamReader = new InputStreamReader(inputStream,
-                    "ASCII");
-            BufferedReader reader = new BufferedReader(inputStreamReader);
-
-            String line = reader.readLine();
-            while(line != null)
-            {
-                testLine(line, renderObjectData);
-                line = reader.readLine();
-            }*/
-
-            long end = System.nanoTime();
-            System.out.println("TimeTaken: " + ((end - start) / 1000000) + "ms");
-
-            inputStream.reset();
-            long b = System.nanoTime();
-            byte[] theFile = new byte[inputStream.available()];
-            inputStream.read(theFile);
-            RenderObject ro = processObj(theFile, renderObjectData);
-            System.out.println("TK: " + ((System.nanoTime() - b) / 1000000) + "ms");
-
-            return ro;
-        }
-        catch(Exception e)
-        {
-            e.printStackTrace();
-        }
-
-        return null;
     }
 }
