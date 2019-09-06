@@ -5,6 +5,8 @@ FUNCTIONAL(#AsOfCommitId) - The functional check has been complete but not the c
 COMPLETE(#AsOfCommitId) - Both the code checklist and functional check have been completed
 
 Project Classes:
+	Demos >
+		TextDemoScene	- INCOMPLETE
 	Geometry - CHECKLIST(5b852fd) >
 		Geometry	- CHECKLIST(5b852fd): 2D types need functions
 		Plane		- CHECKLIST(5b852fd)
@@ -18,10 +20,8 @@ Project Classes:
 		Sphere		- CHECKLIST(5b852fd)
 		Vector2D	- CHECKLIST(5b852fd)
 		Vector3D	- CHECKLIST(5b852fd)
-
 	Native >
 		FreeTypeMethods	- VERIFY
-		
 	Rendering >
 		Data >
 			Colour					- VERIFY: Colours take up too much data (should be 4 bytes not 16 bytes)
@@ -52,7 +52,6 @@ Project Classes:
 			Shader			- VERIFY
 			Texture			- VERIFY
 			TextureOptions	- VERIFY
-			
 	Utilities >
 		FileResourceReader	- VERIFY
 		Logger				- VERIFY
@@ -62,7 +61,6 @@ Project Classes:
 		SceneManager		- VERIFY
 		ShaderCache			- VERIFY
 		TextureCache		- VERIFY
-		
 	Crispin				- VERIFY
 	UnsupprtedDevice	- VERIFY
 	

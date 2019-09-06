@@ -14,6 +14,7 @@ import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
 
+import static android.opengl.GLES20.GL_NEAREST;
 import static android.opengl.GLES30.GL_LUMINANCE;
 
 /**
@@ -60,6 +61,8 @@ public class Font
         textureOptions.internalFormat = GL_LUMINANCE;
         textureOptions.monochrome = true;
         textureOptions.format = GL_LUMINANCE;
+        textureOptions.minFilter = GL_NEAREST;
+        textureOptions.magFilter = GL_NEAREST;
 
         // Iterate through the ASCII range loading each character into the FreeTypeCharData map
         for(char i = ASCII_START_INDEX; i < ASCII_END_INDEX; i++)

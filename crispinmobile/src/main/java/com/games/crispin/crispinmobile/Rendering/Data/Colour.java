@@ -44,6 +44,9 @@ public class Colour
     // Pre-defined magenta colour
     public static final Colour MAGENTA = new Colour(1.0f, 0.0f, 1.0f);
 
+    // Pre-defined orange colour
+    public static final Colour ORANGE = new Colour(1.0f, 0.415f, 0.0f);
+
     // Default alpha value if one is not provided
     private static final float DEFAULT_ALPHA_VALUE = 1.0f;
 

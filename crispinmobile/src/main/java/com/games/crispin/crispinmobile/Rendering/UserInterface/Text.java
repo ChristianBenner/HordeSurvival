@@ -5,15 +5,14 @@ import com.games.crispin.crispinmobile.Geometry.Geometry;
 import com.games.crispin.crispinmobile.Geometry.Point2D;
 import com.games.crispin.crispinmobile.Geometry.Point3D;
 import com.games.crispin.crispinmobile.Geometry.Scale2D;
+import com.games.crispin.crispinmobile.R;
 import com.games.crispin.crispinmobile.Rendering.Data.FreeTypeCharData;
 import com.games.crispin.crispinmobile.Rendering.Data.Colour;
-import com.games.crispin.crispinmobile.Rendering.Data.RenderObjectDataFormat;
 import com.games.crispin.crispinmobile.Rendering.Models.FontSquare;
 import com.games.crispin.crispinmobile.Rendering.Shaders.TextShader;
 import com.games.crispin.crispinmobile.Rendering.Utilities.Camera2D;
 import com.games.crispin.crispinmobile.Rendering.Utilities.Font;
 import com.games.crispin.crispinmobile.Rendering.Utilities.Material;
-import com.games.crispin.crispinmobile.Rendering.Utilities.RenderObject;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -65,7 +64,11 @@ public class Text extends UIObject
         VERY_SLOW
     }
 
-    public Text(Font font, String textString, boolean wrapWords, boolean centerText, float maxLineWidth)
+    public Text(Font font,
+                String textString,
+                boolean wrapWords,
+                boolean centerText,
+                float maxLineWidth)
     {
         this.font = font;
         this.wrapWords = wrapWords;
@@ -84,6 +87,26 @@ public class Text extends UIObject
         squares = new ArrayList<>();
 
         setText(textString);
+    }
+    public Text(Font font,
+                String textString)
+    {
+        this(font,
+                textString,
+                false,
+                false,
+                0.0f);
+    }
+
+    public Text(Font font,
+                String textString,
+                float maxLineWidth)
+    {
+        this(font,
+                textString,
+                false,
+                false,
+                maxLineWidth);
     }
 
     public float getWidth()
@@ -271,12 +294,12 @@ public class Text extends UIObject
                 }
             }
 
-            theY += font.getSize();
+            theY += font.getSize() * scale;
         }
 
         // The height of the text is the number of lines * the height of one line (the font
         // size)
-        height = lines.size() * font.getSize();
+        height = lines.size() * font.getSize() * scale;
 
         if(centerText)
         {
@@ -286,7 +309,115 @@ public class Text extends UIObject
 
     private void generateCentered()
     {
+        // The first task is to calculate the width of each line. To do this we need to add as many
+        // characters to a virtual line before it exceeds the maximum line length.
+        // Then we use the width of each line to calculate a starting position for each character
+        // when generating the text
 
+        // A line comprised of characters (not words as we are not word wrapping)
+        class CharLine
+        {
+            ArrayList<FreeTypeCharData> line = new ArrayList<>();
+            float lineLength = 0.0f;
+        }
+
+        //
+        ArrayList<CharLine> lines = new ArrayList<>();
+
+        // Used while calculating the height of the text
+        float heightCalc = 0.0f;
+
+        float cursorX = 0.0f;
+        CharLine currentLine = new CharLine();
+        for(int i = 0; i < textString.length(); i++)
+        {
+            // Get the data of the current character
+            final FreeTypeCharData FREE_TYPE_CHAR_DATA = font.getCharacter(textString.charAt(i));
+
+            // If adding the next character to the line will exceed the maximum line length, push
+            // the line onto the array of lines and create a new current line.
+            if((cursorX + FREE_TYPE_CHAR_DATA.getBearingX() * scale) +
+                    (FREE_TYPE_CHAR_DATA.getWidth() * scale) >= maxLineWidth)
+            {
+                // Push the current line onto the array of lines and create a new line
+                lines.add(currentLine);
+
+                currentLine = new CharLine();
+                cursorX = 0.0f;
+
+                heightCalc += font.getSize() * scale;
+            }
+
+            // Calculate the x-position
+            final float CHAR_X = cursorX + FREE_TYPE_CHAR_DATA.getBearingX() * scale;
+
+            // Calculate the width
+            final float CHAR_WIDTH = FREE_TYPE_CHAR_DATA.getWidth() * scale;
+
+            // Move the cursor along now that we have calculated the x position
+            cursorX += (FREE_TYPE_CHAR_DATA.getAdvance() >> 6) * scale;
+
+            currentLine.line.add(FREE_TYPE_CHAR_DATA);
+
+            if(CHAR_X + CHAR_WIDTH >= currentLine.lineLength)
+            {
+                currentLine.lineLength = CHAR_X + CHAR_WIDTH;
+            }
+        }
+
+        if(!currentLine.line.isEmpty())
+        {
+            lines.add(currentLine);
+            heightCalc += font.getSize() * scale;
+        }
+
+        squares = new ArrayList<>();
+        float cursorY = 0.0f;
+        for(int i = lines.size() - 1; i >= 0; i--)
+        {
+            // The starting x co-ordinate
+            cursorX = (maxLineWidth - lines.get(i).lineLength) / 2.0f;
+
+            for(int charIt = 0; charIt < lines.get(i).line.size(); charIt++)
+            {
+                // Get the data of the current character
+                final FreeTypeCharData FREE_TYPE_CHAR_DATA = lines.get(i).line.get(charIt);
+
+                // Calculate the x-position
+                final float CHAR_X = cursorX + FREE_TYPE_CHAR_DATA.getBearingX() * scale;
+
+                // Move the cursor along now that we have calculated the x position
+                cursorX += (FREE_TYPE_CHAR_DATA.getAdvance() >> 6) * scale;
+
+                // Calculate the y-position
+                final float CHAR_Y = cursorY - (FREE_TYPE_CHAR_DATA.getHeight() -
+                        FREE_TYPE_CHAR_DATA.getBearingY()) * scale;
+
+                // Calculate the width
+                final float CHAR_WIDTH = FREE_TYPE_CHAR_DATA.getWidth() * scale;
+
+                // Calculate the height
+                final float CHAR_HEIGHT = FREE_TYPE_CHAR_DATA.getHeight() * scale;
+
+                // Create the render object square
+                FontSquare square = new FontSquare(new Material(FREE_TYPE_CHAR_DATA.texture,
+                        Colour.BLACK), position, new Point2D(CHAR_X, CHAR_Y));
+
+                // Force the use of the text shader (optimised for text rendering)
+                square.useCustomShader(textShader);
+
+                // Scale the square to the width and height of the character
+                square.setScale(new Scale2D(CHAR_WIDTH, CHAR_HEIGHT));
+
+                // Add the square to the square array for rendering later
+                squares.add(square);
+            }
+
+            cursorY += font.getSize() * scale;
+        }
+
+        height = heightCalc;
+        width = maxLineWidth;
     }
 
     /**
@@ -382,16 +513,25 @@ public class Text extends UIObject
         {
             generateWrappedWords(centerText);
         }
+        else
         {
             if(centerText)
             {
-
+                generateCentered();
             }
             else
             {
                 generate();
             }
 
+        }
+    }
+
+    public void setColour(Colour colour)
+    {
+        for(int i = 0; i < squares.size(); i++)
+        {
+            squares.get(i).getMaterial().setColour(colour);
         }
     }
 
