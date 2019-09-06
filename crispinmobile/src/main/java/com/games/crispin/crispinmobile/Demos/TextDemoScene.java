@@ -5,10 +5,7 @@ import com.games.crispin.crispinmobile.R;
 import com.games.crispin.crispinmobile.Rendering.Data.Colour;
 import com.games.crispin.crispinmobile.Rendering.UserInterface.Text;
 import com.games.crispin.crispinmobile.Rendering.Utilities.Camera2D;
-import com.games.crispin.crispinmobile.Rendering.Utilities.Camera3D;
 import com.games.crispin.crispinmobile.Rendering.Utilities.Font;
-import com.games.crispin.crispinmobile.Rendering.Utilities.RenderObject;
-import com.games.crispin.crispinmobile.Rendering.Utilities.Texture;
 import com.games.crispin.crispinmobile.Utilities.Scene;
 
 public class TextDemoScene extends Scene {
@@ -87,10 +84,10 @@ public class TextDemoScene extends Scene {
     @Override
     public void render()
     {
-        standardText.renderText(camera2D);
-        standardTextMaxLength.renderText(camera2D);
-        centeredText.renderText(camera2D);
-        wrappedText.renderText(camera2D);
-        wrappedCenteredText.renderText(camera2D);
+        standardText.draw(camera2D);
+        standardTextMaxLength.draw(camera2D);
+        centeredText.draw(camera2D);
+        wrappedText.draw(camera2D);
+        wrappedCenteredText.draw(camera2D);
     }
 }

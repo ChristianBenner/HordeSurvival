@@ -1,6 +1,5 @@
 package com.games.crispin.hordesurvival;
 
-import com.games.crispin.crispinmobile.Geometry.Point2D;
 import com.games.crispin.crispinmobile.Geometry.Scale2D;
 import com.games.crispin.crispinmobile.Rendering.Models.Square;
 import com.games.crispin.crispinmobile.Rendering.Utilities.Camera2D;
@@ -14,7 +13,6 @@ import com.games.crispin.crispinmobile.Rendering.Utilities.Material;
 import com.games.crispin.crispinmobile.Rendering.Utilities.RenderObject;
 import com.games.crispin.crispinmobile.Rendering.UserInterface.Text;
 import com.games.crispin.crispinmobile.Rendering.Utilities.Texture;
-import com.games.crispin.crispinmobile.Utilities.OBJModelLoader;
 import com.games.crispin.crispinmobile.Utilities.OBJThreadTest;
 import com.games.crispin.crispinmobile.Utilities.Scene;
 
@@ -253,8 +251,8 @@ public class TestScene extends Scene {
             personmodel.draw(camera);
         }
 
-        text.renderText(camera2D);
-       // fpsText.renderText(camera2D);
+        text.draw(camera2D);
+       // fpsText.draw(camera2D);
 
         frames++;
 

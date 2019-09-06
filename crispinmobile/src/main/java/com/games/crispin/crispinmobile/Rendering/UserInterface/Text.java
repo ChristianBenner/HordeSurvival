@@ -5,7 +5,6 @@ import com.games.crispin.crispinmobile.Geometry.Geometry;
 import com.games.crispin.crispinmobile.Geometry.Point2D;
 import com.games.crispin.crispinmobile.Geometry.Point3D;
 import com.games.crispin.crispinmobile.Geometry.Scale2D;
-import com.games.crispin.crispinmobile.R;
 import com.games.crispin.crispinmobile.Rendering.Data.FreeTypeCharData;
 import com.games.crispin.crispinmobile.Rendering.Data.Colour;
 import com.games.crispin.crispinmobile.Rendering.Models.FontSquare;
@@ -34,27 +33,7 @@ import static android.opengl.GLES20.glEnable;
  */
 public class Text extends UIObject
 {
-    // The font that the text string is in
-    private Font font;
-
-    // The text string to display
-    private String textString;
-
-    // Scale multiplier
-    private float scale;
-
-    private TextShader textShader;
-
-    private ArrayList<FontSquare> squares;
-    private boolean wrapWords;
-    private boolean centerText;
-    private float maxLineWidth;
-    private float wiggleAmountPixels;
-    private boolean wiggle;
-
-    private float width;
-    private float height;
-
+    // Speed of the wiggle motion
     public enum WiggleSpeed_E
     {
         VERY_FAST,
@@ -64,30 +43,103 @@ public class Text extends UIObject
         VERY_SLOW
     }
 
+    // Tag used in logging
+    private static final String TAG = "Text";
+
+    // The default scale value if one is not provided
+    private static final float DEFAULT_SCALE = 1.0f;
+
+    // The font that the text string is in
+    private Font font;
+
+    // The text string to display
+    private String textString;
+
+    // Wrap words state
+    private boolean wrapWords;
+
+    // Center text state
+    private boolean centerText;
+
+    // Max line width (before wrapping the string)
+    private float maxLineWidth;
+
+    // Scale multiplier
+    private float scale;
+
+    // The width of the text
+    private float width;
+
+    // The height of the text
+    private float height;
+
+    // Amount in pixels that the text can wiggle
+    private float wiggleAmountPixels;
+
+    // Wiggle state
+    private boolean wiggle;
+
+    // Text shader designed to render the characters
+    private TextShader textShader;
+
+    // Array of font square render objects (render objects designed to handle character strings)
+    private ArrayList<FontSquare> squares;
+
+    /**
+     * Construct a text user interface object
+     *
+     * @param font          The font to fetch the character data from
+     * @param textString    Text string to generate
+     * @param wrapWords     True to wrap text by words, else wrap text by characters. For text to
+     *                      wrap there must also be a defined maxLineWidth.
+     * @param centerText    True to center the text in the middle of the maxLineWidth
+     * @param maxLineWidth  Max line width to generate the text in. If the characters exceed the
+     *                      line width, the text will be wrapped. The way the text wrapped is
+     *                      determined on the wrapWords parameter.
+     * @param scale         Scale multiplier to apply to the text. Note that this scales the
+     *                      texture. When upscaling text may appear fuzzy. When downscaling it may
+     *                      produce artifacts.
+     * @since   1.0
+     */
+    public Text(Font font,
+                String textString,
+                boolean wrapWords,
+                boolean centerText,
+                float maxLineWidth,
+                float scale)
+    {
+        this.font = font;
+        this.wrapWords = wrapWords;
+        this.centerText = centerText;
+        this.maxLineWidth = maxLineWidth;
+        this.scale = scale;
+
+        wiggleAmountPixels = 0.0f;
+        wiggle = false;
+        width = 0.0f;
+        height = 0.0f;
+
+        textShader = new TextShader();
+        position = new Point3D();
+        squares = new ArrayList<>();
+
+        setText(textString);
+    }
+
     public Text(Font font,
                 String textString,
                 boolean wrapWords,
                 boolean centerText,
                 float maxLineWidth)
     {
-        this.font = font;
-        this.wrapWords = wrapWords;
-        this.centerText = centerText;
-        this.maxLineWidth = maxLineWidth;
-        this.wiggleAmountPixels = 0.0f;
-        this.wiggle = false;
-
-        this.width = 0.0f;
-        this.height = 0.0f;
-
-        textShader = new TextShader();
-
-        position = new Point3D();
-        scale = 1.0f;
-        squares = new ArrayList<>();
-
-        setText(textString);
+        this(font,
+                textString,
+                wrapWords,
+                centerText,
+                maxLineWidth,
+                DEFAULT_SCALE);
     }
+
     public Text(Font font,
                 String textString)
     {
@@ -95,7 +147,8 @@ public class Text extends UIObject
                 textString,
                 false,
                 false,
-                0.0f);
+                0.0f,
+                DEFAULT_SCALE);
     }
 
     public Text(Font font,
@@ -106,7 +159,8 @@ public class Text extends UIObject
                 textString,
                 false,
                 false,
-                maxLineWidth);
+                maxLineWidth,
+                DEFAULT_SCALE);
     }
 
     public float getWidth()
@@ -631,7 +685,7 @@ public class Text extends UIObject
         this.wiggle = false;
     }
 
-    public void renderText(Camera2D camera)
+    public void draw(Camera2D camera)
     {
         final boolean REENABLE_DEPTH = Crispin.isDepthEnabled();
         glDisable(GL_DEPTH_TEST);
