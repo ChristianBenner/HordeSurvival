@@ -33,6 +33,98 @@ import static android.opengl.GLES20.glEnable;
  */
 public class Text extends UIObject
 {
+    /**
+     * Word class is designed to store data on multiple characters
+     *
+     * @author      Christian Benner
+     * @version     %I%, %G%
+     * @since       1.0
+     */
+    class Word
+    {
+        // Character data array
+        private ArrayList<FreeTypeCharData> characters;
+
+        // The start position x-coordinate
+        private float startX;
+
+        // Length of the word
+        private float length;
+
+        public Word(float startX)
+        {
+            characters = new ArrayList<>();
+            this.startX = startX;
+            length = 0.0f;
+        }
+
+        public Word()
+        {
+            this(0.0f);
+        }
+
+        public float addCharacter(FreeTypeCharData character)
+        {
+            characters.add(character);
+
+            final float X_POS = startX + (character.getBearingX() * scale);
+            final float WIDTH = character.getWidth() * scale;
+            length = X_POS + WIDTH;
+
+            // The advance for the next character
+            startX += (character.getAdvance() >> 6) * scale;
+
+            // Return the last x advance so we can consider where the next word starts
+            return (character.getAdvance() >> 6) * scale;
+        }
+    }
+
+    /**
+     * A line is comprised of multiple word objects. It contains data on the text and is used in
+     * formatting calculations.
+     *
+     * @see         Word
+     * @author      Christian Benner
+     * @version     %I%, %G%
+     * @since       1.0
+     */
+    class Line
+    {
+        // Word array
+        private ArrayList<Word> words;
+
+        // Length of the line
+        private float length;
+
+        public Line()
+        {
+            words = new ArrayList<>();
+            length = 0.0f;
+        }
+
+        public ArrayList<Word> getWords()
+        {
+            return this.words;
+        }
+
+        public boolean addWord(Word word, float maxLength)
+        {
+            // If the word fits on the line, add it and increase the length
+            // If the word doesn't fit on the line however there is no words currently on the line,
+            // add it anyway
+            if(word.length + length <= maxLength || words.isEmpty())
+            {
+                words.add(word);
+                length += word.length;
+
+                return true;
+            }
+
+            // Word doesn't fit on the line, return false
+            return false;
+        }
+    }
+
     // Speed of the wiggle motion
     public enum WiggleSpeed_E
     {
@@ -85,6 +177,12 @@ public class Text extends UIObject
     // Array of font square render objects (render objects designed to handle character strings)
     private ArrayList<FontSquare> squares;
 
+    // Timing used in wiggle calculation
+    private float wiggleTime;
+
+    // Speed of the wiggle
+    private float wiggleSpeed;
+
     /**
      * Construct a text user interface object
      *
@@ -115,6 +213,8 @@ public class Text extends UIObject
         this.scale = scale;
 
         wiggleAmountPixels = 0.0f;
+        wiggleTime = 0.0f;
+        wiggleSpeed = 0.0f;
         wiggle = false;
         width = 0.0f;
         height = 0.0f;
@@ -126,6 +226,19 @@ public class Text extends UIObject
         setText(textString);
     }
 
+    /**
+     * Construct a text user interface object
+     *
+     * @param font          The font to fetch the character data from
+     * @param textString    Text string to generate
+     * @param wrapWords     True to wrap text by words, else wrap text by characters. For text to
+     *                      wrap there must also be a defined maxLineWidth.
+     * @param centerText    True to center the text in the middle of the maxLineWidth
+     * @param maxLineWidth  Max line width to generate the text in. If the characters exceed the
+     *                      line width, the text will be wrapped. The way the text wrapped is
+     *                      determined on the wrapWords parameter.
+     * @since   1.0
+     */
     public Text(Font font,
                 String textString,
                 boolean wrapWords,
@@ -140,17 +253,16 @@ public class Text extends UIObject
                 DEFAULT_SCALE);
     }
 
-    public Text(Font font,
-                String textString)
-    {
-        this(font,
-                textString,
-                false,
-                false,
-                0.0f,
-                DEFAULT_SCALE);
-    }
-
+    /**
+     * Construct a text user interface object
+     *
+     * @param font          The font to fetch the character data from
+     * @param textString    Text string to generate
+     * @param maxLineWidth  Max line width to generate the text in. If the characters exceed the
+     *                      line width, the text will be wrapped. The way the text wrapped is
+     *                      determined on the wrapWords parameter.
+     * @since   1.0
+     */
     public Text(Font font,
                 String textString,
                 float maxLineWidth)
@@ -163,16 +275,53 @@ public class Text extends UIObject
                 DEFAULT_SCALE);
     }
 
+    /**
+     * Construct a text user interface object
+     *
+     * @param font          The font to fetch the character data from
+     * @param textString    Text string to generate
+     * @since   1.0
+     */
+    public Text(Font font,
+                String textString)
+    {
+        this(font,
+                textString,
+                false,
+                false,
+                0.0f,
+                DEFAULT_SCALE);
+    }
+
+    /**
+     * Get the width of the text
+     *
+     * @return  The width of the text string. If the text comprises of multiple lines, the width
+     *          is the length of the largest line.
+     * @since   1.0
+     */
     public float getWidth()
     {
         return this.width;
     }
 
+    /**
+     * Get the height of the text
+     *
+     * @return  The height of the text string
+     * @since   1.0
+     */
     public float getHeight()
     {
         return this.height;
     }
 
+    /**
+     * Set text and generate a new set of characters from a string
+     *
+     * @return  The new text to generate
+     * @since   1.0
+     */
     public void setText(String text)
     {
         // Only change the text if it isn't the same as before
@@ -184,74 +333,13 @@ public class Text extends UIObject
         }
     }
 
-    class Word
-    {
-        public Word(float startX)
-        {
-            characters = new ArrayList<>();
-            this.startX = startX;
-            length = 0.0f;
-        }
-
-        public Word()
-        {
-            this(0.0f);
-        }
-
-        public float addCharacter(FreeTypeCharData character)
-        {
-            characters.add(character);
-
-            final float X_POS = startX + (character.getBearingX() * scale);
-            final float WIDTH = character.getWidth() * scale;
-            length = X_POS + WIDTH;
-
-            // The advance for the next character
-            startX += (character.getAdvance() >> 6) * scale;
-
-            // Return the last x advance so we can consider where the next word starts
-            return (character.getAdvance() >> 6) * scale;
-        }
-
-        private ArrayList<FreeTypeCharData> characters;
-        private float startX;
-        private float length;
-    }
-
-    class Line
-    {
-        public Line()
-        {
-            words = new ArrayList<>();
-            length = 0.0f;
-        }
-
-        public ArrayList<Word> getWords()
-        {
-            return this.words;
-        }
-
-        public boolean addWord(Word word, float maxLength)
-        {
-            // If the word fits on the line, add it and increase the length
-            // If the word doesn't fit on the line however there is no words currently on the line,
-            // add it anyway
-            if(word.length + length <= maxLength || words.isEmpty())
-            {
-                words.add(word);
-                length += word.length;
-
-                return true;
-            }
-
-            // Word doesn't fit on the line, return false
-            return false;
-        }
-
-        private ArrayList<Word> words;
-        private float length;
-    }
-
+    /**
+     * Generate a new set of characters and text that can be rendered. When words exceed the maximum
+     * line width, they will be wrapped (put onto the next line) unless the max line length is zero.
+     *
+     * @param centerText    Whether to center the text or not. True to center text, else false
+     * @since 1.0
+     */
     private void generateWrappedWords(boolean centerText)
     {
         // Save a queue with all the words in
@@ -361,6 +449,13 @@ public class Text extends UIObject
         }
     }
 
+    /**
+     * Generate a new set of characters and text that can be rendered. When characters exceed the
+     * maximum line width, they will be wrapped (put onto the next line) unless the max line length
+     * is zero. The text is centered.
+     *
+     * @since 1.0
+     */
     private void generateCentered()
     {
         // The first task is to calculate the width of each line. To do this we need to add as many
@@ -475,10 +570,11 @@ public class Text extends UIObject
     }
 
     /**
-     * Read a file from a resource ID.
-
-     * @return  The file as an array of bytes
-     * @since   1.0
+     * Generate a new set of characters and text that can be rendered. When characters exceed the
+     * maximum line width, they will be wrapped (put onto the next line) unless the max line length
+     * is zero.
+     *
+     * @since 1.0
      */
     private void generate()
     {
@@ -557,7 +653,7 @@ public class Text extends UIObject
 
     /**
      * Wrapped and centered sets text width to the length of the line as you are centering in regards to the line length
-
+     *
      * @return  The file as an array of bytes
      * @since   1.0
      */
@@ -581,6 +677,13 @@ public class Text extends UIObject
         }
     }
 
+    /**
+     * Set the colour of the text. This will loop through each character and set the colour of the
+     * applied materials colour to the one provided.
+     *
+     * @param colour
+     * @since 1.0
+     */
     public void setColour(Colour colour)
     {
         for(int i = 0; i < squares.size(); i++)
@@ -589,6 +692,11 @@ public class Text extends UIObject
         }
     }
 
+    /**
+     * Update the position of the text by updating all of the characters text position
+     *
+     * @since 1.0
+     */
     private void updateSquarePositions()
     {
         for(int i = 0; i < squares.size(); i++)
@@ -597,8 +705,13 @@ public class Text extends UIObject
         }
     }
 
-    // Sets position of all characters and doesn't work
-
+    /**
+     * If the new position for the text is different to the current, set the new position and do a
+     * position update. The position of the text is based from the bottom left point.
+     *
+     * @param position  The new position
+     * @since 1.0
+     */
     @Override
     public void setPosition(Point3D position)
     {
@@ -612,8 +725,19 @@ public class Text extends UIObject
         }
     }
 
+    /**
+     * If the new position for the text is different to the current, set the new position and do a
+     * position update. The position of the text is based from the bottom left point.
+     *
+     * @param x The new x-coordinate
+     * @param y The new y-coordinate
+     * @param z The new z-coordinate
+     * @since 1.0
+     */
     @Override
-    public void setPosition(float x, float y, float z)
+    public void setPosition(float x,
+                            float y,
+                            float z)
     {
         // Only update the position if the position has changed
         if(this.position.x != x ||
@@ -627,6 +751,13 @@ public class Text extends UIObject
         }
     }
 
+    /**
+     * If the new position for the text is different to the current, set the new position and do a
+     * position update. The position of the text is based from the bottom left point.
+     *
+     * @param position  The new position
+     * @since 1.0
+     */
     @Override
     public void setPosition(Point2D position)
     {
@@ -639,6 +770,14 @@ public class Text extends UIObject
         }
     }
 
+    /**
+     * If the new position for the text is different to the current, set the new position and do a
+     * position update. The position of the text is based from the bottom left point.
+     *
+     * @param x The new x-coordinate
+     * @param y The new y-coordinate
+     * @since 1.0
+     */
     @Override
     public void setPosition(float x, float y)
     {
@@ -652,9 +791,14 @@ public class Text extends UIObject
         }
     }
 
-    float time = 0.0f;
-    float wiggleSpeed = 0.0f;
-
+    /**
+     * Enable text wiggle. This is the vertical movement of characters in a sin wave style motion.
+     * The speed and amount of wiggle is adjustable
+     *
+     * @param amountPixels  The amount of pixels to wiggle characters by (vertically)
+     * @param wiggleSpeed   The speed in which to wiggle the text
+     * @since 1.0
+     */
     public void enableWiggle(float amountPixels, WiggleSpeed_E wiggleSpeed)
     {
         this.wiggleAmountPixels = amountPixels;
@@ -680,11 +824,22 @@ public class Text extends UIObject
         }
     }
 
+    /**
+     * Disable text wiggle
+     *
+     * @since 1.0
+     */
     public void disableWiggle()
     {
         this.wiggle = false;
     }
 
+    /**
+     * Render the text to the display using a 2D camera object.
+     *
+     * @param camera
+     * @since 1.0
+     */
     public void draw(Camera2D camera)
     {
         final boolean REENABLE_DEPTH = Crispin.isDepthEnabled();
@@ -692,22 +847,24 @@ public class Text extends UIObject
 
         if(wiggle)
         {
-            time += wiggleSpeed;
+            wiggleTime += wiggleSpeed;
 
-            for(FontSquare square : squares)
+            for(int i = 0; i < squares.size(); i++)
             {
-                final float sinVal = (square.getPosition().x + time) / maxLineWidth;
-                final float height = wiggleAmountPixels * (((float)Math.sin((double)sinVal) + 1.0f) / 2.0f);
-                square.setCharacterOffset(square.getCharacterOffset().x, square.getCharacterOffset().y + height);
+                final FontSquare square = squares.get(i);
+
+                final float SIN_VALUE = (square.getPosition().x + wiggleTime) / maxLineWidth;
+                final float WIGGLE_OFFSET = wiggleAmountPixels * (((float)Math.sin((double)SIN_VALUE) + 1.0f) / 2.0f);
+                square.setCharacterOffset(square.getCharacterOffset().x, square.getCharacterOffset().y + WIGGLE_OFFSET);
                 square.draw(camera);
-                square.setCharacterOffset(square.getCharacterOffset().x, square.getCharacterOffset().y - height);
+                square.setCharacterOffset(square.getCharacterOffset().x, square.getCharacterOffset().y - WIGGLE_OFFSET);
             }
         }
         else
         {
-            for(FontSquare square : squares)
+            for(int i = 0; i < squares.size(); i++)
             {
-                square.draw(camera);
+                squares.get(i).draw(camera);
             }
         }
 

@@ -45,16 +45,16 @@ public class TextDemoScene extends Scene {
                 false,
                 Crispin.getSurfaceWidth());
 
-        standardText.setColour(Colour.RED);
-        standardTextMaxLength.setColour(Colour.LIGHT_GREY);
-        centeredText.setColour(Colour.CYAN);
-        wrappedText.setColour(Colour.ORANGE);
-
         wrappedCenteredText = new Text(aileronRegular,
                 "This text has both word wrap and centering formats.",
                 true,
                 true,
                 Crispin.getSurfaceWidth());
+
+        standardText.setColour(Colour.RED);
+        standardTextMaxLength.setColour(Colour.LIGHT_GREY);
+        centeredText.setColour(Colour.CYAN);
+        wrappedText.setColour(Colour.ORANGE);
         wrappedCenteredText.setColour(Colour.MAGENTA);
 
         standardText.setPosition(0.0f,
