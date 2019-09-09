@@ -1,5 +1,8 @@
 package com.games.crispin.crispinmobile.Demos;
 
+import android.app.ActionBar;
+import android.app.Activity;
+
 import com.games.crispin.crispinmobile.Crispin;
 import com.games.crispin.crispinmobile.R;
 import com.games.crispin.crispinmobile.Rendering.Data.Colour;
@@ -14,6 +17,7 @@ public class TextDemoScene extends Scene {
     private Text centeredText;
     private Text wrappedText;
     private Text wrappedCenteredText;
+    private Text wiggleText;
     private Camera2D camera2D;
 
     private static final int PADDING_PIXELS = 50;
@@ -51,11 +55,19 @@ public class TextDemoScene extends Scene {
                 true,
                 Crispin.getSurfaceWidth());
 
+        wiggleText = new Text(aileronRegular,
+                "Wiggle wiggle wiggle!",
+                true,
+                true,
+                Crispin.getSurfaceWidth());
+        wiggleText.enableWiggle(PADDING_PIXELS * 2.0f, Text.WiggleSpeed_E.VERY_FAST);
+
         standardText.setColour(Colour.RED);
         standardTextMaxLength.setColour(Colour.LIGHT_GREY);
         centeredText.setColour(Colour.CYAN);
         wrappedText.setColour(Colour.ORANGE);
         wrappedCenteredText.setColour(Colour.MAGENTA);
+        wiggleText.setColour(Colour.GREEN);
 
         standardText.setPosition(0.0f,
                 Crispin.getSurfaceHeight() - standardText.getHeight());
@@ -73,6 +85,11 @@ public class TextDemoScene extends Scene {
         wrappedCenteredText.setPosition((Crispin.getSurfaceWidth() / 2.0f) -
                         (wrappedCenteredText.getWidth() / 2.0f),
                 wrappedText.getPosition().y - wrappedCenteredText.getHeight() - PADDING_PIXELS);
+
+        wiggleText.setPosition((Crispin.getSurfaceWidth() / 2.0f) -
+                        (wiggleText.getWidth() / 2.0f),
+                wrappedCenteredText.getPosition().y - wiggleText.getHeight() -
+                        (PADDING_PIXELS * 2.0f));
     }
 
     @Override
@@ -89,5 +106,6 @@ public class TextDemoScene extends Scene {
         centeredText.draw(camera2D);
         wrappedText.draw(camera2D);
         wrappedCenteredText.draw(camera2D);
+        wiggleText.draw(camera2D);
     }
 }

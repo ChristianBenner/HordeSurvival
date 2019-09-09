@@ -41,7 +41,7 @@ Project Classes:
 			TextureShader					- VERIFY
 			UniformColourShader				- VERIFY
 		UserInterface >
-			Text		- INCOMPLETE
+			Text		- VERIFY
 			UIObject	- INCOMPLETE
 		Utilities >
 			Camera2D		- VERIFY

@@ -59,7 +59,10 @@ public class RenderObject
     private static final String TAG = "RenderObject";
 
     // ability to change for dimensions?
-    static public final int BYTES_PER_FLOAT = 4;
+    public static final int BYTES_PER_FLOAT = 4;
+
+    // The number of vertices in the model data
+    private final int VERTEX_COUNT;
 
     // The number of elements that are in the position data
     private int elementsPerPosition;
@@ -96,16 +99,28 @@ public class RenderObject
 
     // If the model has a custom shader
     private boolean hasCustomShader;
-    private float[] modelMatrix = new float[16];
-    private final int VERTEX_COUNT;
 
+    // Model matrix containing positional data
+    private float[] modelMatrix = new float[16];
+
+    // Scale of the object
     private Scale3D scale;
+
+    // Position of the object
     private Point3D position;
+
+    // Objects rotation
     private Rotation3D rotation;
 
+    // Material to apply to the object
     protected Material material;
+
+    // Shader applied to the object
     protected Shader shader;
 
+    // Method of rendering the object. Points renders one vertex at a time and places a point. Lines
+    // renders two vertex at a time and draw a line between them. Triangles renders three vertices
+    // at a time and uses the fragment shader to fill the middle.
     public enum RenderMethod
     {
         POINTS,
@@ -114,20 +129,22 @@ public class RenderObject
         NONE
     }
 
-    public RenderObject(float[] positionBuffer,
-                        float[] texelBuffer,
-                        float[] colourBuffer,
-                        float[] normalBuffer,
-                        RenderObjectDataFormat renderObjectDataFormat)
-    {
-        this(positionBuffer,
-                texelBuffer,
-                colourBuffer,
-                normalBuffer,
-                renderObjectDataFormat,
-                new Material());
-    }
-
+    /**
+     * Create an object with vertex data comprised of multiple buffers containing different forms of
+     * vertex data. For the buffers that you are not providing data for, put <code>null</code>.
+     *
+     * @param positionBuffer            Float buffer containing the position data
+     * @param texelBuffer               Float buffer containing the texel data, or <code>null</code>
+     *                                  if no texel data is being provided
+     * @param colourBuffer              Float buffer containing the colour data, or
+     *                                  <code>null</code> if no colour data is being provided
+     * @param normalBuffer              Float buffer containing the normal data, or
+     *                                  <code>null</code> if no normal data is being provided
+     * @param renderObjectDataFormat    The format of the vertex data, such as what data is provided
+     *                                  and in what order.
+     * @param material                  The material to apply to the object
+     * @since   1.0
+     */
     public RenderObject(float[] positionBuffer,
                         float[] texelBuffer,
                         float[] colourBuffer,
@@ -223,6 +240,47 @@ public class RenderObject
         hasCustomShader = false;
     }
 
+    /**
+     * Create an object with vertex data comprised of multiple buffers containing different forms of
+     * vertex data. For the buffers that you are not providing data for, put <code>null</code>. A
+     * default material will be applied.
+     *
+     * @param positionBuffer            Float buffer containing the position data
+     * @param texelBuffer               Float buffer containing the texel data, or <code>null</code>
+     *                                  if no texel data is being provided
+     * @param colourBuffer              Float buffer containing the colour data, or
+     *                                  <code>null</code> if no colour data is being provided
+     * @param normalBuffer              Float buffer containing the normal data, or
+     *                                  <code>null</code> if no normal data is being provided
+     * @param renderObjectDataFormat    The format of the vertex data, such as what data is provided
+     *                                  and in what order
+     * @since   1.0
+     */
+    public RenderObject(float[] positionBuffer,
+                        float[] texelBuffer,
+                        float[] colourBuffer,
+                        float[] normalBuffer,
+                        RenderObjectDataFormat renderObjectDataFormat)
+    {
+        this(positionBuffer,
+                texelBuffer,
+                colourBuffer,
+                normalBuffer,
+                renderObjectDataFormat,
+                new Material());
+    }
+
+    /**
+     * Create an object using a single vertex data buffer. The format of the data must be specified
+     * in order for the data to be correctly interpreted. Data stride and attribute offsets are
+     * calculated based on the format.
+     *
+     * @param vertexData                Float buffer containing the vertex data
+     * @param renderObjectDataFormat    The format of the vertex data, such as what data is provided
+     *                                  and in what order
+     * @param material                  Material to apply to the object
+     * @since   1.0
+     */
     public RenderObject(float[] vertexData,
                         RenderObjectDataFormat renderObjectDataFormat,
                         Material material)
@@ -265,33 +323,30 @@ public class RenderObject
         hasCustomShader = false;
     }
 
+    /**
+     * Create an object using a single vertex data buffer. The format of the data must be specified
+     * in order for the data to be correctly interpreted. Data stride and attribute offsets are
+     * calculated based on the format. A default material will be applied to the object as one has
+     * not been provided.
+     *
+     * @param vertexData                Float buffer containing the vertex data
+     * @param renderObjectDataFormat    The format of the vertex data, such as what data is provided
+     *                                  and in what order
+     * @since 1.0
+     */
     public RenderObject(float[] vertexData,
                         RenderObjectDataFormat renderObjectDataFormat)
     {
         this(vertexData, renderObjectDataFormat, new Material());
     }
 
-    public ByteBuffer convertToByteBuffer(float[] buffer)
-    {
-        // Initialise a vertex byte buffer for the shape float array
-        final ByteBuffer VERTICES_BYTE_BUFFER = ByteBuffer.allocateDirect(
-                buffer.length * BYTES_PER_FLOAT);
-
-        // Use the devices hardware's native byte order
-        VERTICES_BYTE_BUFFER.order(ByteOrder.nativeOrder());
-
-        // Create a Float buffer from the ByteBuffer
-        vertexBuffer = VERTICES_BYTE_BUFFER.asFloatBuffer();
-
-        // Add the array of floats to the buffer
-        vertexBuffer.put(buffer);
-
-        // Set buffer to read the first co-ordinate
-        vertexBuffer.position(0);
-
-        return VERTICES_BYTE_BUFFER;
-    }
-
+    /**
+     * Set the material. Materials can contain multiple pieces of information such as texture and
+     * colour. Your model must contain texel data in order to support material textures.
+     *
+     * @param material  The material to apply to the render object
+     * @since 1.0
+     */
     public void setMaterial(Material material)
     {
         this.material = material;

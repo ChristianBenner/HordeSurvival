@@ -135,15 +135,6 @@ public class RenderObjectDataFormat
     // The render method that is determined from the number of different face data present
     private final RenderObject.RenderMethod renderMethod;
 
-    // Whether or not the attribute order specifies the use of texel data
-    private boolean attributeOrderSupportsTexels;
-
-    // Whether or not the attribute order specifies the use of colour data
-    private boolean attributeOrderSupportsColour;
-
-    // Whether or not the attribute order specifies the use of normal data
-    private boolean attributeOrderSupportsNormals;
-
     /**
      * Create a RenderObjectDataFormat with all the parameters.
      *
