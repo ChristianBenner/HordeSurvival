@@ -42,13 +42,13 @@ Project Classes:
 			UniformColourShader				- VERIFY
 		UserInterface >
 			Text		- VERIFY
-			UIObject	- INCOMPLETE
+			UIObject	- VERIFY
 		Utilities >
 			Camera2D		- VERIFY
 			Camera3D		- VERIFY
 			Font			- VERIFY
 			Material		- VERIFY
-			RenderObject	- INCOMPLETE
+			RenderObject	- VERIFY
 			Shader			- VERIFY
 			Texture			- VERIFY
 			TextureOptions	- VERIFY
