@@ -18,7 +18,7 @@ void log(int level, const char* message)
 }
 
 extern "C" JNIEXPORT jbyteArray JNICALL
-Java_com_games_crispin_crispinmobile_Native_FreeTypeMethods_loadCharacter(JNIEnv *env,
+Java_com_games_crispin_crispinmobile_Native_CrispinNativeInterface_loadCharacter(JNIEnv *env,
         jobject instance,
         jbyteArray fontBytes_,
         jbyte thechar_,
@@ -117,42 +117,42 @@ Java_com_games_crispin_crispinmobile_Native_FreeTypeMethods_loadCharacter(JNIEnv
 
 extern "C"
 JNIEXPORT jint JNICALL
-Java_com_games_crispin_crispinmobile_Native_FreeTypeMethods_getFaceBearingX(JNIEnv* env, jobject instance)
+Java_com_games_crispin_crispinmobile_Native_CrispinNativeInterface_getFaceBearingX(JNIEnv* env, jobject instance)
 {
     return face->glyph->bitmap_left;
 }
 
 extern "C"
 JNIEXPORT jint JNICALL
-Java_com_games_crispin_crispinmobile_Native_FreeTypeMethods_getFaceBearingY(JNIEnv* env, jobject instance)
+Java_com_games_crispin_crispinmobile_Native_CrispinNativeInterface_getFaceBearingY(JNIEnv* env, jobject instance)
 {
     return face->glyph->bitmap_top;
 }
 
 extern "C"
 JNIEXPORT jint JNICALL
-Java_com_games_crispin_crispinmobile_Native_FreeTypeMethods_getFaceAdvance(JNIEnv* env, jobject instance)
+Java_com_games_crispin_crispinmobile_Native_CrispinNativeInterface_getFaceAdvance(JNIEnv* env, jobject instance)
 {
     return face->glyph->advance.x;
 }
 
 extern "C"
 JNIEXPORT jint JNICALL
-Java_com_games_crispin_crispinmobile_Native_FreeTypeMethods_getFaceWidth(JNIEnv* env, jobject instance)
+Java_com_games_crispin_crispinmobile_Native_CrispinNativeInterface_getFaceWidth(JNIEnv* env, jobject instance)
 {
     return face->glyph->bitmap.width;
 }
 
 extern "C"
 JNIEXPORT jint JNICALL
-Java_com_games_crispin_crispinmobile_Native_FreeTypeMethods_getFaceHeight(JNIEnv* env, jobject instance)
+Java_com_games_crispin_crispinmobile_Native_CrispinNativeInterface_getFaceHeight(JNIEnv* env, jobject instance)
 {
     return face->glyph->bitmap.rows;
 }
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_games_crispin_crispinmobile_Native_FreeTypeMethods_freeFace(JNIEnv* env, jobject instance)
+Java_com_games_crispin_crispinmobile_Native_CrispinNativeInterface_freeFace(JNIEnv* env, jobject instance)
 {
     FT_Done_Face(face);
 }

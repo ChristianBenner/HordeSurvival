@@ -1,10 +1,21 @@
 package com.games.crispin.crispinmobile.Native;
 
-public class FreeTypeMethods
+/**
+ * The CrispinNativeInterface class provides static functions that are used to interact with the
+ * Crispin Native Interface Library programmed in C. The Crispin Native Interface Library is used
+ * to interface other C libraries in a JNI friendly way. Currently the library provides an interface
+ * to the following C libraries:
+ * -    FreeType: Used to generate font data from font files
+ *
+ * @author      Christian Benner
+ * @version     %I%, %G%
+ * @since       1.0
+ */
+public class CrispinNativeInterface
 {
     static
     {
-        // Load the C library
+        // Load the Crispin Native Interface library
         System.loadLibrary("crispinni");
     }
 
@@ -15,7 +26,7 @@ public class FreeTypeMethods
      *
      * @param fontBytes The font as an array of bytes
      * @param asciiChar The ASCII character to load
-     * @param size      The size to load the character as (larger this is the larger the texture)
+     * @param size      The size to load the character as (larger size entails larger texture size)
      * @return  Array of bytes containing texture data. The texture is monochrome meaning there is
      *          one byte per pixel as fonts do not contain colour data.
      * @since   1.0

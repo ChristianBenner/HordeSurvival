@@ -1,9 +1,9 @@
 package com.games.crispin.crispinmobile.Rendering.Data;
 
 /**
- * Colour class provides an interface around RGBA colour data. The class contains some pre-defined
- * colours, it also allows you to create your own RGBA colours. Colour channels are represented as
- * floats with a range of 0.0 to 1.0.
+ * Colour class allows you to store RGBA colour data. The class allows you to create your own
+ * colours but also contains some pre-defined ones. Colour channels are represented as floats with a
+ * range of 0.0 to 1.0.
  *
  * @author      Christian Benner
  * @version     %I%, %G%
@@ -53,10 +53,10 @@ public class Colour
     // Default red value if one is not provided
     private static final float DEFAULT_RED_VALUE = 1.0f;
 
-    // Default red value if one is not provided
+    // Default green value if one is not provided
     private static final float DEFAULT_GREEN_VALUE = 1.0f;
 
-    // Default red value if one is not provided
+    // Default blue value if one is not provided
     private static final float DEFAULT_BLUE_VALUE = 1.0f;
 
     // Red channel value
@@ -74,9 +74,16 @@ public class Colour
     /**
      * Construct a colour object with RGBA values
      *
-     * @since   1.0
+     * @param red   The red colour value (0.0 for no red, 1.0 for maximum red)
+     * @param green The green colour value (0.0 for no green, 1.0 for maximum green)
+     * @param blue  The blue colour value (0.0 for no blue, 1.0 for maximum blue)
+     * @param alpha The alpha colour value (0.0 for no alpha, 1.0 for maximum alpha)
+     * @since 1.0
      */
-    public Colour(float red, float green, float blue, float alpha)
+    public Colour(float red,
+                  float green,
+                  float blue,
+                  float alpha)
     {
         setRed(red);
         setGreen(green);
@@ -87,11 +94,19 @@ public class Colour
     /**
      * Construct a colour object with RGB values. Uses default alpha value of 1.0
      *
+     * @param red   The red colour value (0.0 for no red, 1.0 for maximum red)
+     * @param green The green colour value (0.0 for no green, 1.0 for maximum green)
+     * @param blue  The blue colour value (0.0 for no blue, 1.0 for maximum blue)
      * @since   1.0
      */
-    public Colour(float red, float green, float blue)
+    public Colour(float red,
+                  float green,
+                  float blue)
     {
-        this(red, green, blue, DEFAULT_ALPHA_VALUE);
+        this(red,
+                green,
+                blue,
+                DEFAULT_ALPHA_VALUE);
     }
 
     /**

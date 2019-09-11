@@ -1,13 +1,18 @@
 package com.games.crispin.crispinmobile.Rendering.Data;
 
 import com.games.crispin.crispinmobile.Rendering.Utilities.RenderObject;
+import com.games.crispin.crispinmobile.Utilities.Logger;
 
 import java.util.ArrayList;
 
-import static com.games.crispin.crispinmobile.Rendering.Data.RenderObjectDataFormat.AttributeOrder_t.POSITION;
-import static com.games.crispin.crispinmobile.Rendering.Data.RenderObjectDataFormat.AttributeOrder_t.POSITION_THEN_NORMAL;
-import static com.games.crispin.crispinmobile.Rendering.Data.RenderObjectDataFormat.AttributeOrder_t.POSITION_THEN_TEXEL;
-import static com.games.crispin.crispinmobile.Rendering.Data.RenderObjectDataFormat.AttributeOrder_t.POSITION_THEN_TEXEL_THEN_NORMAL;
+import static com.games.crispin.crispinmobile.Rendering.Data.RenderObjectDataFormat.
+        AttributeOrder_t.POSITION;
+import static com.games.crispin.crispinmobile.Rendering.Data.RenderObjectDataFormat.
+        AttributeOrder_t.POSITION_THEN_NORMAL;
+import static com.games.crispin.crispinmobile.Rendering.Data.RenderObjectDataFormat.
+        AttributeOrder_t.POSITION_THEN_TEXEL;
+import static com.games.crispin.crispinmobile.Rendering.Data.RenderObjectDataFormat.
+        AttributeOrder_t.POSITION_THEN_TEXEL_THEN_NORMAL;
 
 /**
  * RenderObjectData is a class designed to build vertex data based on position, texel, normal and
@@ -52,6 +57,12 @@ public class RenderObjectData
         XY,
         NONE
     }
+
+    // Tag used for logging
+    private static final String TAG = "RenderObjectData";
+
+    // Start index offset
+    static final int START_INDEX_OFFSET = 1;
 
     // The number of data elements in position only face data
     private static final int NUM_DATA_ELEMENTS_POSITION_ONLY = 1;
@@ -131,33 +142,31 @@ public class RenderObjectData
     /**
      * Attempt to set the position component type
      *
-     * @param positionComponents    Text
+     * @param positionComponents    The components that the position data includes
      * @return  True if the position component type has been set, else false. The function will
      *          return false if the data has already been assigned a position component type
      * @since   1.0
      */
     public boolean setPositionComponents(PositionComponents positionComponents)
     {
+        // Check if the position components have been set yet
         if(this.positionComponents == PositionComponents.NONE)
         {
             this.positionComponents = positionComponents;
 
+            // Determine the number of position components depending on the type
             switch (positionComponents)
             {
                 case XY:
-                    System.out.println("vvv Set Position Component to XY");
                     numberOfPositionComponents = 2;
                     break;
                 case XYZ:
-                    System.out.println("vvv Set Position Component to XYZ");
                     numberOfPositionComponents = 3;
                     break;
                 case XYZW:
-                    System.out.println("vvv Set Position Component to XYZW");
                     numberOfPositionComponents = 4;
                     break;
                 case NONE:
-                    System.out.println("vvv Set Position Component to NONE");
                     break;
             }
 
@@ -169,7 +178,8 @@ public class RenderObjectData
         }
         else
         {
-            System.err.println("ERROR: RenderObjectData already has a different position component type");
+            Logger.error(TAG,
+                    "RenderObjectData already has a different position component type");
             return false;
         }
     }
@@ -184,26 +194,10 @@ public class RenderObjectData
      */
     public boolean setRenderMethod(RenderObject.RenderMethod renderMethod)
     {
+        // Check if the render method has been set yet
         if(this.renderMethod == RenderObject.RenderMethod.NONE)
         {
             this.renderMethod = renderMethod;
-
-            switch (renderMethod)
-            {
-                case NONE:
-                    System.out.println("vvv Render Method Set to: " + "NONE");
-                    break;
-                case TRIANGLES:
-                    System.out.println("vvv Render Method Set to: " + "TRIANGLES");
-                    break;
-                case LINES:
-                    System.out.println("vvv Render Method Set to: " + "LINES");
-                    break;
-                case POINTS:
-                    System.out.println("vvv Render Method Set to: " + "POINTS");
-                    break;
-            }
-
             return true;
         }
         else if(this.renderMethod == renderMethod)
@@ -212,7 +206,7 @@ public class RenderObjectData
         }
         else
         {
-            System.err.println("ERROR: RenderObjectData already has a different Render Method type");
+            Logger.error(TAG, "RenderObjectData already has a different Render Method type");
             return false;
         }
     }
@@ -227,42 +221,37 @@ public class RenderObjectData
      */
     public boolean setFaceDataType(FaceData faceDataType)
     {
+        // Check if the face data has been set yet
         if(this.faceData == FaceData.NONE)
         {
             this.faceData = faceDataType;
 
+            // Determine the data start index for different face data types
             switch(faceDataType)
             {
-                case NONE:
-                    System.out.println("vvv Face Data Type set to: " + "NONE");
-                    break;
                 case POSITION_ONLY:
-                    System.out.println("vvv Face Data Type set to: " + "POSITION_ONLY");
                     dataStride = NUM_DATA_ELEMENTS_POSITION_ONLY;
                     positionStartIndex = POSITION_START_INDEX;
                     texelStartIndex = UNUSED_DATA_ELEMENT;
                     normalStartIndex = UNUSED_DATA_ELEMENT;
                     break;
                 case POSITION_AND_NORMAL:
-                    System.out.println("vvv Face Data Type set to: " + "POSITION_AND_NORMAL");
                     dataStride = NUM_DATA_ELEMENTS_POSITION_AND_NORMAL;
                     positionStartIndex = POSITION_START_INDEX;
                     texelStartIndex = UNUSED_DATA_ELEMENT;
-                    normalStartIndex = positionStartIndex + 1;
+                    normalStartIndex = positionStartIndex + START_INDEX_OFFSET;
                     break;
                 case POSITION_AND_TEXEL:
-                    System.out.println("vvv Face Data Type set to: " + "POSITION_AND_TEXEL");
                     dataStride = NUM_DATA_ELEMENTS_POSITION_AND_TEXEL;
                     positionStartIndex = POSITION_START_INDEX;
-                    texelStartIndex = positionStartIndex + 1;
+                    texelStartIndex = positionStartIndex + START_INDEX_OFFSET;
                     normalStartIndex = UNUSED_DATA_ELEMENT;
                     break;
                 case POSITION_AND_TEXEL_AND_NORMAL:
-                    System.out.println("vvv Face Data Type set to: " + "POSITION_AND_TEXEL_AND_NORMAL");
                     dataStride = NUM_DATA_ELEMENTS_POSITION_AND_TEXEL_AND_NORMAL;
                     positionStartIndex = POSITION_START_INDEX;
-                    texelStartIndex = positionStartIndex + 1;
-                    normalStartIndex = texelStartIndex + 1;
+                    texelStartIndex = positionStartIndex + START_INDEX_OFFSET;
+                    normalStartIndex = texelStartIndex + START_INDEX_OFFSET;
                     break;
             }
 
@@ -274,7 +263,7 @@ public class RenderObjectData
         }
         else
         {
-            System.err.println("ERROR: RenderObjectData already has a different FaceData type");
+            Logger.error(TAG, "RenderObjectData already has a different FaceData type");
             return false;
         }
     }
@@ -282,7 +271,7 @@ public class RenderObjectData
     /**
      * Add some position data to be processed later
      *
-     * @param vertexData    The vertex data as a float
+     * @param vertexData    The position data as a float
      * @since   1.0
      */
     public void addPositionData(float vertexData)
@@ -331,6 +320,7 @@ public class RenderObjectData
      */
     private RenderObjectDataFormat.PositionDimensions_t getPositionDimensions()
     {
+        // Get the position dimensions
         switch (positionComponents)
         {
             case XY:

@@ -1,6 +1,6 @@
 package com.games.crispin.crispinmobile.Rendering.Data;
 
-import com.games.crispin.crispinmobile.Native.FreeTypeMethods;
+import com.games.crispin.crispinmobile.Native.CrispinNativeInterface;
 import com.games.crispin.crispinmobile.Rendering.Utilities.Texture;
 import com.games.crispin.crispinmobile.Rendering.Utilities.TextureOptions;
 
@@ -53,23 +53,31 @@ public class FreeTypeCharData
                             byte asciiChar,
                             TextureOptions textureOptions)
     {
-        byte[] charBytes = FreeTypeMethods.loadCharacter(fontBytes, asciiChar, fontSize);
-        width = FreeTypeMethods.getFaceWidth();
-        height = FreeTypeMethods.getFaceHeight();
-        bearingX = FreeTypeMethods.getFaceBearingX();
-        bearingY = FreeTypeMethods.getFaceBearingY();
-        advance = FreeTypeMethods.getFaceAdvance();
+        // Get the character texture data. The character texture must be loaded first before the
+        // other properties such as width and height can be accessed.
+        final byte[] CHAR_BYTES = CrispinNativeInterface.loadCharacter(fontBytes,
+                asciiChar,
+                fontSize);
+
+        width = CrispinNativeInterface.getFaceWidth();
+        height = CrispinNativeInterface.getFaceHeight();
+        bearingX = CrispinNativeInterface.getFaceBearingX();
+        bearingY = CrispinNativeInterface.getFaceBearingY();
+        advance = CrispinNativeInterface.getFaceAdvance();
         this.ascii = asciiChar;
-        FreeTypeMethods.freeFace();
+        CrispinNativeInterface.freeFace();
 
         // Create the texture
-        texture = new Texture(charBytes, width, height, textureOptions);
+        texture = new Texture(CHAR_BYTES,
+                width,
+                height,
+                textureOptions);
     }
 
     /**
      * Get the width of the character
      *
-     * @return  The width of the character width
+     * @return  The width of the character face
      * @since   1.0
      */
     public int getWidth()
@@ -80,7 +88,7 @@ public class FreeTypeCharData
     /**
      * Get the height of the character
      *
-     * @return  The height of the character width
+     * @return  The height of the character face
      * @since   1.0
      */
     public int getHeight()
@@ -91,7 +99,7 @@ public class FreeTypeCharData
     /**
      * Get the advance of the character
      *
-     * @return  The advance of the character width
+     * @return  The advance of the character face
      * @since   1.0
      */
     public int getAdvance()
@@ -102,7 +110,7 @@ public class FreeTypeCharData
     /**
      * Get the x-bearing of the character
      *
-     * @return  The x-bearing of the character width
+     * @return  The x-bearing of the character face
      * @since   1.0
      */
     public int getBearingX()
@@ -113,7 +121,7 @@ public class FreeTypeCharData
     /**
      * Get the y-bearing of the character
      *
-     * @return  The y-bearing of the character width
+     * @return  The y-bearing of the character face
      * @since   1.0
      */
     public int getBearingY()

@@ -21,11 +21,11 @@ Project Classes:
 		Vector2D	- CHECKLIST(5b852fd)
 		Vector3D	- CHECKLIST(5b852fd)
 	Native >
-		FreeTypeMethods	- VERIFY
+		CrispinNativeInterface	- CHECKLIST
 	Rendering >
 		Data >
-			Colour					- VERIFY: Colours take up too much data (should be 4 bytes not 16 bytes)
-			FreeTypeCharData		- VERIFY
+			Colour					- CHECKLIST
+			FreeTypeCharData		- CHECKLIST
 			RenderObjectData		- VERIFY
 			RenderObjectDataFormat	- VERIFY
 		Entities >
