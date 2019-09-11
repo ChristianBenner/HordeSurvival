@@ -63,6 +63,19 @@ public class Point3D extends Point2D
     /**
      * Translate the point
      *
+     * @param point Point to translate by
+     * @since 1.0
+     */
+    public void translate(Point3D point)
+    {
+        this.x += point.x;
+        this.y += point.y;
+        this.z += point.z;
+    }
+
+    /**
+     * Translate the point
+     *
      * @param x The x co-ordinate
      * @param y The y co-ordinate
      * @param z The z co-ordinate

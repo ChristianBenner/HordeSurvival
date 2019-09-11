@@ -26,7 +26,7 @@ public abstract class Scene
 
     /**
      * The update function is called as frequently as possible. It provides a deltaTime value which
-     * can be used in logic calculations. No draw calls should be made from the update function.
+     * can be used in logic calculations. No render calls should be made from the update function.
      *
      * @param deltaTime Delta time is used in logic calculations. Lower deltaTime means the function
      *                  is being updated at a faster rate. Higher deltaTime means the function is
@@ -37,7 +37,7 @@ public abstract class Scene
     public abstract void update(float deltaTime);
 
     /**
-     * The render function is called as frequently as possible. It is where all of the draw calls
+     * The render function is called as frequently as possible. It is where all of the render calls
      * should be made. Logic based operations should be kept to a minimal in the render function.
      *
      * @since           1.0

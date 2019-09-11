@@ -856,7 +856,7 @@ public class Text extends UIObject
                 final float SIN_VALUE = (square.getPosition().x + wiggleTime) / maxLineWidth;
                 final float WIGGLE_OFFSET = wiggleAmountPixels * (((float)Math.sin((double)SIN_VALUE) + 1.0f) / 2.0f);
                 square.setCharacterOffset(square.getCharacterOffset().x, square.getCharacterOffset().y + WIGGLE_OFFSET);
-                square.draw(camera);
+                square.render(camera);
                 square.setCharacterOffset(square.getCharacterOffset().x, square.getCharacterOffset().y - WIGGLE_OFFSET);
             }
         }
@@ -864,7 +864,7 @@ public class Text extends UIObject
         {
             for(int i = 0; i < squares.size(); i++)
             {
-                squares.get(i).draw(camera);
+                squares.get(i).render(camera);
             }
         }
 

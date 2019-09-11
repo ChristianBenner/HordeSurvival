@@ -47,6 +47,18 @@ public class Point2D
     /**
      * Translate the point
      *
+     * @param point Position to translate by
+     * @since   1.0
+     */
+    public void translate(Point2D point)
+    {
+        this.x += point.x;
+        this.y += point.y;
+    }
+
+    /**
+     * Translate the point
+     *
      * @param x The x co-ordinate to translate the point by
      * @param y The y co-ordinate to translate the point by
      * @since   1.0

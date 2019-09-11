@@ -27,7 +27,7 @@ import static android.opengl.GLES30.glTexParameteri;
 
 /**
  * Texture class contains texture data and information about that texture such as width and height.
- * It is used around CrispinEngine such as in RenderObjects so that you can draw models or UI with
+ * It is used around CrispinEngine such as in RenderObjects so that you can render models or UI with
  * textures. It interacts with the TextureCache class so that the same resource isn't loaded more
  * than once.
  *

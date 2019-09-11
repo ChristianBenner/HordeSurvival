@@ -232,27 +232,27 @@ public class TestScene extends Scene {
         brickMaterial.setColour(new Colour(colourR, 1.0f, 1.0f));
 
         // Draw the cube
-        cubeThree.draw(camera);
-        square.draw(camera);
-        //cubeTwo.draw(camera);
+        cubeThree.render(camera);
+        square.render(camera);
+        //cubeTwo.render(camera);
 
         if(dinomodel != null)
         {
-            dinomodel.draw(camera);
+            dinomodel.render(camera);
         }
 
         if(carmodel != null)
         {
-            carmodel.draw(camera);
+            carmodel.render(camera);
         }
 
         if(personmodel != null)
         {
-            personmodel.draw(camera);
+            personmodel.render(camera);
         }
 
         text.draw(camera2D);
-       // fpsText.draw(camera2D);
+       // fpsText.render(camera2D);
 
         frames++;
 

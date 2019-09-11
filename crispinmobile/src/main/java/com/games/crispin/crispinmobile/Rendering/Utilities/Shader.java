@@ -70,8 +70,8 @@ public class Shader
     protected int uvMultiplierUniformHandle;
 
     /**
-     * Enable the shader program. Should be used before making draw calls to objects that you wish
-     * to draw using the shader.
+     * Enable the shader program. Should be used before making render calls to objects that you wish
+     * to render using the shader.
      *
      * @since 1.0
      */

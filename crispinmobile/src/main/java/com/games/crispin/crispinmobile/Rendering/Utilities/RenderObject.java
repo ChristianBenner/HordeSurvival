@@ -119,7 +119,7 @@ public class RenderObject
     protected Shader shader;
 
     // Method of rendering the object. Points renders one vertex at a time and places a point. Lines
-    // renders two vertex at a time and draw a line between them. Triangles renders three vertices
+    // renders two vertex at a time and render a line between them. Triangles renders three vertices
     // at a time and uses the fragment shader to fill the middle.
     public enum RenderMethod
     {
@@ -352,6 +352,463 @@ public class RenderObject
         this.material = material;
     }
 
+    /**
+     * Get the material applied to the render object
+     *
+     * @return The material attached to the render object
+     * @since 1.0
+     */
+    public Material getMaterial()
+    {
+        return this.material;
+    }
+
+    /**
+     * Set the position
+     *
+     * @param position  The new position
+     * @since 1.0
+     */
+    public void setPosition(Point3D position)
+    {
+        this.position = position;
+    }
+
+    /**
+     * Set the position
+     *
+     * @param x The new x-coordinate
+     * @param y The new y-coordinate
+     * @param z The new z-coordinate
+     * @since 1.0
+     */
+    public void setPosition(float x,
+                            float y,
+                            float z)
+    {
+        this.position.x = x;
+        this.position.y = y;
+        this.position.z = z;
+    }
+
+    /**
+     * Set the position
+     *
+     * @param position  The new position
+     * @since 1.0
+     */
+    public void setPosition(Point2D position)
+    {
+        this.position.x = position.x;
+        this.position.y = position.y;
+    }
+
+    /**
+     * Set the position
+     *
+     * @param x The new x-coordinate
+     * @param y The new y-coordinate
+     * @since 1.0
+     */
+    public void setPosition(float x, float y)
+    {
+        this.position.x = x;
+        this.position.y = y;
+    }
+
+    /**
+     * Get the position
+     *
+     * @return The position of the object
+     * @since 1.0
+     */
+    public Point3D getPosition()
+    {
+        return position;
+    }
+
+    /**
+     * Set the scale
+     *
+     * @param scale The scale to apply to the object
+     * @since 1.0
+     */
+    public void setScale(Scale3D scale)
+    {
+        this.scale = scale;
+    }
+
+    /**
+     * Set the scale
+     *
+     * @param w Multiplier for the x-axis
+     * @param h Multiplier for the y-axis
+     * @param l Multiplier for the z-axis
+     * @since 1.0
+     */
+    public void setScale(float w,
+                         float h,
+                         float l)
+    {
+        this.scale.x = w;
+        this.scale.y = h;
+        this.scale.z = l;
+    }
+
+    /**
+     * Set the scale
+     *
+     * @param scale The scale to apply to the object
+     * @since 1.0
+     */
+    public void setScale(Scale2D scale)
+    {
+        this.scale.x = scale.x;
+        this.scale.y = scale.y;
+    }
+
+    /**
+     * Set the scale
+     *
+     * @param w Multiplier for the x-axis
+     * @param h Multiplier for the y-axis
+     * @since 1.0
+     */
+    public void setScale(float w, float h)
+    {
+        this.scale.x = w;
+        this.scale.y = h;
+    }
+
+    /**
+     * Translate the render objects position
+     *
+     * @param point The point to translate by
+     * @since 1.0
+     */
+    public void translate(Point3D point)
+    {
+        this.position.translate(point);
+    }
+
+    /**
+     * Translate the render objects position
+     *
+     * @param x The x-coordinate to translate by
+     * @param y The y-coordinate to translate by
+     * @param z The z-coordinate to translate by
+     * @since 1.0
+     */
+    public void translate(float x,
+                          float y,
+                          float z)
+    {
+        this.position.x += x;
+        this.position.y += y;
+        this.position.z += z;
+    }
+
+    /**
+     * Translate the render objects position
+     *
+     * @param point The point to translate by
+     * @since 1.0
+     */
+    public void translate(Point2D point)
+    {
+        this.position.translate(point);
+    }
+
+    /**
+     * Translate the render objects position
+     *
+     * @param x The x-coordinate to translate by
+     * @param y The y-coordinate to translate by
+     * @since 1.0
+     */
+    public void translate(float x, float y)
+    {
+        this.position.x += x;
+        this.position.y += y;
+    }
+
+    /**
+     * Set the rotation of the object
+     *
+     * @param rotation  The new rotation for the object
+     * @since 1.0
+     */
+    public void setRotation(Rotation3D rotation)
+    {
+        this.rotation = rotation;
+    }
+
+    /**
+     * Set the rotation of the object
+     *
+     * @param x Degrees to rotate around the x-axis
+     * @param y Degrees to rotate around the y-axis
+     * @param z Degrees to rotate around the z-axis
+     * @since 1.0
+     */
+    public void setRotation(float x,
+                            float y,
+                            float z)
+    {
+        setRotation(x, y);
+        this.rotation.z = z;
+    }
+
+    /**
+     * Set the rotation of the object
+     *
+     * @param rotation  The new rotation for the object
+     * @since 1.0
+     */
+    public void setRotation(Rotation2D rotation)
+    {
+        this.rotation.x = rotation.x;
+        this.rotation.y = rotation.y;
+    }
+
+    /**
+     * Set the rotation of the object
+     *
+     * @param x Degrees to rotate around the x-axis
+     * @param y Degrees to rotate around the y-axis
+     * @since 1.0
+     */
+    public void setRotation(float x, float y)
+    {
+        this.rotation.x = x;
+        this.rotation.y = y;
+    }
+
+    /**
+     * Get the rotation of the object
+     *
+     * @return The rotation on the object
+     * @since 1.0
+     */
+    public Rotation3D getRotation()
+    {
+        return this.rotation;
+    }
+
+    /**
+     * Use a custom shader with the object. This means that the object will be rendered using your
+     * own or a different built in GLSL program. You must make sure the shader you are setting
+     * supports the data attributes and uniforms of the object or the object may not render
+     * correctly or worse the program will crash.
+     *
+     * @since 1.0
+     */
+    public void useCustomShader(Shader customShader)
+    {
+        // Check if the shader being assigned has been initialised
+        if(customShader != null)
+        {
+            hasCustomShader = true;
+            shader = customShader;
+        }
+        else
+        {
+            Logger.error(TAG, "Custom shader supplied is null");
+        }
+    }
+
+    /**
+     * Render the object to the display using a 2D camera object
+     *
+     * @param camera    2-Dimensional camera object. Render the object in the cameras view
+     * @since 1.0
+     */
+    public void render(Camera2D camera)
+    {
+        if(shader == null)
+        {
+            updateShader();
+        }
+
+        updateModelMatrix();
+
+        shader.enableIt();
+
+        float[] modelViewMatrix = new float[16];
+        Matrix.multiplyMM(modelViewMatrix,
+                0,
+                camera.getOrthoMatrix(),
+                0,
+                modelMatrix,
+                0);
+
+        glUniformMatrix4fv(shader.getMatrixUniformHandle(),
+                1,
+                false,
+                modelViewMatrix,
+                0);
+
+        if(shader.getColourUniformHandle() != -1)
+        {
+            glUniform4fv(shader.getColourUniformHandle(),
+                    1,
+                    material.getColourData(),
+                    0);
+        }
+
+        if(shader.getTextureUniformHandle() != -1 && material.hasTexture())
+        {
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, material.getTexture().getId());
+            glUniform1i(shader.getTextureUniformHandle(), 0);
+
+            if(shader.getUvMultiplierUniformHandlea() != -1)
+            {
+                glUniform2f(shader.getUvMultiplierUniformHandlea(),
+                        material.getUvMultiplier().x,
+                        material.getUvMultiplier().y);
+            }
+        }
+
+        handleAttributes(true);
+
+        switch (DATA_FORMAT.getRenderMethod())
+        {
+            case POINTS:
+                glDrawArrays(GL_POINTS, 0, VERTEX_COUNT);
+                break;
+            case LINES:
+                glDrawArrays(GL_LINES, 0, VERTEX_COUNT);
+                break;
+            case TRIANGLES:
+                glDrawArrays(GL_TRIANGLES, 0, VERTEX_COUNT);
+                break;
+        }
+
+        handleAttributes(false);
+
+        glBindTexture(GL_TEXTURE_2D, 0);
+
+        shader.disableIt();
+    }
+
+    /**
+     * Render the object to the display using a 3D camera object
+     *
+     * @param camera    3-Dimensional camera object. Render the object in the cameras view
+     * @since 1.0
+     */
+    public void render(Camera3D camera)
+    {
+        if(shader == null)
+        {
+            updateShader();
+        }
+
+        updateModelMatrix();
+
+        shader.enableIt();
+
+        float[] modelViewMatrix = new float[16];
+        Matrix.multiplyMM(modelViewMatrix,
+                0,
+                camera.getViewMatrix(),
+                0,
+                modelMatrix,
+                0);
+
+        float[] modelViewProjectionMatrix = new float[16];
+        Matrix.multiplyMM(modelViewProjectionMatrix,
+                0,
+                camera.getPerspectiveMatrix(),
+                0,
+                modelViewMatrix,
+                0);
+
+        glUniformMatrix4fv(shader.getMatrixUniformHandle(),
+                1,
+                false,
+                modelViewProjectionMatrix,
+                0);
+
+        if(shader.getColourUniformHandle() != -1)
+        {
+            glUniform4f(shader.getColourUniformHandle(),
+                    material.getColour().getRed(),
+                    material.getColour().getGreen(),
+                    material.getColour().getBlue(),
+                    material.getColour().getAlpha());
+        }
+
+        if(shader.getTextureUniformHandle() != -1 && material.hasTexture())
+        {
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, material.getTexture().getId());
+            glUniform1i(shader.getTextureUniformHandle(), 0);
+
+            if(shader.getUvMultiplierUniformHandlea() != -1)
+            {
+                glUniform2f(shader.getUvMultiplierUniformHandlea(),
+                        material.getUvMultiplier().x,
+                        material.getUvMultiplier().y);
+            }
+        }
+
+        handleAttributes(true);
+
+        switch (DATA_FORMAT.getRenderMethod())
+        {
+            case POINTS:
+                glDrawArrays(GL_POINTS, 0, VERTEX_COUNT);
+                break;
+            case LINES:
+                glDrawArrays(GL_LINES, 0, VERTEX_COUNT);
+                break;
+            case TRIANGLES:
+                glDrawArrays(GL_TRIANGLES, 0, VERTEX_COUNT);
+                break;
+        }
+
+        handleAttributes(false);
+
+        glBindTexture(GL_TEXTURE_2D, 0);
+
+        shader.disableIt();
+    }
+
+    /**
+     * Update the model matrix. This can update the model matrix if a transformation property of the
+     * object such as a position, scale or rotation has changed.
+     *
+     * @since 1.0
+     */
+    protected void updateModelMatrix()
+    {
+        Matrix.setIdentityM(modelMatrix, 0);
+        Matrix.translateM(modelMatrix, 0, position.x, position.y, position.z);
+        Matrix.scaleM(modelMatrix, 0, scale.x, scale.y, scale.z);
+
+        if(rotation.x != 0.0f)
+        {
+            Matrix.rotateM(modelMatrix, 0, rotation.x, 1.0f, 0.0f, 0.0f);
+        }
+        if(rotation.y != 0.0f)
+        {
+            Matrix.rotateM(modelMatrix, 0, rotation.y, 0.0f, 1.0f, 0.0f);
+        }
+        if(rotation.z != 0.0f)
+        {
+            Matrix.rotateM(modelMatrix, 0, rotation.z, 0.0f, 0.0f, 1.0f);
+        }
+    }
+
+    /**
+     * Update the shader by automatically deciding what built in GLSL program to use depending on
+     * the data that is present on the render object. For example, if the object has position data,
+     * texel data and a texture applied, a texture shader will be assigned.
+     *
+     * @since 1.0
+     */
     protected void updateShader()
     {
         if(!hasCustomShader)
@@ -408,355 +865,12 @@ public class RenderObject
         }
     }
 
-    public void useCustomShader(Shader customShader)
-    {
-        if(customShader != null)
-        {
-            hasCustomShader = true;
-            shader = customShader;
-        }
-        else
-        {
-            Logger.error(TAG, "Custom shader supplied is null");
-        }
-
-    }
-
-    public Material getMaterial()
-    {
-        return this.material;
-    }
-
-    public void setScale(Scale2D scale)
-    {
-        this.scale.x = scale.x;
-        this.scale.y = scale.y;
-    }
-
-    public void setScale(float w, float h)
-    {
-        this.scale.x = w;
-        this.scale.y = h;
-    }
-
-    public void setScale(Scale3D scale)
-    {
-        this.scale = scale;
-    }
-
-    public void setScale(float w, float h, float l)
-    {
-        this.scale.x = w;
-        this.scale.y = h;
-        this.scale.z = l;
-    }
-
-    public void setPosition(Point2D position)
-    {
-        this.position.x = position.x;
-        this.position.y = position.y;
-    }
-
-    public void setPosition(float x, float y)
-    {
-        this.position.x = x;
-        this.position.y = y;
-    }
-
-    public void setPosition(Point3D position)
-    {
-        this.position = position;
-    }
-
-    public void setPosition(float x, float y, float z)
-    {
-        this.position.x = x;
-        this.position.y = y;
-        this.position.z = z;
-    }
-
-    public Point3D getPosition()
-    {
-        return position;
-    }
-
-    public void offset(float x, float y)
-    {
-        this.position.x += x;
-        this.position.y += y;
-    }
-
-    public void offset(float x, float y, float z)
-    {
-        this.position.x += x;
-        this.position.y += y;
-        this.position.z += z;
-    }
-
-    public void offset(Point2D point2D)
-    {
-        this.position.x += point2D.x;
-        this.position.y += point2D.y;
-    }
-
-    public void offset(Point3D point3D)
-    {
-        this.position.x += point3D.x;
-        this.position.y += point3D.y;
-        this.position.z += point3D.z;
-    }
-
-    public void setRotation(Rotation3D rotation)
-    {
-        this.rotation = rotation;
-    }
-
-    public void setRotation(float x, float y, float z)
-    {
-        setRotation(x, y);
-        this.rotation.z = z;
-    }
-
-    public void setRotation(Rotation2D rotation)
-    {
-        this.rotation.x = rotation.x;
-        this.rotation.y = rotation.y;
-    }
-
-    public void setRotation(float x, float y)
-    {
-        this.rotation.x = x;
-        this.rotation.y = y;
-    }
-
-    public Rotation3D getRotation()
-    {
-        return this.rotation;
-    }
-
-    protected void updateModelMatrix()
-    {
-        Matrix.setIdentityM(modelMatrix, 0);
-        Matrix.translateM(modelMatrix, 0, position.x, position.y, position.z);
-        Matrix.scaleM(modelMatrix, 0, scale.x, scale.y, scale.z);
-        
-        if(rotation.x != 0.0f)
-        {
-            Matrix.rotateM(modelMatrix, 0, rotation.x, 1.0f, 0.0f, 0.0f);
-        }
-        if(rotation.y != 0.0f)
-        {
-            Matrix.rotateM(modelMatrix, 0, rotation.y, 0.0f, 1.0f, 0.0f);
-        }
-        if(rotation.z != 0.0f)
-        {
-            Matrix.rotateM(modelMatrix, 0, rotation.z, 0.0f, 0.0f, 1.0f);
-        }
-    }
-
-    // Enable set to true will enable the vertex attributes, disable will disable the vertex attrib
-    private void handlePositionDataAttribute(boolean enable)
-    {
-        if(enable)
-        {
-            vertexBuffer.position(positionDataOffset);
-            glEnableVertexAttribArray(shader.getPositionAttributeHandle());
-            glVertexAttribPointer(shader.getPositionAttributeHandle(),
-                    elementsPerPosition,
-                    GL_FLOAT,
-                    true,
-                    totalStrideBytes,
-                    vertexBuffer);
-            vertexBuffer.position(0);
-        }
-        else
-        {
-            glDisableVertexAttribArray(shader.getPositionAttributeHandle());
-        }
-    }
-
-    private void handleTexelDataAttribute(boolean enable)
-    {
-        if(enable)
-        {
-            // Enable attrib texture data
-            vertexBuffer.position(texelDataOffset);
-            glEnableVertexAttribArray(shader.getTextureAttributeHandle());
-            glVertexAttribPointer(shader.getTextureAttributeHandle(),
-                    elementsPerTexel,
-                    GL_FLOAT,
-                    true,
-                    totalStrideBytes,
-                    vertexBuffer);
-            vertexBuffer.position(0);
-        }
-        else
-        {
-            glDisableVertexAttribArray(shader.getTextureAttributeHandle());
-        }
-    }
-
-    private void handleColourDataAttribute(boolean enable)
-    {
-        if(enable)
-        {
-            // Enable attrib colour data
-            vertexBuffer.position(colourDataOffset);
-            glEnableVertexAttribArray(shader.getColourAttributeHandle());
-            glVertexAttribPointer(shader.getColourAttributeHandle(),
-                    elementsPerColour,
-                    GL_FLOAT,
-                    true,
-                    totalStrideBytes,
-                    vertexBuffer);
-            vertexBuffer.position(0);
-        }
-        else
-        {
-            glDisableVertexAttribArray(shader.getColourAttributeHandle());
-        }
-    }
-
-    // check if the data provided contains the data necessary for disable or enable an attribute
-    protected void handleAttributes(boolean enable)
-    {
-        if(!material.isIgnoringPositionData())
-        {
-            handlePositionDataAttribute(enable);
-        }
-
-        if(!material.isIgnoringTexelData() && DATA_FORMAT.supportsTexelData())
-        {
-            handleTexelDataAttribute(enable);
-        }
-
-        if(!material.isIgnoringColourData() && DATA_FORMAT.supportsColourData())
-        {
-            handleColourDataAttribute(enable);
-        }
-    }
-
-    public void draw(Camera2D camera)
-    {
-        if(shader == null)
-        {
-            updateShader();
-        }
-
-        updateModelMatrix();
-
-        shader.enableIt();
-
-        float[] modelViewMatrix = new float[16];
-        Matrix.multiplyMM(modelViewMatrix, 0, camera.getOrthoMatrix(), 0, modelMatrix, 0);
-
-        glUniformMatrix4fv(shader.getMatrixUniformHandle(), 1, false, modelViewMatrix, 0);
-
-        if(shader.getColourUniformHandle() != -1)
-        {
-            glUniform4fv(shader.getColourUniformHandle(), 1, material.getColourData(), 0);
-        }
-
-        if(shader.getTextureUniformHandle() != -1 && material.hasTexture())
-        {
-            glActiveTexture(GL_TEXTURE0);
-            glBindTexture(GL_TEXTURE_2D, material.getTexture().getId());
-            glUniform1i(shader.getTextureUniformHandle(), 0);
-
-            if(shader.getUvMultiplierUniformHandlea() != -1)
-            {
-                glUniform2f(shader.getUvMultiplierUniformHandlea(),
-                        material.getUvMultiplier().x,
-                        material.getUvMultiplier().y);
-            }
-        }
-
-        handleAttributes(true);
-
-        switch (DATA_FORMAT.getRenderMethod())
-        {
-            case POINTS:
-                glDrawArrays(GL_POINTS, 0, VERTEX_COUNT);
-                break;
-            case LINES:
-                glDrawArrays(GL_LINES, 0, VERTEX_COUNT);
-                break;
-            case TRIANGLES:
-                glDrawArrays(GL_TRIANGLES, 0, VERTEX_COUNT);
-                break;
-        }
-
-        handleAttributes(false);
-
-        glBindTexture(GL_TEXTURE_2D, 0);
-
-        shader.disableIt();
-    }
-
-    public void draw(Camera3D camera)
-    {
-        if(shader == null)
-        {
-            updateShader();
-        }
-
-        updateModelMatrix();
-
-        shader.enableIt();
-
-        float[] modelViewMatrix = new float[16];
-        Matrix.multiplyMM(modelViewMatrix, 0, camera.getViewMatrix(), 0, modelMatrix, 0);
-
-        float[] modelViewProjectionMatrix = new float[16];
-        Matrix.multiplyMM(modelViewProjectionMatrix, 0, camera.getPerspectiveMatrix(), 0, modelViewMatrix, 0);
-
-        glUniformMatrix4fv(shader.getMatrixUniformHandle(), 1, false, modelViewProjectionMatrix, 0);
-
-        if(shader.getColourUniformHandle() != -1)
-        {
-            glUniform4f(shader.getColourUniformHandle(),
-                    material.getColour().getRed(),
-                    material.getColour().getGreen(),
-                    material.getColour().getBlue(),
-                    material.getColour().getAlpha());
-        }
-
-        if(shader.getTextureUniformHandle() != -1 && material.hasTexture())
-        {
-            glActiveTexture(GL_TEXTURE0);
-            glBindTexture(GL_TEXTURE_2D, material.getTexture().getId());
-            glUniform1i(shader.getTextureUniformHandle(), 0);
-
-            if(shader.getUvMultiplierUniformHandlea() != -1)
-            {
-                glUniform2f(shader.getUvMultiplierUniformHandlea(),
-                        material.getUvMultiplier().x,
-                        material.getUvMultiplier().y);
-            }
-        }
-
-        handleAttributes(true);
-
-        switch (DATA_FORMAT.getRenderMethod())
-        {
-            case POINTS:
-                glDrawArrays(GL_POINTS, 0, VERTEX_COUNT);
-                break;
-            case LINES:
-                glDrawArrays(GL_LINES, 0, VERTEX_COUNT);
-                break;
-            case TRIANGLES:
-                glDrawArrays(GL_TRIANGLES, 0, VERTEX_COUNT);
-                break;
-        }
-
-        handleAttributes(false);
-
-        glBindTexture(GL_TEXTURE_2D, 0);
-
-        shader.disableIt();
-    }
-
+    /**
+     * Resolve the stride between the vertex data types. The stride is the number of bytes between
+     * data of the same type in the vertex data.
+     *
+     * @since 1.0
+     */
     private void resolveStride()
     {
         elementsPerPosition = DATA_FORMAT.getNumberPositionDimensions();
@@ -774,6 +888,12 @@ public class RenderObject
         }
     }
 
+    /**
+     * Resolve the attribute offsets. This is where each attribute starts from the beginning of the
+     * vertex data.
+     *
+     * @since 1.0
+     */
     private void resolveAttributeOffsets()
     {
         final int TOTAL_NUMBER_POSITION_ELEMENTS = elementsPerPosition * DATA_FORMAT.getNumberVerticesPerGroup();
@@ -864,6 +984,115 @@ public class RenderObject
                 colourDataOffset = normalDataOffset + TOTAL_NUMBER_NORMAL_ELEMENTS;
                 texelDataOffset = colourDataOffset + TOTAL_NUMBER_COLOUR_ELEMENTS;
                 break;
+        }
+    }
+
+    /**
+     * Handle the attributes that are supported by the render model. For example, if texel data, a
+     * texture applied and the user has not chosen to ignore texel data, the texel data attribute
+     * will be enabled.
+     *
+     * @param enable    True will enable the attributes, false will disable the attributes
+     * @since 1.0
+     */
+    protected void handleAttributes(boolean enable)
+    {
+        if(!material.isIgnoringPositionData())
+        {
+            handlePositionDataAttribute(enable);
+        }
+
+        if(!material.isIgnoringTexelData() && DATA_FORMAT.supportsTexelData())
+        {
+            handleTexelDataAttribute(enable);
+        }
+
+        if(!material.isIgnoringColourData() && DATA_FORMAT.supportsColourData())
+        {
+            handleColourDataAttribute(enable);
+        }
+    }
+
+    /**
+     * Enable or disable the position attribute. This will upload the vertex buffer and tell OpenGL
+     * SL how to read the position data from it.
+     *
+     * @param enable    True will enable the attribute, false will disable the attribute
+     * @since 1.0
+     */
+    private void handlePositionDataAttribute(boolean enable)
+    {
+        if(enable)
+        {
+            vertexBuffer.position(positionDataOffset);
+            glEnableVertexAttribArray(shader.getPositionAttributeHandle());
+            glVertexAttribPointer(shader.getPositionAttributeHandle(),
+                    elementsPerPosition,
+                    GL_FLOAT,
+                    true,
+                    totalStrideBytes,
+                    vertexBuffer);
+            vertexBuffer.position(0);
+        }
+        else
+        {
+            glDisableVertexAttribArray(shader.getPositionAttributeHandle());
+        }
+    }
+
+    /**
+     * Enable or disable the texel attribute. This will upload the vertex buffer and tell OpenGL SL
+     * how to read the texel data from it.
+     *
+     * @param enable    True will enable the attribute, false will disable the attribute
+     * @since 1.0
+     */
+    private void handleTexelDataAttribute(boolean enable)
+    {
+        if(enable)
+        {
+            // Enable attrib texture data
+            vertexBuffer.position(texelDataOffset);
+            glEnableVertexAttribArray(shader.getTextureAttributeHandle());
+            glVertexAttribPointer(shader.getTextureAttributeHandle(),
+                    elementsPerTexel,
+                    GL_FLOAT,
+                    true,
+                    totalStrideBytes,
+                    vertexBuffer);
+            vertexBuffer.position(0);
+        }
+        else
+        {
+            glDisableVertexAttribArray(shader.getTextureAttributeHandle());
+        }
+    }
+
+    /**
+     * Enable or disable the colour attribute. This will upload the vertex buffer and tell OpenGL SL
+     * how to read the colour data from it.
+     *
+     * @param enable    True will enable the attribute, false will disable the attribute
+     * @since 1.0
+     */
+    private void handleColourDataAttribute(boolean enable)
+    {
+        if(enable)
+        {
+            // Enable attrib colour data
+            vertexBuffer.position(colourDataOffset);
+            glEnableVertexAttribArray(shader.getColourAttributeHandle());
+            glVertexAttribPointer(shader.getColourAttributeHandle(),
+                    elementsPerColour,
+                    GL_FLOAT,
+                    true,
+                    totalStrideBytes,
+                    vertexBuffer);
+            vertexBuffer.position(0);
+        }
+        else
+        {
+            glDisableVertexAttribArray(shader.getColourAttributeHandle());
         }
     }
 }
