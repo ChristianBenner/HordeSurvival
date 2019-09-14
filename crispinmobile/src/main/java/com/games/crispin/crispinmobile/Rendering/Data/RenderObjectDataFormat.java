@@ -120,17 +120,10 @@ public class RenderObjectDataFormat
     // The attribute order of the data
     private final AttributeOrder_t ATTRIBUTE_ORDER;
 
-    // The position dimensions available in the data
-    private final PositionDimensions_t POSITION_DIMENSIONS;
-
-    // The texel dimensions available in the data
-    private final TexelDimensions_t TEXEL_DIMENSIONS;
-
-    // The colour dimensions available in the data
-    private final ColourDimensions_t COLOUR_DIMENSIONS;
-
-    // The normal dimensions available in the data
-    private final NormalDimensions_t NORMAL_DIMENSIONS;
+    private final byte NUM_POSITION_COMPONENTS;
+    private final byte NUM_TEXEL_COMPONENTS;
+    private final byte NUM_COLOUR_COMPONENTS;
+    private final byte NUM_NORMAL_COMPONENTS;
 
     // The render method that is determined from the number of different face data present
     private final RenderObject.RenderMethod renderMethod;
@@ -141,206 +134,27 @@ public class RenderObjectDataFormat
      * @param renderMethod          The method to render the data (e.g. triangles or quads)
      * @param attributeOrder        The order in which the vertex elements appear
      * @param numVerticesPerGroup   The number of vertices in a group
-     * @param positionDimensions    The components the position data is comprised of
-     * @param texelDimensions       The components that the texel data is comprised of
-     * @param colourDimensions      The components that the colour data is comprised of
-     * @param normalDimensions      The components that the normal data is comprised of
+     * @param numPositionComponents The number of components the position data is comprised of
+     * @param numTexelComponents    The number of components that the texel data is comprised of
+     * @param numColourComponents   The number of components that the colour data is comprised of
+     * @param numNormalComponents   The number components that the normal data is comprised of
      * @since 1.0
      */
     public RenderObjectDataFormat(RenderObject.RenderMethod renderMethod,
                                   AttributeOrder_t attributeOrder,
                                   int numVerticesPerGroup,
-                                  PositionDimensions_t positionDimensions,
-                                  TexelDimensions_t texelDimensions,
-                                  ColourDimensions_t colourDimensions,
-                                  NormalDimensions_t normalDimensions)
+                                  byte numPositionComponents,
+                                  byte numTexelComponents,
+                                  byte numColourComponents,
+                                  byte numNormalComponents)
     {
         this.renderMethod = renderMethod;
-        this.POSITION_DIMENSIONS = positionDimensions;
         this.NUM_VERTICES_GROUP = numVerticesPerGroup;
-        this.TEXEL_DIMENSIONS = texelDimensions;
-        this.COLOUR_DIMENSIONS = colourDimensions;
-        this.NORMAL_DIMENSIONS = normalDimensions;
+        this.NUM_POSITION_COMPONENTS = numPositionComponents;
+        this.NUM_TEXEL_COMPONENTS = numTexelComponents;
+        this.NUM_COLOUR_COMPONENTS = numColourComponents;
+        this.NUM_NORMAL_COMPONENTS = numNormalComponents;
         this.ATTRIBUTE_ORDER = attributeOrder;
-    }
-
-    /**
-     * Create a RenderObjectDataFormat that accounts for only position data
-     *
-     * @param renderMethod          The method to render the data (e.g. triangles or quads)
-     * @param attributeOrder        The order in which the vertex elements appear
-     * @param numVerticesPerGroup   The number of vertices in a group
-     * @param positionDimensions    The components the position data is comprised of
-     * @since 1.0
-     */
-    public RenderObjectDataFormat(RenderObject.RenderMethod renderMethod,
-                                  AttributeOrder_t attributeOrder,
-                                  int numVerticesPerGroup,
-                                  PositionDimensions_t positionDimensions)
-    {
-        this(renderMethod,
-                attributeOrder,
-                numVerticesPerGroup,
-                positionDimensions,
-                TexelDimensions_t.NONE,
-                ColourDimensions_t.NONE,
-                NormalDimensions_t.NONE);
-    }
-
-    /**
-     * Create a RenderObjectDataFormat that accounts for position, texel and colour data
-     *
-     * @param renderMethod          The method to render the data (e.g. triangles or quads)
-     * @param attributeOrder        The order in which the vertex elements appear
-     * @param numVerticesPerGroup   The number of vertices in a group
-     * @param positionDimensions    The components the position data is comprised of
-     * @param texelDimensions       The components that the texel data is comprised of
-     * @param colourDimensions      The components that the colour data is comprised of
-     * @since 1.0
-     */
-    public RenderObjectDataFormat(RenderObject.RenderMethod renderMethod,
-                                  AttributeOrder_t attributeOrder,
-                                  int numVerticesPerGroup,
-                                  PositionDimensions_t positionDimensions,
-                                  TexelDimensions_t texelDimensions,
-                                  ColourDimensions_t colourDimensions)
-    {
-        this(renderMethod,
-                attributeOrder,
-                numVerticesPerGroup,
-                positionDimensions,
-                texelDimensions,
-                colourDimensions,
-                NormalDimensions_t.NONE);
-    }
-
-    /**
-     * Create a RenderObjectDataFormat that accounts for position, texel and normal data
-     *
-     * @param renderMethod          The method to render the data (e.g. triangles or quads)
-     * @param attributeOrder        The order in which the vertex elements appear
-     * @param numVerticesPerGroup   The number of vertices in a group
-     * @param positionDimensions    The components the position data is comprised of
-     * @param texelDimensions       The components that the texel data is comprised of
-     * @param normalDimensions      The components that the normal data is comprised of
-     * @since 1.0
-     */
-    public RenderObjectDataFormat(RenderObject.RenderMethod renderMethod,
-                                  AttributeOrder_t attributeOrder,
-                                  int numVerticesPerGroup,
-                                  PositionDimensions_t positionDimensions,
-                                  TexelDimensions_t texelDimensions,
-                                  NormalDimensions_t normalDimensions)
-    {
-        this(renderMethod,
-                attributeOrder,
-                numVerticesPerGroup,
-                positionDimensions,
-                texelDimensions,
-                ColourDimensions_t.NONE,
-                normalDimensions);
-    }
-
-    /**
-     * Create a RenderObjectDataFormat that accounts for position, colour and normal data
-     *
-     * @param renderMethod          The method to render the data (e.g. triangles or quads)
-     * @param attributeOrder        The order in which the vertex elements appear
-     * @param numVerticesPerGroup   The number of vertices in a group
-     * @param positionDimensions    The components the position data is comprised of
-     * @param colourDimensions      The components that the colour data is comprised of
-     * @param normalDimensions      The components that the normal data is comprised of
-     * @since 1.0
-     */
-    public RenderObjectDataFormat(RenderObject.RenderMethod renderMethod,
-                                  AttributeOrder_t attributeOrder,
-                                  int numVerticesPerGroup,
-                                  PositionDimensions_t positionDimensions,
-                                  ColourDimensions_t colourDimensions,
-                                  NormalDimensions_t normalDimensions)
-    {
-        this(renderMethod,
-                attributeOrder,
-                numVerticesPerGroup,
-                positionDimensions,
-                TexelDimensions_t.NONE,
-                colourDimensions,
-                normalDimensions);
-    }
-
-    /**
-     * Create a RenderObjectDataFormat that accounts for position and texel data
-     *
-     * @param renderMethod          The method to render the data (e.g. triangles or quads)
-     * @param attributeOrder        The order in which the vertex elements appear
-     * @param numVerticesPerGroup   The number of vertices in a group
-     * @param positionDimensions    The components the position data is comprised of
-     * @param texelDimensions       The components that the texel data is comprised of
-     * @since 1.0
-     */
-    public RenderObjectDataFormat(RenderObject.RenderMethod renderMethod,
-                                  AttributeOrder_t attributeOrder,
-                                  int numVerticesPerGroup,
-                                  PositionDimensions_t positionDimensions,
-                                  TexelDimensions_t texelDimensions)
-    {
-        this(renderMethod,
-                attributeOrder,
-                numVerticesPerGroup,
-                positionDimensions,
-                texelDimensions,
-                ColourDimensions_t.NONE,
-                NormalDimensions_t.NONE);
-    }
-
-    /**
-     * Create a RenderObjectDataFormat that accounts for position and normal data
-     *
-     * @param renderMethod          The method to render the data (e.g. triangles or quads)
-     * @param attributeOrder        The order in which the vertex elements appear
-     * @param numVerticesPerGroup   The number of vertices in a group
-     * @param positionDimensions    The components the position data is comprised of
-     * @param normalDimensions      The components that the normal data is comprised of
-     * @since 1.0
-     */
-    public RenderObjectDataFormat(RenderObject.RenderMethod renderMethod,
-                                  AttributeOrder_t attributeOrder,
-                                  int numVerticesPerGroup,
-                                  PositionDimensions_t positionDimensions,
-                                  NormalDimensions_t normalDimensions)
-    {
-        this(renderMethod,
-                attributeOrder,
-                numVerticesPerGroup,
-                positionDimensions,
-                TexelDimensions_t.NONE,
-                ColourDimensions_t.NONE,
-                normalDimensions);
-    }
-
-    /**
-     * Create a RenderObjectDataFormat that accounts for position and colour data
-     *
-     * @param renderMethod          The method to render the data (e.g. triangles or quads)
-     * @param attributeOrder        The order in which the vertex elements appear
-     * @param numVerticesPerGroup   The number of vertices in a group
-     * @param positionDimensions    The components the position data is comprised of
-     * @param colourDimensions      The components that the colour data is comprised of
-     * @since 1.0
-     */
-    public RenderObjectDataFormat(RenderObject.RenderMethod renderMethod,
-                                  AttributeOrder_t attributeOrder,
-                                  int numVerticesPerGroup,
-                                  PositionDimensions_t positionDimensions,
-                                  ColourDimensions_t colourDimensions)
-    {
-        this(renderMethod,
-                attributeOrder,
-                numVerticesPerGroup,
-                positionDimensions,
-                TexelDimensions_t.NONE,
-                colourDimensions,
-                NormalDimensions_t.NONE);
     }
 
     /**
@@ -355,25 +169,47 @@ public class RenderObjectDataFormat
     }
 
     /**
-     * Get the components of the position data
+     * Get the number of position data dimensions (e.g. XYZ contains three and XY contains two)
      *
-     * @return  Components of the position data as a PositionDimension_t type
+     * @return  The number of position data dimensions
      * @since   1.0
      */
-    public PositionDimensions_t getPositionDimensions()
+    public byte getNumberPositionDimensions()
     {
-        return POSITION_DIMENSIONS;
+        return NUM_POSITION_COMPONENTS;
     }
 
     /**
-     * Get the components of the texel data
+     * Get the number of texel data dimensions (e.g. ST contains two)
      *
-     * @return  Components of the texel data as a TexelDimensions_t type
+     * @return  The number of texel data dimensions
      * @since   1.0
      */
-    public TexelDimensions_t getTexelDimensions()
+    public byte getNumberTexelDimensions()
     {
-        return TEXEL_DIMENSIONS;
+        return NUM_TEXEL_COMPONENTS;
+    }
+
+    /**
+     * Get the number of colour data dimensions (e.g. RGBA contains four and RGB contains three)
+     *
+     * @return  The number of colour data dimensions
+     * @since   1.0
+     */
+    public byte getNumberColourDimensions()
+    {
+        return NUM_COLOUR_COMPONENTS;
+    }
+
+    /**
+     * Get the number of normal data dimensions (e.g. XYZ contains three and XY contains two)
+     *
+     * @return  The number of normal data dimensions
+     * @since   1.0
+     */
+    public byte getNumberNormalDimensions()
+    {
+        return NUM_NORMAL_COMPONENTS;
     }
 
     /**
@@ -384,18 +220,7 @@ public class RenderObjectDataFormat
      */
     public boolean supportsTexelData()
     {
-        return (TEXEL_DIMENSIONS != null) && (TEXEL_DIMENSIONS != TexelDimensions_t.NONE);
-    }
-
-    /**
-     * Get the components of the colour data
-     *
-     * @return  Components of the colour data as a ColourDimensions_t type
-     * @since   1.0
-     */
-    public ColourDimensions_t getColourDimensions()
-    {
-        return COLOUR_DIMENSIONS;
+        return NUM_TEXEL_COMPONENTS != 0;
     }
 
     /**
@@ -406,18 +231,7 @@ public class RenderObjectDataFormat
      */
     public boolean supportsColourData()
     {
-        return (COLOUR_DIMENSIONS != null) && (COLOUR_DIMENSIONS != ColourDimensions_t.NONE);
-    }
-
-    /**
-     * Get the components of the normal data
-     *
-     * @return  Components of the normal data as a NormalDimensions_t type
-     * @since   1.0
-     */
-    public NormalDimensions_t getNormalDimensions()
-    {
-        return NORMAL_DIMENSIONS;
+        return NUM_COLOUR_COMPONENTS != 0;
     }
 
     /**
@@ -428,7 +242,7 @@ public class RenderObjectDataFormat
      */
     public boolean supportsNormalData()
     {
-        return (NORMAL_DIMENSIONS != null) && (NORMAL_DIMENSIONS != NormalDimensions_t.NONE);
+        return NUM_NORMAL_COMPONENTS != 0;
     }
 
     /**
@@ -440,110 +254,6 @@ public class RenderObjectDataFormat
     public int getNumberVerticesPerGroup()
     {
         return NUM_VERTICES_GROUP;
-    }
-
-    /**
-     * Get the number of position dimensions
-     *
-     * @return  An integer of the number of position dimensions
-     * @since   1.0
-     */
-    public int getNumberPositionDimensions()
-    {
-        // Check if position dimensions have not been specified
-        if(POSITION_DIMENSIONS == null)
-        {
-            return 0;
-        }
-
-        switch (POSITION_DIMENSIONS)
-        {
-            case XYZW:
-                return 4;
-            case XYZ:
-            default:
-                return 3;
-            case XY:
-                return 2;
-        }
-    }
-
-    /**
-     * Get the number of texel dimensions
-     *
-     * @return  An integer of the number of texel dimensions
-     * @since   1.0
-     */
-    public int getNumberTexelDimensions()
-    {
-        // Check if texel dimensions have not been specified
-        if(TEXEL_DIMENSIONS == null)
-        {
-            return 0;
-        }
-
-        switch (TEXEL_DIMENSIONS)
-        {
-            default:
-            case ST:
-                return 2;
-            case NONE:
-                return 0;
-        }
-    }
-
-    /**
-     * Get the number of colour dimensions
-     *
-     * @return  An integer of the number of colour dimensions
-     * @since   1.0
-     */
-    public int getNumberColourDimensions()
-    {
-        // Check if colour dimensions have not been specified
-        if(COLOUR_DIMENSIONS == null)
-        {
-            return 0;
-        }
-
-        switch (COLOUR_DIMENSIONS)
-        {
-            case RGBA:
-                return 4;
-            case RGB:
-            default:
-                return 3;
-            case NONE:
-                return 0;
-        }
-    }
-
-    /**
-     * Get the number of normal dimensions
-     *
-     * @return  An integer of the number of normal dimensions
-     * @since   1.0
-     */
-    public int getNumberNormalDimensions()
-    {
-        // Check if normal dimensions have not been specified
-        if(NORMAL_DIMENSIONS == null)
-        {
-            return 0;
-        }
-
-        switch (NORMAL_DIMENSIONS)
-        {
-            case XYZW:
-                return 4;
-            case XYZ:
-            default:
-                return 3;
-            case XY:
-                return 2;
-            case NONE:
-                return 0;
-        }
     }
 
     /**

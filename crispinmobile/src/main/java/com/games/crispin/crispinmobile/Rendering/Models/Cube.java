@@ -251,9 +251,10 @@ public class Cube extends RenderObject
                                 renderColour,
                                 false),
                         POSITION_DATA.length / NUMBER_POSITION_COMPONENTS,
-                        RenderObjectDataFormat.PositionDimensions_t.XYZ,
-                        renderTexels ? RenderObjectDataFormat.TexelDimensions_t.ST : null,
-                        renderColour ? RenderObjectDataFormat.ColourDimensions_t.RGB : null),
+                        (byte)3,
+                        (byte)2,
+                        (byte)0,
+                        (byte)3),
                 material);
     }
 

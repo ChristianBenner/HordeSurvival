@@ -65,8 +65,10 @@ public class Square extends RenderObject
                         renderTexels ? RenderObjectDataFormat.AttributeOrder_t.POSITION_THEN_TEXEL :
                                 RenderObjectDataFormat.AttributeOrder_t.POSITION,
                         POSITION_DATA.length / NUMBER_POSITION_COMPONENTS,
-                        RenderObjectDataFormat.PositionDimensions_t.XY,
-                        renderTexels ? RenderObjectDataFormat.TexelDimensions_t.ST : null),
+                        (byte)2,
+                        (byte)2,
+                        (byte)0,
+                        (byte)0),
                 material);
     }
 

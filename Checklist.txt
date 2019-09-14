@@ -26,7 +26,7 @@ Project Classes:
 		Data >
 			Colour					- CHECKLIST
 			FreeTypeCharData		- CHECKLIST
-			RenderObjectData		- VERIFY
+			RenderObjectData		- CHECKLIST
 			RenderObjectDataFormat	- VERIFY
 		Entities >
 			Light	- VERIFY
@@ -75,7 +75,7 @@ Code Checklist:
 - All class variables have comments
 - All class variables have access identifiers
 - No magic numbers (unless 0 or raw vertex data)
-- If/while/for statements have comments explaining what they do
+- If/while/for/switch statements have comments explaining what they do
 - Scope starts are on new lines
 - If function signatures contain more than 2 parameters, put them on new lines
 - Do not allow any code to get past the white line (put on a new line)

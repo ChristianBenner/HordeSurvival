@@ -473,9 +473,9 @@ public class OBJModelLoader
                 break;
         }
 
-        renderObjectData.setNumPositionComponents(numberPositionDataElements);
-        renderObjectData.setNumNormalComponents(numberNormalDataElements);
-        renderObjectData.setNumTexelComponents(numberTexelDataElements);
+        renderObjectData.setNumPositionComponents((byte)numberPositionDataElements);
+        renderObjectData.setNumNormalComponents((byte)numberNormalDataElements);
+        renderObjectData.setNumTexelComponents((byte)numberTexelDataElements);
         return renderObjectData.processData();
     }
 }
