@@ -1,7 +1,6 @@
 package com.games.crispin.crispinmobile.Rendering.Utilities;
 
 import android.opengl.Matrix;
-import android.util.Pair;
 
 import com.games.crispin.crispinmobile.Geometry.Point2D;
 import com.games.crispin.crispinmobile.Geometry.Point3D;
@@ -9,20 +8,15 @@ import com.games.crispin.crispinmobile.Geometry.Rotation2D;
 import com.games.crispin.crispinmobile.Geometry.Rotation3D;
 import com.games.crispin.crispinmobile.Geometry.Scale2D;
 import com.games.crispin.crispinmobile.Geometry.Scale3D;
-import com.games.crispin.crispinmobile.Rendering.Data.RenderObjectDataFormat;
 import com.games.crispin.crispinmobile.Rendering.Shaders.AttributeColourShader;
 import com.games.crispin.crispinmobile.Rendering.Shaders.TextureAttributeColourShader;
 import com.games.crispin.crispinmobile.Rendering.Shaders.TextureShader;
 import com.games.crispin.crispinmobile.Utilities.Logger;
 import com.games.crispin.crispinmobile.Rendering.Shaders.UniformColourShader;
 
-import java.lang.reflect.Array;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
-import java.text.DateFormat;
-import java.util.ArrayList;
-import java.util.Date;
 
 import static android.opengl.GLES20.GL_LINES;
 import static android.opengl.GLES20.GL_POINTS;
@@ -41,7 +35,6 @@ import static android.opengl.GLES30.glUniform1i;
 import static android.opengl.GLES30.glUniform4fv;
 import static android.opengl.GLES30.glUniformMatrix4fv;
 import static android.opengl.GLES30.glVertexAttribPointer;
-import static android.opengl.GLES32.GL_QUADS;
 
 /**
  * Render object is a base class for any graphical object. It handles an objects shader (based on
@@ -55,6 +48,57 @@ import static android.opengl.GLES32.GL_QUADS;
 
 public class RenderObject
 {
+    /**
+     * The attribute order type is to store the order that the vertex data elements appear. This
+     * means that the data can be submitted to the GPU in the correct order.
+     *  POSITION: The position data element is the only one provided
+     *  POSITION_THEN_TEXEL: The position data is provided first, then texel data
+     *  POSITION_THEN_COLOUR: The position data provided first, then colour
+     *  POSITION_THEN_NORMAL: The position data provided first, then normal
+     *  POSITION_THEN_TEXEL_THEN_COLOUR: Position data first, then texel, then colour
+     *  POSITION_THEN_COLOUR_THEN_TEXEL: Position data first, then colour, then texel
+     *  POSITION_THEN_TEXEL_THEN_NORMAL: Position data first, then texel, then normal
+     *  POSITION_THEN_NORMAL_THEN_TEXEL: Position data first, then normal, then texel
+     *  POSITION_THEN_COLOUR_THEN_NORMAL: Position data first, then colour, then normal
+     *  POSITION_THEN_NORMAL_THEN_COLOUR: Position data first, then normal, then colour
+     *  POSITION_THEN_TEXEL_THEN_COLOUR_THEN_NORMAL: Position data first, then texel, then normal,
+     *      then normal
+     *  POSITION_THEN_COLOUR_THEN_TEXEL_THEN_NORMAL: Position data first, then colour, then texel,
+     *      then normal
+     *  POSITION_THEN_TEXEL_THEN_NORMAL_THEN_COLOUR: Position data first, then texel, then normal,
+     *      then colour
+     *  POSITION_THEN_COLOUR_THEN_NORMAL_THEN_TEXEL: Position data first, then colour, then normal,
+     *      then texel
+     *  POSITION_THEN_NORMAL_THEN_TEXEL_THEN_COLOUR: Position data first, then normal, then texel,
+     *      then colour
+     *  POSITION_THEN_NORMAL_THEN_COLOUR_THEN_TEXEL: Position data first, then normal, then colour,
+     *      then texel
+     *
+     * @since       1.0
+     */
+    public enum AttributeOrder_t
+    {
+        POSITION,
+        POSITION_THEN_TEXEL,
+        POSITION_THEN_COLOUR,
+        POSITION_THEN_NORMAL,
+        POSITION_THEN_TEXEL_THEN_COLOUR,
+        POSITION_THEN_COLOUR_THEN_TEXEL,
+        POSITION_THEN_TEXEL_THEN_NORMAL,
+        POSITION_THEN_NORMAL_THEN_TEXEL,
+        POSITION_THEN_COLOUR_THEN_NORMAL,
+        POSITION_THEN_NORMAL_THEN_COLOUR,
+        POSITION_THEN_TEXEL_THEN_COLOUR_THEN_NORMAL,
+        POSITION_THEN_COLOUR_THEN_TEXEL_THEN_NORMAL,
+        POSITION_THEN_TEXEL_THEN_NORMAL_THEN_COLOUR,
+        POSITION_THEN_COLOUR_THEN_NORMAL_THEN_TEXEL,
+        POSITION_THEN_NORMAL_THEN_TEXEL_THEN_COLOUR,
+        POSITION_THEN_NORMAL_THEN_COLOUR_THEN_TEXEL
+    }
+
+    // The 'numVerticesPerGroup' if the vertices are not grouped
+    public static final int UNGROUPED = 1;
+
     // Tag used in logging output
     private static final String TAG = "RenderObject";
 
@@ -95,7 +139,9 @@ public class RenderObject
     private FloatBuffer vertexBuffer;
 
     // The format of the render data
-    private final RenderObjectDataFormat DATA_FORMAT;
+    //private final RenderObjectDataFormat DATA_FORMAT;
+
+    private final RenderMethod renderMethod;
 
     // If the model has a custom shader
     private boolean hasCustomShader;
@@ -130,6 +176,59 @@ public class RenderObject
     }
 
     /**
+     * Get the attribute order of the model depending on a set of allowed data types
+     *
+     * @param renderTexels  True if the model is allowed to use texel data, else false
+     * @param renderColour  True if the model is allowed to use colour data, else false
+     * @param renderNormals True if the model is allowed to use normal data, else false
+     *
+     * @return  Returns an attribute order based on the set of allowed data types. Position will
+     *          always be part of the attribute order. In the attribute order, texel data takes 2nd
+     *          priority in the, colour data takes 3rd priority, and normal data takes 4th priority.
+     *          For example, if all data types are allowed then the attribute order is
+     *          <code>POSITION_THEN_TEXEL_THEN_COLOUR_THEN_NORMAL</code>
+     * @since   1.0
+     */
+    private static AttributeOrder_t resolveAttributeOrder(boolean renderTexels,
+                                                          boolean renderColour,
+                                                          boolean renderNormals)
+    {
+        // Check what attribute order to use depending on what data types are allowed
+        if (renderTexels &&
+                renderColour &&
+                renderNormals)
+        {
+            return AttributeOrder_t.POSITION_THEN_TEXEL_THEN_COLOUR_THEN_NORMAL;
+        }
+        else if (renderTexels && renderColour)
+        {
+            return AttributeOrder_t.POSITION_THEN_TEXEL_THEN_COLOUR;
+        }
+        else if (renderTexels && renderNormals)
+        {
+            return AttributeOrder_t.POSITION_THEN_TEXEL_THEN_NORMAL;
+        }
+        else if(renderColour && renderNormals)
+        {
+            return AttributeOrder_t.POSITION_THEN_COLOUR_THEN_NORMAL;
+        }
+        else if(renderTexels)
+        {
+            return AttributeOrder_t.POSITION_THEN_TEXEL;
+        }
+        else if(renderColour)
+        {
+            return AttributeOrder_t.POSITION_THEN_COLOUR;
+        }
+        else if(renderNormals)
+        {
+            return AttributeOrder_t.POSITION_THEN_NORMAL;
+        }
+
+        return AttributeOrder_t.POSITION;
+    }
+
+    /**
      * Create an object with vertex data comprised of multiple buffers containing different forms of
      * vertex data. For the buffers that you are not providing data for, put <code>null</code>.
      *
@@ -140,8 +239,6 @@ public class RenderObject
      *                                  <code>null</code> if no colour data is being provided
      * @param normalBuffer              Float buffer containing the normal data, or
      *                                  <code>null</code> if no normal data is being provided
-     * @param renderObjectDataFormat    The format of the vertex data, such as what data is provided
-     *                                  and in what order.
      * @param material                  The material to apply to the object
      * @since   1.0
      */
@@ -149,19 +246,35 @@ public class RenderObject
                         float[] texelBuffer,
                         float[] colourBuffer,
                         float[] normalBuffer,
-                        RenderObjectDataFormat renderObjectDataFormat,
+                        RenderObject.RenderMethod renderMethod,
+                        int numVerticesPerGroup,
+                        byte elementsPerPosition,
+                        byte elementsPerTexel,
+                        byte elementsPerColour,
+                        byte elementsPerNormal,
                         Material material)
     {
-        this.DATA_FORMAT = renderObjectDataFormat;
         this.scale = new Scale3D();
         this.position = new Point3D();
         this.rotation = new Rotation3D();
-        this.totalStrideBytes = 0;
 
-        // Figure out the stride
-        resolveStride();
-        resolveAttributeOffsets();
+        this.renderMethod = renderMethod;
+        this.elementsPerPosition = positionBuffer == null ? 0 : elementsPerPosition;
+        this.elementsPerTexel = texelBuffer == null ? 0 : elementsPerTexel;
+        this.elementsPerColour = colourBuffer == null ? 0 : elementsPerColour;
+        this.elementsPerNormal = normalBuffer == null ? 0 : elementsPerNormal;
 
+        // Solve the attribute order here
+        AttributeOrder_t attributeOrder = resolveAttributeOrder(
+                texelBuffer != null,
+                colourBuffer != null,
+                normalBuffer != null);
+
+        // Solve the data stride
+        resolveStride(numVerticesPerGroup);
+
+        // Solve the attribute offsets
+        resolveAttributeOffsets(attributeOrder, numVerticesPerGroup);
 
         final int POS_BUFFER_LENGTH = positionBuffer == null ? 0 : positionBuffer.length;
         final int COL_BUFFER_LENGTH = texelBuffer == null ? 0 : texelBuffer.length;
@@ -252,21 +365,29 @@ public class RenderObject
      *                                  <code>null</code> if no colour data is being provided
      * @param normalBuffer              Float buffer containing the normal data, or
      *                                  <code>null</code> if no normal data is being provided
-     * @param renderObjectDataFormat    The format of the vertex data, such as what data is provided
-     *                                  and in what order
      * @since   1.0
      */
     public RenderObject(float[] positionBuffer,
                         float[] texelBuffer,
                         float[] colourBuffer,
                         float[] normalBuffer,
-                        RenderObjectDataFormat renderObjectDataFormat)
+                        RenderObject.RenderMethod renderMethod,
+                        int numVerticesPerGroup,
+                        byte elementsPerPosition,
+                        byte elementsPerTexel,
+                        byte elementsPerColour,
+                        byte elementsPerNormal)
     {
         this(positionBuffer,
                 texelBuffer,
                 colourBuffer,
                 normalBuffer,
-                renderObjectDataFormat,
+                renderMethod,
+                numVerticesPerGroup,
+                elementsPerPosition,
+                elementsPerTexel,
+                elementsPerColour,
+                elementsPerNormal,
                 new Material());
     }
 
@@ -276,24 +397,34 @@ public class RenderObject
      * calculated based on the format.
      *
      * @param vertexData                Float buffer containing the vertex data
-     * @param renderObjectDataFormat    The format of the vertex data, such as what data is provided
-     *                                  and in what order
      * @param material                  Material to apply to the object
      * @since   1.0
      */
     public RenderObject(float[] vertexData,
-                        RenderObjectDataFormat renderObjectDataFormat,
+                        RenderObject.RenderMethod renderMethod,
+                        AttributeOrder_t attributeOrder,
+                        int numVerticesPerGroup,
+                        byte elementsPerPosition,
+                        byte elementsPerTexel,
+                        byte elementsPerColour,
+                        byte elementsPerNormal,
                         Material material)
     {
-        this.DATA_FORMAT = renderObjectDataFormat;
+        this.renderMethod = renderMethod;
         this.scale = new Scale3D();
         this.position = new Point3D();
         this.rotation = new Rotation3D();
         this.totalStrideBytes = 0;
+        this.elementsPerPosition = elementsPerPosition;
+        this.elementsPerTexel = elementsPerTexel;
+        this.elementsPerColour = elementsPerColour;
+        this.elementsPerNormal = elementsPerNormal;
 
-        // Figure out the stride
-        resolveStride();
-        resolveAttributeOffsets();
+        // Resolve the data stride
+        resolveStride(numVerticesPerGroup);
+
+        // Solve attribute offset
+        resolveAttributeOffsets(attributeOrder, numVerticesPerGroup);
 
         // Initialise a vertex byte buffer for the shape float array
         final ByteBuffer VERTICES_BYTE_BUFFER = ByteBuffer.allocateDirect(
@@ -330,14 +461,26 @@ public class RenderObject
      * not been provided.
      *
      * @param vertexData                Float buffer containing the vertex data
-     * @param renderObjectDataFormat    The format of the vertex data, such as what data is provided
-     *                                  and in what order
      * @since 1.0
      */
     public RenderObject(float[] vertexData,
-                        RenderObjectDataFormat renderObjectDataFormat)
+                        RenderObject.RenderMethod renderMethod,
+                        AttributeOrder_t attributeOrder,
+                        int numVerticesPerGroup,
+                        byte elementsPerPosition,
+                        byte elementsPerTexel,
+                        byte elementsPerColour,
+                        byte elementsPerNormal)
     {
-        this(vertexData, renderObjectDataFormat, new Material());
+        this(vertexData,
+                renderMethod,
+                attributeOrder,
+                numVerticesPerGroup,
+                elementsPerPosition,
+                elementsPerTexel,
+                elementsPerColour,
+                elementsPerNormal,
+                new Material());
     }
 
     /**
@@ -672,7 +815,7 @@ public class RenderObject
 
         handleAttributes(true);
 
-        switch (DATA_FORMAT.getRenderMethod())
+        switch (renderMethod)
         {
             case POINTS:
                 glDrawArrays(GL_POINTS, 0, VERTEX_COUNT);
@@ -756,7 +899,7 @@ public class RenderObject
 
         handleAttributes(true);
 
-        switch (DATA_FORMAT.getRenderMethod())
+        switch (renderMethod)
         {
             case POINTS:
                 glDrawArrays(GL_POINTS, 0, VERTEX_COUNT);
@@ -818,12 +961,12 @@ public class RenderObject
 
             // Check that the object has all of the components required to render a texture
             supportsTexture = material.hasTexture() &&
-                    DATA_FORMAT.supportsTexelData() &&
+                    (elementsPerTexel != 0) &&
                     !material.isIgnoringTexelData();
 
             // Check if the object has all of the components required to render per vertex colour
             supportsColourPerAttrib =
-                    DATA_FORMAT.supportsColourData() &&
+                    (elementsPerColour != 0) &&
                             !material.isIgnoringColourData();
 
 //                // Determine the best shader to used depending on the material
@@ -866,128 +1009,6 @@ public class RenderObject
     }
 
     /**
-     * Resolve the stride between the vertex data types. The stride is the number of bytes between
-     * data of the same type in the vertex data.
-     *
-     * @since 1.0
-     */
-    private void resolveStride()
-    {
-        elementsPerPosition = DATA_FORMAT.getNumberPositionDimensions();
-        elementsPerTexel = DATA_FORMAT.getNumberTexelDimensions();
-        elementsPerColour = DATA_FORMAT.getNumberColourDimensions();
-        elementsPerNormal = DATA_FORMAT.getNumberNormalDimensions();
-
-        if(DATA_FORMAT.getNumberVerticesPerGroup() == RenderObjectDataFormat.UNGROUPED)
-        {
-            totalStrideBytes = (elementsPerPosition +
-                    elementsPerTexel +
-                    elementsPerColour +
-                    elementsPerNormal) *
-                    BYTES_PER_FLOAT;
-        }
-    }
-
-    /**
-     * Resolve the attribute offsets. This is where each attribute starts from the beginning of the
-     * vertex data.
-     *
-     * @since 1.0
-     */
-    private void resolveAttributeOffsets()
-    {
-        final int TOTAL_NUMBER_POSITION_ELEMENTS = elementsPerPosition * DATA_FORMAT.getNumberVerticesPerGroup();
-        final int TOTAL_NUMBER_TEXEL_ELEMENTS = elementsPerTexel * DATA_FORMAT.getNumberVerticesPerGroup();
-        final int TOTAL_NUMBER_COLOUR_ELEMENTS = elementsPerColour * DATA_FORMAT.getNumberVerticesPerGroup();
-        final int TOTAL_NUMBER_NORMAL_ELEMENTS = elementsPerNormal * DATA_FORMAT.getNumberVerticesPerGroup();
-
-        switch (DATA_FORMAT.getAttributeOrder())
-        {
-            case POSITION:
-                positionDataOffset = 0;
-                break;
-            case POSITION_THEN_TEXEL:
-                positionDataOffset = 0;
-                texelDataOffset = TOTAL_NUMBER_POSITION_ELEMENTS;
-                break;
-            case POSITION_THEN_COLOUR:
-                positionDataOffset = 0;
-                colourDataOffset = TOTAL_NUMBER_POSITION_ELEMENTS;
-                break;
-            case POSITION_THEN_NORMAL:
-                positionDataOffset = 0;
-                normalDataOffset = TOTAL_NUMBER_POSITION_ELEMENTS;
-                break;
-            case POSITION_THEN_TEXEL_THEN_COLOUR:
-                positionDataOffset = 0;
-                texelDataOffset = TOTAL_NUMBER_POSITION_ELEMENTS;
-                colourDataOffset = texelDataOffset + TOTAL_NUMBER_TEXEL_ELEMENTS;
-                break;
-            case POSITION_THEN_COLOUR_THEN_TEXEL:
-                positionDataOffset = 0;
-                colourDataOffset = TOTAL_NUMBER_POSITION_ELEMENTS;
-                texelDataOffset = colourDataOffset + TOTAL_NUMBER_COLOUR_ELEMENTS;
-                break;
-            case POSITION_THEN_TEXEL_THEN_NORMAL:
-                positionDataOffset = 0;
-                texelDataOffset = TOTAL_NUMBER_POSITION_ELEMENTS;
-                normalDataOffset = texelDataOffset + TOTAL_NUMBER_TEXEL_ELEMENTS;
-                break;
-            case POSITION_THEN_NORMAL_THEN_TEXEL:
-                positionDataOffset = 0;
-                normalDataOffset = TOTAL_NUMBER_POSITION_ELEMENTS;
-                texelDataOffset = normalDataOffset + TOTAL_NUMBER_NORMAL_ELEMENTS;
-                break;
-            case POSITION_THEN_COLOUR_THEN_NORMAL:
-                positionDataOffset = 0;
-                colourDataOffset = TOTAL_NUMBER_POSITION_ELEMENTS;
-                normalDataOffset = colourDataOffset + TOTAL_NUMBER_COLOUR_ELEMENTS;
-                break;
-            case POSITION_THEN_NORMAL_THEN_COLOUR:
-                positionDataOffset = 0;
-                normalDataOffset = TOTAL_NUMBER_POSITION_ELEMENTS;
-                colourDataOffset = normalDataOffset + TOTAL_NUMBER_NORMAL_ELEMENTS;
-                break;
-            case POSITION_THEN_TEXEL_THEN_COLOUR_THEN_NORMAL:
-                positionDataOffset = 0;
-                texelDataOffset = TOTAL_NUMBER_POSITION_ELEMENTS;
-                colourDataOffset = texelDataOffset + TOTAL_NUMBER_TEXEL_ELEMENTS;
-                normalDataOffset = colourDataOffset + TOTAL_NUMBER_COLOUR_ELEMENTS;
-                break;
-            case POSITION_THEN_COLOUR_THEN_TEXEL_THEN_NORMAL:
-                positionDataOffset = 0;
-                colourDataOffset = TOTAL_NUMBER_POSITION_ELEMENTS;
-                texelDataOffset = colourDataOffset + TOTAL_NUMBER_COLOUR_ELEMENTS;
-                normalDataOffset = texelDataOffset + TOTAL_NUMBER_TEXEL_ELEMENTS;
-                break;
-            case POSITION_THEN_TEXEL_THEN_NORMAL_THEN_COLOUR:
-                positionDataOffset = 0;
-                texelDataOffset = TOTAL_NUMBER_POSITION_ELEMENTS;
-                normalDataOffset = texelDataOffset + TOTAL_NUMBER_TEXEL_ELEMENTS;
-                colourDataOffset = normalDataOffset + TOTAL_NUMBER_NORMAL_ELEMENTS;
-                break;
-            case POSITION_THEN_COLOUR_THEN_NORMAL_THEN_TEXEL:
-                positionDataOffset = 0;
-                colourDataOffset = TOTAL_NUMBER_POSITION_ELEMENTS;
-                normalDataOffset = colourDataOffset + TOTAL_NUMBER_COLOUR_ELEMENTS;
-                texelDataOffset = normalDataOffset + TOTAL_NUMBER_NORMAL_ELEMENTS;
-                break;
-            case POSITION_THEN_NORMAL_THEN_TEXEL_THEN_COLOUR:
-                positionDataOffset = 0;
-                normalDataOffset = TOTAL_NUMBER_POSITION_ELEMENTS;
-                texelDataOffset = normalDataOffset + TOTAL_NUMBER_NORMAL_ELEMENTS;
-                colourDataOffset = texelDataOffset + TOTAL_NUMBER_TEXEL_ELEMENTS;
-                break;
-            case POSITION_THEN_NORMAL_THEN_COLOUR_THEN_TEXEL:
-                positionDataOffset = 0;
-                normalDataOffset = TOTAL_NUMBER_POSITION_ELEMENTS;
-                colourDataOffset = normalDataOffset + TOTAL_NUMBER_NORMAL_ELEMENTS;
-                texelDataOffset = colourDataOffset + TOTAL_NUMBER_COLOUR_ELEMENTS;
-                break;
-        }
-    }
-
-    /**
      * Handle the attributes that are supported by the render model. For example, if texel data, a
      * texture applied and the user has not chosen to ignore texel data, the texel data attribute
      * will be enabled.
@@ -1002,12 +1023,12 @@ public class RenderObject
             handlePositionDataAttribute(enable);
         }
 
-        if(!material.isIgnoringTexelData() && DATA_FORMAT.supportsTexelData())
+        if(!material.isIgnoringTexelData() && elementsPerTexel != 0)
         {
             handleTexelDataAttribute(enable);
         }
 
-        if(!material.isIgnoringColourData() && DATA_FORMAT.supportsColourData())
+        if(!material.isIgnoringColourData() && elementsPerColour != 0)
         {
             handleColourDataAttribute(enable);
         }
@@ -1093,6 +1114,117 @@ public class RenderObject
         else
         {
             glDisableVertexAttribArray(shader.getColourAttributeHandle());
+        }
+    }
+
+    private void resolveStride(int numVerticesPerGroup)
+    {
+        if(numVerticesPerGroup == UNGROUPED)
+        {
+            totalStrideBytes = (elementsPerPosition +
+                    elementsPerTexel +
+                    elementsPerColour +
+                    elementsPerNormal) *
+                    BYTES_PER_FLOAT;
+        }
+        else
+        {
+            totalStrideBytes = 0;
+        }
+    }
+
+    private void resolveAttributeOffsets(AttributeOrder_t attributeOrder,
+                                         int numVerticesPerGroup)
+    {
+        // Solve attribute offset
+        final int TOTAL_NUMBER_POSITION_ELEMENTS = elementsPerPosition * numVerticesPerGroup;
+        final int TOTAL_NUMBER_TEXEL_ELEMENTS = elementsPerTexel * numVerticesPerGroup;
+        final int TOTAL_NUMBER_COLOUR_ELEMENTS = elementsPerColour * numVerticesPerGroup;
+        final int TOTAL_NUMBER_NORMAL_ELEMENTS = elementsPerNormal * numVerticesPerGroup;
+
+        switch (attributeOrder)
+        {
+            case POSITION:
+                positionDataOffset = 0;
+                break;
+            case POSITION_THEN_TEXEL:
+                positionDataOffset = 0;
+                texelDataOffset = TOTAL_NUMBER_POSITION_ELEMENTS;
+                break;
+            case POSITION_THEN_COLOUR:
+                positionDataOffset = 0;
+                colourDataOffset = TOTAL_NUMBER_POSITION_ELEMENTS;
+                break;
+            case POSITION_THEN_NORMAL:
+                positionDataOffset = 0;
+                normalDataOffset = TOTAL_NUMBER_POSITION_ELEMENTS;
+                break;
+            case POSITION_THEN_TEXEL_THEN_COLOUR:
+                positionDataOffset = 0;
+                texelDataOffset = TOTAL_NUMBER_POSITION_ELEMENTS;
+                colourDataOffset = texelDataOffset + TOTAL_NUMBER_TEXEL_ELEMENTS;
+                break;
+            case POSITION_THEN_COLOUR_THEN_TEXEL:
+                positionDataOffset = 0;
+                colourDataOffset = TOTAL_NUMBER_POSITION_ELEMENTS;
+                texelDataOffset = colourDataOffset + TOTAL_NUMBER_COLOUR_ELEMENTS;
+                break;
+            case POSITION_THEN_TEXEL_THEN_NORMAL:
+                positionDataOffset = 0;
+                texelDataOffset = TOTAL_NUMBER_POSITION_ELEMENTS;
+                normalDataOffset = texelDataOffset + TOTAL_NUMBER_TEXEL_ELEMENTS;
+                break;
+            case POSITION_THEN_NORMAL_THEN_TEXEL:
+                positionDataOffset = 0;
+                normalDataOffset = TOTAL_NUMBER_POSITION_ELEMENTS;
+                texelDataOffset = normalDataOffset + TOTAL_NUMBER_NORMAL_ELEMENTS;
+                break;
+            case POSITION_THEN_COLOUR_THEN_NORMAL:
+                positionDataOffset = 0;
+                colourDataOffset = TOTAL_NUMBER_POSITION_ELEMENTS;
+                normalDataOffset = colourDataOffset + TOTAL_NUMBER_COLOUR_ELEMENTS;
+                break;
+            case POSITION_THEN_NORMAL_THEN_COLOUR:
+                positionDataOffset = 0;
+                normalDataOffset = TOTAL_NUMBER_POSITION_ELEMENTS;
+                colourDataOffset = normalDataOffset + TOTAL_NUMBER_NORMAL_ELEMENTS;
+                break;
+            case POSITION_THEN_TEXEL_THEN_COLOUR_THEN_NORMAL:
+                positionDataOffset = 0;
+                texelDataOffset = TOTAL_NUMBER_POSITION_ELEMENTS;
+                colourDataOffset = texelDataOffset + TOTAL_NUMBER_TEXEL_ELEMENTS;
+                normalDataOffset = colourDataOffset + TOTAL_NUMBER_COLOUR_ELEMENTS;
+                break;
+            case POSITION_THEN_COLOUR_THEN_TEXEL_THEN_NORMAL:
+                positionDataOffset = 0;
+                colourDataOffset = TOTAL_NUMBER_POSITION_ELEMENTS;
+                texelDataOffset = colourDataOffset + TOTAL_NUMBER_COLOUR_ELEMENTS;
+                normalDataOffset = texelDataOffset + TOTAL_NUMBER_TEXEL_ELEMENTS;
+                break;
+            case POSITION_THEN_TEXEL_THEN_NORMAL_THEN_COLOUR:
+                positionDataOffset = 0;
+                texelDataOffset = TOTAL_NUMBER_POSITION_ELEMENTS;
+                normalDataOffset = texelDataOffset + TOTAL_NUMBER_TEXEL_ELEMENTS;
+                colourDataOffset = normalDataOffset + TOTAL_NUMBER_NORMAL_ELEMENTS;
+                break;
+            case POSITION_THEN_COLOUR_THEN_NORMAL_THEN_TEXEL:
+                positionDataOffset = 0;
+                colourDataOffset = TOTAL_NUMBER_POSITION_ELEMENTS;
+                normalDataOffset = colourDataOffset + TOTAL_NUMBER_COLOUR_ELEMENTS;
+                texelDataOffset = normalDataOffset + TOTAL_NUMBER_NORMAL_ELEMENTS;
+                break;
+            case POSITION_THEN_NORMAL_THEN_TEXEL_THEN_COLOUR:
+                positionDataOffset = 0;
+                normalDataOffset = TOTAL_NUMBER_POSITION_ELEMENTS;
+                texelDataOffset = normalDataOffset + TOTAL_NUMBER_NORMAL_ELEMENTS;
+                colourDataOffset = texelDataOffset + TOTAL_NUMBER_TEXEL_ELEMENTS;
+                break;
+            case POSITION_THEN_NORMAL_THEN_COLOUR_THEN_TEXEL:
+                positionDataOffset = 0;
+                normalDataOffset = TOTAL_NUMBER_POSITION_ELEMENTS;
+                colourDataOffset = normalDataOffset + TOTAL_NUMBER_NORMAL_ELEMENTS;
+                texelDataOffset = colourDataOffset + TOTAL_NUMBER_COLOUR_ELEMENTS;
+                break;
         }
     }
 }

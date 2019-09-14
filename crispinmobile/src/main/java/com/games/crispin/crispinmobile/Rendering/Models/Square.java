@@ -1,6 +1,5 @@
 package com.games.crispin.crispinmobile.Rendering.Models;
 
-import com.games.crispin.crispinmobile.Rendering.Data.RenderObjectDataFormat;
 import com.games.crispin.crispinmobile.Rendering.Utilities.Material;
 import com.games.crispin.crispinmobile.Rendering.Utilities.RenderObject;
 
@@ -60,15 +59,12 @@ public class Square extends RenderObject
                 renderTexels ? TEXEL_DATA : null,
                 null,
                 null,
-                new RenderObjectDataFormat(
-                        RenderMethod.TRIANGLES,
-                        renderTexels ? RenderObjectDataFormat.AttributeOrder_t.POSITION_THEN_TEXEL :
-                                RenderObjectDataFormat.AttributeOrder_t.POSITION,
-                        POSITION_DATA.length / NUMBER_POSITION_COMPONENTS,
-                        (byte)2,
-                        (byte)2,
-                        (byte)0,
-                        (byte)0),
+                RenderMethod.TRIANGLES,
+                POSITION_DATA.length / NUMBER_POSITION_COMPONENTS,
+                (byte)2,
+                (byte)2,
+                (byte)0,
+                (byte)0,
                 material);
     }
 

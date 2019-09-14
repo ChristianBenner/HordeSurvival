@@ -5,14 +5,6 @@ import com.games.crispin.crispinmobile.Utilities.Logger;
 
 import java.util.ArrayList;
 
-import static com.games.crispin.crispinmobile.Rendering.Data.RenderObjectDataFormat.
-        AttributeOrder_t.POSITION;
-import static com.games.crispin.crispinmobile.Rendering.Data.RenderObjectDataFormat.
-        AttributeOrder_t.POSITION_THEN_NORMAL;
-import static com.games.crispin.crispinmobile.Rendering.Data.RenderObjectDataFormat.
-        AttributeOrder_t.POSITION_THEN_TEXEL;
-import static com.games.crispin.crispinmobile.Rendering.Data.RenderObjectDataFormat.
-        AttributeOrder_t.POSITION_THEN_TEXEL_THEN_NORMAL;
 
 /**
  * RenderObjectData is a class designed to build vertex data based on position, texel, normal and
@@ -326,28 +318,6 @@ public class RenderObjectData
     }
 
     /**
-     * Get the position dimensions
-     *
-     * @return  The components that the position data is comprised of
-     * @since   1.0
-     */
-    private RenderObjectDataFormat.PositionDimensions_t getPositionDimensions()
-    {
-        // Get the position dimensions
-        switch (numberOfPositionComponents)
-        {
-            case NUM_COMPONENTS_XY:
-                return RenderObjectDataFormat.PositionDimensions_t.XY;
-            case NUM_COMPONENTS_XYZW:
-                return RenderObjectDataFormat.PositionDimensions_t.XYZW;
-            case 0:
-            case NUM_COMPONENTS_XYZ:
-            default:
-                return RenderObjectDataFormat.PositionDimensions_t.XYZ;
-        }
-    }
-
-    /**
      * Process the data. The function produces the vertex data based on positional, texel and normal
      * face data.
      *
@@ -434,19 +404,14 @@ public class RenderObjectData
             }
         }
 
-        RenderObjectDataFormat.PositionDimensions_t positionDimensions = getPositionDimensions();
-
-        // Create a render object data format from the data provided
-        RenderObjectDataFormat rdf = new RenderObjectDataFormat(
-                renderMethod,
-                POSITION_THEN_TEXEL_THEN_NORMAL,
+        // Create and return a render object using the data format and the vertex data
+        return new RenderObject(vertexDataBuffer,
+                RenderObject.RenderMethod.TRIANGLES,
+                RenderObject.AttributeOrder_t.POSITION_THEN_TEXEL_THEN_NORMAL,
                 NUMBER_OF_FACE_DATA,
                 numberOfPositionComponents,
                 numberOfTexelComponents,
                 (byte)0,
                 numberOfNormalComponents);
-
-        // Create and return a render object using the data format and the vertex data
-        return new RenderObject(vertexDataBuffer, rdf);
     }
 }

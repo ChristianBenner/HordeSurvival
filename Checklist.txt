@@ -27,7 +27,7 @@ Project Classes:
 			Colour					- CHECKLIST
 			FreeTypeCharData		- CHECKLIST
 			RenderObjectData		- CHECKLIST
-			RenderObjectDataFormat	- VERIFY
+			RenderObjectDataFormat	- CHECKLIST
 		Entities >
 			Light	- VERIFY
 		Models >

@@ -1,25 +1,7 @@
 package com.games.crispin.crispinmobile.Rendering.Models;
 
-import com.games.crispin.crispinmobile.Rendering.Data.RenderObjectDataFormat;
 import com.games.crispin.crispinmobile.Rendering.Utilities.Material;
 import com.games.crispin.crispinmobile.Rendering.Utilities.RenderObject;
-
-import static com.games.crispin.crispinmobile.Rendering.Data.RenderObjectDataFormat.
-        AttributeOrder_t.POSITION;
-import static com.games.crispin.crispinmobile.Rendering.Data.RenderObjectDataFormat.
-        AttributeOrder_t.POSITION_THEN_COLOUR;
-import static com.games.crispin.crispinmobile.Rendering.Data.RenderObjectDataFormat.
-        AttributeOrder_t.POSITION_THEN_COLOUR_THEN_NORMAL;
-import static com.games.crispin.crispinmobile.Rendering.Data.RenderObjectDataFormat.
-        AttributeOrder_t.POSITION_THEN_NORMAL;
-import static com.games.crispin.crispinmobile.Rendering.Data.RenderObjectDataFormat.
-        AttributeOrder_t.POSITION_THEN_TEXEL;
-import static com.games.crispin.crispinmobile.Rendering.Data.RenderObjectDataFormat.
-        AttributeOrder_t.POSITION_THEN_TEXEL_THEN_COLOUR;
-import static com.games.crispin.crispinmobile.Rendering.Data.RenderObjectDataFormat.
-        AttributeOrder_t.POSITION_THEN_TEXEL_THEN_COLOUR_THEN_NORMAL;
-import static com.games.crispin.crispinmobile.Rendering.Data.RenderObjectDataFormat.
-        AttributeOrder_t.POSITION_THEN_TEXEL_THEN_NORMAL;
 
 /**
  * Cube class is a default 3D model of a cube. It is a render object and therefor can be drawn to
@@ -33,7 +15,16 @@ import static com.games.crispin.crispinmobile.Rendering.Data.RenderObjectDataFor
 public class Cube extends RenderObject
 {
     // The number of position components in the position data (3 because its XYZ)
-    private static final int NUMBER_POSITION_COMPONENTS = 3;
+    private static final byte NUMBER_POSITION_COMPONENTS = 3;
+
+    // The number of texel components in the texel data (2 because its ST)
+    private static final byte NUMBER_TEXEL_COMPONENTS = 2;
+
+    // The number of colour components in the colour data (3 because its RGB)
+    private static final byte NUMBER_COLOUR_COMPONENTS = 3;
+
+    // The number of normal components in the normal data (0 because there is no normal data)
+    private static final byte NUMBER_NORMAL_COMPONENTS = 0;
 
     // Position vertex data that contains XYZ components
     private static final float POSITION_DATA[] =
@@ -174,59 +165,6 @@ public class Cube extends RenderObject
     };
 
     /**
-     * Get the attribute order of the model depending on a set of allowed data types
-     *
-     * @param renderTexels  True if the model is allowed to use texel data, else false
-     * @param renderColour  True if the model is allowed to use colour data, else false
-     * @param renderNormals True if the model is allowed to use normal data, else false
-     *
-     * @return  Returns an attribute order based on the set of allowed data types. Position will
-     *          always be part of the attribute order. In the attribute order, texel data takes 2nd
-     *          priority in the, colour data takes 3rd priority, and normal data takes 4th priority.
-     *          For example, if all data types are allowed then the attribute order is
-     *          <code>POSITION_THEN_TEXEL_THEN_COLOUR_THEN_NORMAL</code>
-     * @since   1.0
-     */
-    private static RenderObjectDataFormat.AttributeOrder_t getAtrributeOrder(boolean renderTexels,
-                                                                             boolean renderColour,
-                                                                             boolean renderNormals)
-    {
-        // Check what attribute order to use depending on what data types are allowed
-        if (renderTexels &&
-                renderColour &&
-                renderNormals)
-        {
-            return POSITION_THEN_TEXEL_THEN_COLOUR_THEN_NORMAL;
-        }
-        else if (renderTexels && renderColour)
-        {
-            return POSITION_THEN_TEXEL_THEN_COLOUR;
-        }
-        else if (renderTexels && renderNormals)
-        {
-            return POSITION_THEN_TEXEL_THEN_NORMAL;
-        }
-        else if(renderColour && renderNormals)
-        {
-            return POSITION_THEN_COLOUR_THEN_NORMAL;
-        }
-        else if(renderTexels)
-        {
-            return POSITION_THEN_TEXEL;
-        }
-        else if(renderColour)
-        {
-            return POSITION_THEN_COLOUR;
-        }
-        else if(renderNormals)
-        {
-            return POSITION_THEN_NORMAL;
-        }
-
-        return POSITION;
-    }
-
-    /**
      * Create a cube with specifically allowed data types. This means that on creation of the object
      * that a controllable amount of vertex data is submitted to a buffer. This can prove efficient
      * in scenarios where multiple cubes are going to be created in a short amount of time such as
@@ -245,16 +183,12 @@ public class Cube extends RenderObject
                 renderTexels ? TEXEL_DATA : null,
                 renderColour ? COLOUR_DATA : null,
                 null,
-                new RenderObjectDataFormat(
-                        RenderMethod.TRIANGLES,
-                        getAtrributeOrder(renderTexels,
-                                renderColour,
-                                false),
-                        POSITION_DATA.length / NUMBER_POSITION_COMPONENTS,
-                        (byte)3,
-                        (byte)2,
-                        (byte)0,
-                        (byte)3),
+                RenderMethod.TRIANGLES,
+                POSITION_DATA.length / NUMBER_POSITION_COMPONENTS,
+                NUMBER_POSITION_COMPONENTS,
+                NUMBER_TEXEL_COMPONENTS,
+                NUMBER_COLOUR_COMPONENTS,
+                NUMBER_NORMAL_COMPONENTS,
                 material);
     }
 
