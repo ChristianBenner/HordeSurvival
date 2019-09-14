@@ -158,6 +158,18 @@ public class OBJModelLoader
         // Whether or not to count the number of data elements in the position data
         boolean countPositionDataElements = false;
 
+        // Keep the number of different normal elements in the face data
+        int numberNormalDataElements = 0;
+
+        // Whether or not to count the number of data elements in the normal data
+        boolean countNormalDataElements = false;
+
+        // Keep the number of different texel elements in the face data
+        int numberTexelDataElements = 0;
+
+        // Whether or not to count the number of data elements in the texel data
+        boolean countTexelDataElements = false;
+
         // Keep the number of different elements in the face data
         int numberFaceDataElements = 0;
 
@@ -253,6 +265,11 @@ public class OBJModelLoader
                         if (dataStartIndex == NO_START_INDEX)
                         {
                             dataStartIndex = i;
+
+                            if(!countTexelDataElements && numberTexelDataElements == 0)
+                            {
+                                countTexelDataElements = true;
+                            }
                         }
                     }
                     else
@@ -262,6 +279,11 @@ public class OBJModelLoader
                             // We are processing a float and have found the end of it, parse it
                             renderObjectData.addTexelData(Float.parseFloat(new String(theFile, dataStartIndex, i - dataStartIndex)));
                             dataStartIndex = NO_START_INDEX;
+
+                            if(countTexelDataElements)
+                            {
+                                numberTexelDataElements++;
+                            }
                         }
                     }
                     break;
@@ -273,6 +295,11 @@ public class OBJModelLoader
                         if (dataStartIndex == NO_START_INDEX)
                         {
                             dataStartIndex = i;
+
+                            if(!countNormalDataElements && numberNormalDataElements == 0)
+                            {
+                                countNormalDataElements = true;
+                            }
                         }
                     }
                     else
@@ -282,6 +309,11 @@ public class OBJModelLoader
                             // We are processing a float and have found the end of it, parse it
                             renderObjectData.addNormalData(Float.parseFloat(new String(theFile, dataStartIndex, i - dataStartIndex)));
                             dataStartIndex = NO_START_INDEX;
+
+                            if(countNormalDataElements)
+                            {
+                                numberNormalDataElements++;
+                            }
                         }
                     }
                     break;
@@ -441,22 +473,9 @@ public class OBJModelLoader
                 break;
         }
 
-        switch (numberPositionDataElements)
-        {
-            case 2:
-                renderObjectData.setPositionComponents(RenderObjectData.PositionComponents.XY);
-                break;
-            case 3:
-                renderObjectData.setPositionComponents(RenderObjectData.PositionComponents.XYZ);
-                break;
-            case 4:
-                renderObjectData.setPositionComponents(RenderObjectData.PositionComponents.XYZW);
-                break;
-            default:
-                // error
-                break;
-        }
-
+        renderObjectData.setNumPositionComponents(numberPositionDataElements);
+        renderObjectData.setNumNormalComponents(numberNormalDataElements);
+        renderObjectData.setNumTexelComponents(numberTexelDataElements);
         return renderObjectData.processData();
     }
 }

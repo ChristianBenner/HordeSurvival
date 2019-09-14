@@ -26,10 +26,10 @@ public class TestScene extends Scene {
     private Camera2D camera2D;
     private float angle = 0.0f;
 
-    private Text text;
+  //  private Text text;
     private Material brickMaterial;
 
-    private Text fpsText;
+//    private Text fpsText;
     private Material mRed;
     private Material mGreen;
     private Material mBlue;
@@ -58,7 +58,7 @@ public class TestScene extends Scene {
         brickMaterial = new Material(new Texture(R.drawable.brick), new Scale2D(0.25f, 0.25f));
        // brickMaterial.ignoreData(Material.IGNORE_TEXEL_DATA_FLAG);
 
-       // dinomodelThread = new OBJThreadTest(R.raw.);
+        dinomodelThread = new OBJThreadTest(R.raw.dinomodel);
         new Thread(dinomodelThread).start();
 //        personmodelThread = new OBJThreadTest(R.raw.personmodel);
 //        new Thread(personmodelThread).start();
@@ -82,9 +82,9 @@ public class TestScene extends Scene {
         cubeThree = new Cube(brickMaterial, true, true);
         cubeThree.setPosition(new Point3D(2.0f, 3.0f, 0.0f));
 
-        Font font = new Font(R.raw.opensans, 64);
+       // Font font = new Font(R.raw.opensans, 64);
 
-        text = new Text(font,
+/*        text = new Text(font,
                 "Testing1 Testing2 Testing3 Testing4 Testing5 Testing6 Testing7",
                 true,
                 false,
@@ -102,7 +102,7 @@ public class TestScene extends Scene {
                 true,
                 false,
                 Crispin.getSurfaceWidth());
-        fpsText.setPosition(5.0f, 5.0f);
+        fpsText.setPosition(5.0f, 5.0f);*/
 
    /* public Square(Material material, boolean renderTexels)
     public Square(boolean renderTexels)
@@ -140,31 +140,31 @@ public class TestScene extends Scene {
       //  text.setText("Rotations: " + (int)(angle / 360));
      //   text.setPosition(5.0f, Crispin.getSurfaceHeight() - text.getHeight() - 5f);
 
-//        if(dinomodelThread.isComplete() && !onetimeDino)
-//        {
-//          //  renderObject = OBJModelLoader.readObjFile(R.raw.dragon);
-//            dinomodel = dinomodelThread.getRenderObject();
-//            dinomodel.setPosition(-2.0f, -2.5f, 0.0f);
-//            dinomodel.setScale(0.005f, 0.005f, 0.005f);
-//            dinomodel.setMaterial(mRed);
-//            startModelFadeInDino = true;
-//            onetimeDino = true;
-//        }
+        if(dinomodelThread.isComplete() && !onetimeDino)
+        {
+          //  renderObject = OBJModelLoader.readObjFile(R.raw.dragon);
+            dinomodel = dinomodelThread.getRenderObject();
+            dinomodel.setPosition(-2.0f, -2.5f, 0.0f);
+            dinomodel.setScale(0.005f, 0.005f, 0.005f);
+            dinomodel.setMaterial(mRed);
+            startModelFadeInDino = true;
+            onetimeDino = true;
+        }
 //
-//        if(dinomodelThread.isComplete())
-//        {
-//            dinomodel.setRotation(15.0f, angle, 0.0f);
-//
-//            if(startModelFadeInDino && modelFadeInDino != 1.0f)
-//            {
-//                modelFadeInDino += 0.03f;
-//                if(modelFadeInDino >= 0.5f)
-//                {
-//                    modelFadeInDino = 0.5f;
-//                }
-//                dinomodel.getMaterial().getColour().setAlpha(modelFadeInDino);
-//            }
-//        }
+        if(dinomodelThread.isComplete())
+        {
+            dinomodel.setRotation(15.0f, angle, 0.0f);
+
+            if(startModelFadeInDino && modelFadeInDino != 1.0f)
+            {
+                modelFadeInDino += 0.03f;
+                if(modelFadeInDino >= 0.5f)
+                {
+                    modelFadeInDino = 0.5f;
+                }
+                dinomodel.getMaterial().getColour().setAlpha(modelFadeInDino);
+            }
+        }
 //
 //        if(carmodelThread.isComplete() && !onetimeCar)
 //        {
@@ -251,7 +251,7 @@ public class TestScene extends Scene {
             personmodel.render(camera);
         }
 
-        text.draw(camera2D);
+    //    text.draw(camera2D);
        // fpsText.render(camera2D);
 
         frames++;
