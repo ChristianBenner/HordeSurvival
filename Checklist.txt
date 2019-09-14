@@ -27,13 +27,12 @@ Project Classes:
 			Colour					- CHECKLIST
 			FreeTypeCharData		- CHECKLIST
 			RenderObjectData		- CHECKLIST
-			RenderObjectDataFormat	- CHECKLIST
 		Entities >
-			Light	- VERIFY
+			Light	- CHECKLIST
 		Models >
-			Cube		- VERIFY
-			FontSquare	- VERIFY
-			Square		- VERIFY
+			Cube		- CHECKLIST
+			FontSquare	- CHECKLIST
+			Square		- CHECKLIST
 		Shaders >
 			AttributeColourShader			- VERIFY
 			TextShader						- VERIFY
@@ -48,7 +47,7 @@ Project Classes:
 			Camera3D		- VERIFY
 			Font			- VERIFY
 			Material		- VERIFY
-			RenderObject	- VERIFY
+			RenderObject	- VERIFY (JavaDoc missing params)
 			Shader			- VERIFY
 			Texture			- VERIFY
 			TextureOptions	- VERIFY

@@ -17,7 +17,10 @@ import com.games.crispin.crispinmobile.Rendering.Utilities.RenderObject;
 public class Square extends RenderObject
 {
     // The number of position components in the position data (2 because its XYZ)
-    private static final int NUMBER_POSITION_COMPONENTS = 2;
+    private static final byte NUMBER_POSITION_COMPONENTS = 2;
+
+    // The number of texel components in the texel data (2 because its ST)
+    private static final byte NUMBER_TEXEL_COMPONENTS = 2;
 
     // Position vertex data that contains XY components
     private static final float[] POSITION_DATA =
@@ -61,8 +64,8 @@ public class Square extends RenderObject
                 null,
                 RenderMethod.TRIANGLES,
                 POSITION_DATA.length / NUMBER_POSITION_COMPONENTS,
-                (byte)2,
-                (byte)2,
+                NUMBER_POSITION_COMPONENTS,
+                NUMBER_TEXEL_COMPONENTS,
                 (byte)0,
                 (byte)0,
                 material);

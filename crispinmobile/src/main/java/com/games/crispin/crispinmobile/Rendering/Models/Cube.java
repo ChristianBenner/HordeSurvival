@@ -26,6 +26,10 @@ public class Cube extends RenderObject
     // The number of normal components in the normal data (0 because there is no normal data)
     private static final byte NUMBER_NORMAL_COMPONENTS = 0;
 
+    // The render method to draw the data with (triangles because that's how the data is
+    // constructed)
+    private static final RenderMethod RENDER_METHOD = RenderMethod.TRIANGLES;
+
     // Position vertex data that contains XYZ components
     private static final float POSITION_DATA[] =
     {
@@ -183,7 +187,7 @@ public class Cube extends RenderObject
                 renderTexels ? TEXEL_DATA : null,
                 renderColour ? COLOUR_DATA : null,
                 null,
-                RenderMethod.TRIANGLES,
+                RENDER_METHOD,
                 POSITION_DATA.length / NUMBER_POSITION_COMPONENTS,
                 NUMBER_POSITION_COMPONENTS,
                 NUMBER_TEXEL_COMPONENTS,
@@ -205,7 +209,9 @@ public class Cube extends RenderObject
     public Cube(boolean renderTexels,
                 boolean renderColour)
     {
-        this(new Material(), renderTexels, renderColour);
+        this(new Material(),
+                renderTexels,
+                renderColour);
     }
 
     /**
@@ -234,7 +240,7 @@ public class Cube extends RenderObject
      * could also use ignore data flags on an attached material, however this wouldn't provide the
      * efficiency of not uploading the data in the first place.
      *
-     * @since   1.0
+     * @since 1.0
      */
     public Cube()
     {
