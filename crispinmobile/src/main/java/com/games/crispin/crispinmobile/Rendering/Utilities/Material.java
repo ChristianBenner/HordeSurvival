@@ -5,8 +5,8 @@ import com.games.crispin.crispinmobile.Rendering.Data.Colour;
 
 /**
  * The material class is designed to hold rendering information that can be used on objects.
- * Rendering information such as colour, texture, direction maps and UV multiplier. This allows you to
- * configure how rendered objects appear.
+ * Rendering information such as colour, texture, direction maps and UV multiplier. This allows you
+ * to configure how rendered objects appear.
  *
  * @author      Christian Benner
  * @see         RenderObject
@@ -17,7 +17,7 @@ import com.games.crispin.crispinmobile.Rendering.Data.Colour;
  */
 public class Material
 {
-    // todo: Add a texture for the direction map. This will be used eventually by lighting shaders
+    // todo: Add a texture for the normal map. This will be used eventually by lighting shaders
 
     // Tag used in logging output
     private static final String TAG = "Material";
@@ -68,7 +68,9 @@ public class Material
      * @see                 Colour
      * @since               1.0
      */
-    public Material(Texture texture, Scale2D uvMultiplier, Colour colour)
+    public Material(Texture texture,
+                    Scale2D uvMultiplier,
+                    Colour colour)
     {
         setTexture(texture);
         setUvMultiplier(uvMultiplier);
@@ -89,7 +91,9 @@ public class Material
      */
     public Material(Texture texture, Colour colour)
     {
-        this(texture, DEFAULT_UV_MULTIPLIER, colour);
+        this(texture,
+                DEFAULT_UV_MULTIPLIER,
+                colour);
     }
 
     /**
@@ -104,7 +108,9 @@ public class Material
      */
     public Material(Texture texture, Scale2D uvMultiplier)
     {
-        this(texture, uvMultiplier, DEFAULT_COLOUR);
+        this(texture,
+                uvMultiplier,
+                DEFAULT_COLOUR);
     }
 
     /**
@@ -120,7 +126,9 @@ public class Material
      */
     public Material(Scale2D uvMultiplier, Colour colour)
     {
-        this(null, uvMultiplier, colour);
+        this(null,
+                uvMultiplier,
+                colour);
     }
 
     /**
@@ -132,7 +140,9 @@ public class Material
      */
     public Material(Texture texture)
     {
-        this(texture, DEFAULT_UV_MULTIPLIER, DEFAULT_COLOUR);
+        this(texture,
+                DEFAULT_UV_MULTIPLIER,
+                DEFAULT_COLOUR);
     }
 
     /**
@@ -144,7 +154,9 @@ public class Material
      */
     public Material(Colour colour)
     {
-        this(null, DEFAULT_UV_MULTIPLIER, colour);
+        this(null,
+                DEFAULT_UV_MULTIPLIER,
+                colour);
     }
 
     /**
@@ -157,7 +169,9 @@ public class Material
      */
     public Material(Scale2D uvMultiplier)
     {
-        this(null, uvMultiplier, DEFAULT_COLOUR);
+        this(null,
+                uvMultiplier,
+                DEFAULT_COLOUR);
     }
 
     /**
@@ -167,7 +181,9 @@ public class Material
      */
     public Material()
     {
-        this(null, DEFAULT_UV_MULTIPLIER, DEFAULT_COLOUR);
+        this(null,
+                DEFAULT_UV_MULTIPLIER,
+                DEFAULT_COLOUR);
     }
 
     /**

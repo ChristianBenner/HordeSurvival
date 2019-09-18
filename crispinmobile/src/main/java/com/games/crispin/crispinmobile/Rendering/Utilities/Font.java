@@ -1,16 +1,8 @@
 package com.games.crispin.crispinmobile.Rendering.Utilities;
 
-import android.graphics.Bitmap;
-
-import com.games.crispin.crispinmobile.Crispin;
 import com.games.crispin.crispinmobile.Rendering.Data.FreeTypeCharData;
 import com.games.crispin.crispinmobile.Utilities.FileResourceReader;
-import com.games.crispin.crispinmobile.Utilities.TextureCache;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
 

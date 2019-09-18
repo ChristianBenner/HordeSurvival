@@ -41,12 +41,12 @@ Project Classes:
 			UniformColourShader				- CHECKLIST
 		UserInterface >
 			Text		- CHECKLIST
-			UIObject	- VERIFY
+			UIObject	- CHECKLIST
 		Utilities >
-			Camera2D		- VERIFY
-			Camera3D		- VERIFY
-			Font			- VERIFY
-			Material		- VERIFY
+			Camera2D		- CHECKLIST
+			Camera3D		- CHECKLIST
+			Font			- CHECKLIST
+			Material		- CHECKLIST
 			RenderObject	- VERIFY (JavaDoc missing params)
 			Shader			- VERIFY
 			Texture			- VERIFY
