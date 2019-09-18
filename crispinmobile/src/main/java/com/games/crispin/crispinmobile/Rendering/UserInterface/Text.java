@@ -51,6 +51,12 @@ public class Text extends UIObject
         // Length of the word
         private float length;
 
+        /**
+         * Construct a word object.
+         *
+         * @param startX    The start position of the word
+         * @since 1.0
+         */
         public Word(float startX)
         {
             characters = new ArrayList<>();
@@ -58,11 +64,23 @@ public class Text extends UIObject
             length = 0.0f;
         }
 
+        /**
+         * Construct a word object with a default start position of zero
+         *
+         * @since 1.0
+         */
         public Word()
         {
             this(0.0f);
         }
 
+        /**
+         * Add a character to the word
+         *
+         * @param character FreeTypeCharData to add to the word
+         * @return The start character advancement
+         * @since 1.0
+         */
         public float addCharacter(FreeTypeCharData character)
         {
             characters.add(character);
@@ -72,10 +90,10 @@ public class Text extends UIObject
             length = X_POS + WIDTH;
 
             // The advance for the next character
-            startX += (character.getAdvance() >> 6) * scale;
+            startX += (character.getAdvance() >> ADVANCE_TRANSFORMATION) * scale;
 
             // Return the last x advance so we can consider where the next word starts
-            return (character.getAdvance() >> 6) * scale;
+            return (character.getAdvance() >> ADVANCE_TRANSFORMATION) * scale;
         }
     }
 
@@ -96,17 +114,36 @@ public class Text extends UIObject
         // Length of the line
         private float length;
 
+        /**
+         * Construct a line object.
+         *
+         * @since 1.0
+         */
         public Line()
         {
             words = new ArrayList<>();
             length = 0.0f;
         }
 
+        /**
+         * Retrieve an array of words that the line is comprised of
+         *
+         * @return An array list of words that the line is comprised of
+         * @since 1.0
+         */
         public ArrayList<Word> getWords()
         {
             return this.words;
         }
 
+        /**
+         * Add a word to the line
+         *
+         * @param word      The word to add to the line
+         * @param maxLength The maximum length of the line
+         * @return True if successfully added, false if the word didn't fit on the line
+         * @since 1.0
+         */
         public boolean addWord(Word word, float maxLength)
         {
             // If the word fits on the line, add it and increase the length
@@ -140,6 +177,33 @@ public class Text extends UIObject
 
     // The default scale value if one is not provided
     private static final float DEFAULT_SCALE = 1.0f;
+
+    // Transform the FreeType advance value
+    private static final int ADVANCE_TRANSFORMATION = 6;
+
+    // Value to divide the line width by to find half of the line width
+    private static final float CENTER_LINE_DIVIDE = 2.0f;
+
+    // The very fast wiggle speed
+    private static final float WIGGLE_SPEED_VERY_FAST = 50.0f;
+
+    // The fast wiggle speed
+    private static final float WIGGLE_SPEED_FAST = 40.0f;
+
+    // The medium wiggle speed
+    private static final float WIGGLE_SPEED_MEDIUM = 30.0f;
+
+    // The slow wiggle speed
+    private static final float WIGGLE_SPEED_SLOW = 20.0f;
+
+    // The very slow wiggle speed
+    private static final float WIGGLE_SPEED_VERY_SLOW = 10.0f;
+
+    // This is used in a calculation to make the sin wave produce an output from 0.0 to 1.0
+    private static final float SIN_WAVE_OFFSET = 1.0f;
+
+    // This is used in a calculation to make the sin wave produce an output from 0.0 to 1.0
+    private static final float SIN_WAVE_DIVIDE = 2.0f;
 
     // The font that the text string is in
     private Font font;
@@ -376,6 +440,7 @@ public class Text extends UIObject
         // The current line
         Line tempLine = new Line();
 
+        // Go through each word attempting to add them to lines
         while(!words.isEmpty())
         {
             if(tempLine.addWord(words.peek(), maxLineWidth))
@@ -403,20 +468,27 @@ public class Text extends UIObject
 
         squares = new ArrayList<>();
         float theY = 0.0f;
+
+        // Iterate through the lines (starting from the end of the array). Add each line
         for(int pLine = lines.size() - 1; pLine >= 0; pLine--)
         {
-            float theX = centerText ? (maxLineWidth - lines.get(pLine).length) / 2.0f : 0.0f;
+            float theX = centerText ? (maxLineWidth - lines.get(pLine).length) /
+                    CENTER_LINE_DIVIDE : 0.0f;
 
             ArrayList<Word> pWords = lines.get(pLine).getWords();
+
+            // Iterate through the words in the line. Add each word
             for(int pWord = 0; pWord < pWords.size(); pWord++)
             {
                 ArrayList<FreeTypeCharData> pCharacters = pWords.get(pWord).characters;
 
+                // Iterate through the characters in the word, adding each one
                 for(int pCharacter = 0; pCharacter < pCharacters.size(); pCharacter++)
                 {
                     FreeTypeCharData theChar = pCharacters.get(pCharacter);
                     final float CHAR_X = theX + theChar.getBearingX() * scale;
-                    final float CHAR_Y = theY - ((theChar.getHeight() - theChar.getBearingY()) * scale);
+                    final float CHAR_Y = theY - ((theChar.getHeight() - theChar.getBearingY()) *
+                            scale);
                     final float CHAR_WIDTH = theChar.getWidth() * scale;
                     final float CHAR_HEIGHT = theChar.getHeight() * scale;
 
@@ -432,7 +504,7 @@ public class Text extends UIObject
                     square.setScale(new Scale2D(CHAR_WIDTH, CHAR_HEIGHT));
                     squares.add(square);
 
-                    theX += (theChar.getAdvance() >> 6) * scale;
+                    theX += (theChar.getAdvance() >> ADVANCE_TRANSFORMATION) * scale;
                 }
             }
 
@@ -443,6 +515,7 @@ public class Text extends UIObject
         // size)
         height = lines.size() * font.getSize() * scale;
 
+        // If the text is centered the width is the maximum line length
         if(centerText)
         {
             width = maxLineWidth;
@@ -470,7 +543,7 @@ public class Text extends UIObject
             float lineLength = 0.0f;
         }
 
-        //
+        // Create an array of lines to store words in
         ArrayList<CharLine> lines = new ArrayList<>();
 
         // Used while calculating the height of the text
@@ -504,16 +577,19 @@ public class Text extends UIObject
             final float CHAR_WIDTH = FREE_TYPE_CHAR_DATA.getWidth() * scale;
 
             // Move the cursor along now that we have calculated the x position
-            cursorX += (FREE_TYPE_CHAR_DATA.getAdvance() >> 6) * scale;
+            cursorX += (FREE_TYPE_CHAR_DATA.getAdvance() >> ADVANCE_TRANSFORMATION) * scale;
 
             currentLine.line.add(FREE_TYPE_CHAR_DATA);
 
+            // Check if the character exceeds the current line length and if it does set the new
+            // line length
             if(CHAR_X + CHAR_WIDTH >= currentLine.lineLength)
             {
                 currentLine.lineLength = CHAR_X + CHAR_WIDTH;
             }
         }
 
+        // Add the final line
         if(!currentLine.line.isEmpty())
         {
             lines.add(currentLine);
@@ -522,11 +598,15 @@ public class Text extends UIObject
 
         squares = new ArrayList<>();
         float cursorY = 0.0f;
+
+        // Iterate through the lines, creating characters that can be rendered (iterate from the end
+        // to the beginning of the array)
         for(int i = lines.size() - 1; i >= 0; i--)
         {
             // The starting x co-ordinate
-            cursorX = (maxLineWidth - lines.get(i).lineLength) / 2.0f;
+            cursorX = (maxLineWidth - lines.get(i).lineLength) / CENTER_LINE_DIVIDE;
 
+            // Iterate through the characters in the line, creating objects that can be rendered
             for(int charIt = 0; charIt < lines.get(i).line.size(); charIt++)
             {
                 // Get the data of the current character
@@ -536,7 +616,7 @@ public class Text extends UIObject
                 final float CHAR_X = cursorX + FREE_TYPE_CHAR_DATA.getBearingX() * scale;
 
                 // Move the cursor along now that we have calculated the x position
-                cursorX += (FREE_TYPE_CHAR_DATA.getAdvance() >> 6) * scale;
+                cursorX += (FREE_TYPE_CHAR_DATA.getAdvance() >> ADVANCE_TRANSFORMATION) * scale;
 
                 // Calculate the y-position
                 final float CHAR_Y = cursorY - (FREE_TYPE_CHAR_DATA.getHeight() -
@@ -606,7 +686,10 @@ public class Text extends UIObject
 
                 for(int squareIt = 0; squareIt < squares.size(); squareIt++)
                 {
-                    squares.get(squareIt).setCharacterOffset(Geometry.translate(squares.get(squareIt).getCharacterOffset(), 0.0f, font.getSize() * scale));
+                    squares.get(squareIt).setCharacterOffset(
+                            Geometry.translate(squares.get(squareIt).getCharacterOffset(),
+                                    0.0f,
+                                    font.getSize() * scale));
                 }
 
                 heightCalc += font.getSize() * scale;
@@ -616,7 +699,7 @@ public class Text extends UIObject
             final float CHAR_X = cursorX + FREE_TYPE_CHAR_DATA.getBearingX() * scale;
 
             // Move the cursor along now that we have calculated the x position
-            cursorX += (FREE_TYPE_CHAR_DATA.getAdvance() >> 6) * scale;
+            cursorX += (FREE_TYPE_CHAR_DATA.getAdvance() >> ADVANCE_TRANSFORMATION) * scale;
 
             // Calculate the y-position
             final float CHAR_Y = cursorY - (FREE_TYPE_CHAR_DATA.getHeight() -
@@ -636,7 +719,9 @@ public class Text extends UIObject
 
             // Create the render object square
             FontSquare square = new FontSquare(new Material(FREE_TYPE_CHAR_DATA.texture,
-                    Colour.BLACK), position, new Point2D(CHAR_X, CHAR_Y));
+                    Colour.BLACK),
+                    position,
+                    new Point2D(CHAR_X, CHAR_Y));
 
             // Force the use of the text shader (optimised for text rendering)
             square.useCustomShader(textShader);
@@ -652,13 +737,16 @@ public class Text extends UIObject
     }
 
     /**
-     * Wrapped and centered sets text width to the length of the line as you are centering in regards to the line length
+     * Wrapped and centered sets text width to the length of the line as you are centering in
+     * regards to the line length
      *
      * @return  The file as an array of bytes
      * @since   1.0
      */
     private void generateText()
     {
+        // If word wrapping is enabled then use the word wrap function, otherwise use the non-word
+        // wrap functions.
         if(wrapWords)
         {
             generateWrappedWords(centerText);
@@ -686,6 +774,7 @@ public class Text extends UIObject
      */
     public void setColour(Colour colour)
     {
+        // Iterate through all of the characters setting their new material colours
         for(int i = 0; i < squares.size(); i++)
         {
             squares.get(i).getMaterial().setColour(colour);
@@ -699,6 +788,8 @@ public class Text extends UIObject
      */
     private void updateSquarePositions()
     {
+        // Iterate through all of the characters updating the text position (they will re-calculate
+        // their position based on the text position by using their character offset data)
         for(int i = 0; i < squares.size(); i++)
         {
             squares.get(i).setTextPosition(this.position);
@@ -761,6 +852,7 @@ public class Text extends UIObject
     @Override
     public void setPosition(Point2D position)
     {
+        // Only update the position if the position has changed
         if(this.position.x != position.x ||
                 this.position.y != position.y)
         {
@@ -781,13 +873,13 @@ public class Text extends UIObject
     @Override
     public void setPosition(float x, float y)
     {
+        // Only update the position if the position has changed
         if(this.position.x != x ||
                 this.position.y != y)
         {
             this.position.x = x;
             this.position.y = y;
             updateSquarePositions();
-            System.out.println("UPDATED POSITION");
         }
     }
 
@@ -804,22 +896,23 @@ public class Text extends UIObject
         this.wiggleAmountPixels = amountPixels;
         this.wiggle = true;
 
+        // Switch through the different wiggle speeds
         switch (wiggleSpeed)
         {
             case VERY_FAST:
-                this.wiggleSpeed = 50.0f;
+                this.wiggleSpeed = WIGGLE_SPEED_VERY_FAST;
                 break;
             case FAST:
-                this.wiggleSpeed = 40.0f;
+                this.wiggleSpeed = WIGGLE_SPEED_FAST;
                 break;
             case MEDIUM:
-                this.wiggleSpeed = 30.0f;
+                this.wiggleSpeed = WIGGLE_SPEED_MEDIUM;
                 break;
             case SLOW:
-                this.wiggleSpeed = 20.0f;
+                this.wiggleSpeed = WIGGLE_SPEED_SLOW;
                 break;
             case VERY_SLOW:
-                this.wiggleSpeed = 10.0f;
+                this.wiggleSpeed = WIGGLE_SPEED_VERY_SLOW;
                 break;
         }
     }
@@ -845,29 +938,36 @@ public class Text extends UIObject
         final boolean REENABLE_DEPTH = Crispin.isDepthEnabled();
         glDisable(GL_DEPTH_TEST);
 
+        // If wiggle is enabled, apply the
         if(wiggle)
         {
             wiggleTime += wiggleSpeed;
 
+            // Iterate through all of the characters and render them
             for(int i = 0; i < squares.size(); i++)
             {
                 final FontSquare square = squares.get(i);
 
                 final float SIN_VALUE = (square.getPosition().x + wiggleTime) / maxLineWidth;
-                final float WIGGLE_OFFSET = wiggleAmountPixels * (((float)Math.sin((double)SIN_VALUE) + 1.0f) / 2.0f);
-                square.setCharacterOffset(square.getCharacterOffset().x, square.getCharacterOffset().y + WIGGLE_OFFSET);
+                final float WIGGLE_OFFSET = wiggleAmountPixels *
+                        (((float)Math.sin((double)SIN_VALUE) + SIN_WAVE_OFFSET) / SIN_WAVE_DIVIDE);
+                square.setCharacterOffset(square.getCharacterOffset().x,
+                        square.getCharacterOffset().y + WIGGLE_OFFSET);
                 square.render(camera);
-                square.setCharacterOffset(square.getCharacterOffset().x, square.getCharacterOffset().y - WIGGLE_OFFSET);
+                square.setCharacterOffset(square.getCharacterOffset().x,
+                        square.getCharacterOffset().y - WIGGLE_OFFSET);
             }
         }
         else
         {
+            // Iterate through all of the characters and render them
             for(int i = 0; i < squares.size(); i++)
             {
                 squares.get(i).render(camera);
             }
         }
 
+        // If depth was enabled before calling the function then re-enable it
         if(REENABLE_DEPTH)
         {
             glEnable(GL_DEPTH_TEST);
