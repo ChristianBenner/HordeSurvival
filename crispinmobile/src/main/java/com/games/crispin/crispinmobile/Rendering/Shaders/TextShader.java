@@ -1,6 +1,7 @@
 package com.games.crispin.crispinmobile.Rendering.Shaders;
 
 import com.games.crispin.crispinmobile.R;
+import com.games.crispin.crispinmobile.Rendering.UserInterface.Text;
 import com.games.crispin.crispinmobile.Rendering.Utilities.Shader;
 
 /**
@@ -9,6 +10,7 @@ import com.games.crispin.crispinmobile.Rendering.Utilities.Shader;
  *
  * @author      Christian Benner
  * @version     %I%, %G%
+ * @see         Text
  * @see         Shader
  * @since       1.0
  */

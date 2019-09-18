@@ -34,11 +34,11 @@ Project Classes:
 			FontSquare	- CHECKLIST
 			Square		- CHECKLIST
 		Shaders >
-			AttributeColourShader			- VERIFY
-			TextShader						- VERIFY
-			TextureAttributeColourShader	- VERIFY
-			TextureShader					- VERIFY
-			UniformColourShader				- VERIFY
+			AttributeColourShader			- CHECKLIST
+			TextShader						- CHECKLIST
+			TextureAttributeColourShader	- CHECKLIST
+			TextureShader					- CHECKLIST
+			UniformColourShader				- CHECKLIST
 		UserInterface >
 			Text		- VERIFY
 			UIObject	- VERIFY
