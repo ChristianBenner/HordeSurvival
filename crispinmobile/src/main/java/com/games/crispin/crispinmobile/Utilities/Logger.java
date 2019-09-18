@@ -46,6 +46,7 @@ public class Logger
      */
     public static void debug(String tag, String string)
     {
+        // Only print debug info if debug logging is enabled
         if(debugLoggingEnabled)
         {
             System.out.println("DEBUG[" + tag + "]: " + string);

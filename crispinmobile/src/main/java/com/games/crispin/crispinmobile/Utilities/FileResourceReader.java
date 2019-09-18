@@ -25,6 +25,7 @@ public class FileResourceReader
      */
     public static byte[] readRawResource(int resourceId)
     {
+        // Attempt to open a resource file as an input stream
         try
         {
             Resources resources = Crispin.getApplicationContext().getResources();

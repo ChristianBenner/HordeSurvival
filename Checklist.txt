@@ -48,13 +48,13 @@ Project Classes:
 			Font			- CHECKLIST
 			Material		- CHECKLIST
 			RenderObject	- CHECKLIST
-			Shader			- VERIFY
-			Texture			- VERIFY
-			TextureOptions	- VERIFY
+			Shader			- CHECKLIST
+			Texture			- CHECKLIST
+			TextureOptions	- CHECKLIST
 	Utilities >
-		FileResourceReader	- VERIFY
-		Logger				- VERIFY
-		OBJModelLoader		- VERIFY
+		FileResourceReader	- CHECKLIST
+		Logger				- CHECKLIST
+		OBJModelLoader		- CHECKLIST
 		OBJThreadTest		- VERIFY
 		Scene				- VERIFY
 		SceneManager		- VERIFY
@@ -73,7 +73,7 @@ Code Checklist:
 - TAG at the top for logging (unless there is no logging)
 - All class variables have comments
 - All class variables have access identifiers
-- No magic numbers (unless 0, vertex data or offsetting an index by 1 when iterating backwards through an array)
+- No magic numbers (unless 0, vertex data, creating a one-length buffer or offsetting an index by 1 when iterating backwards through an array)
 - If/while/for/switch statements have comments explaining what they do
 - Scope starts are on new lines
 - If function signatures contain more than 2 parameters, put them on new lines

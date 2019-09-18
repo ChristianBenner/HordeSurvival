@@ -116,7 +116,7 @@ public class Shader
      * Get an integer ID for a handle of a specified attribute
      *
      * @param attributeName The name of the attribute in the shader code
-     * @return                  Integer ID of the attribute handle
+     * @return              Integer ID of the attribute handle
      * @since               1.0
      */
     public int getAttribute(String attributeName)
@@ -205,10 +205,13 @@ public class Shader
     /**
      * Get the uv multiplier uniform handle
      *
-     * @return  Integer ID of the uv multiplierzx uniform handle
+     * @return  Integer ID of the uv multipliers uniform handle
      * @since   1.0
      */
-    public int getUvMultiplierUniformHandle() { return uvMultiplierUniformHandle; }
+    public int getUvMultiplierUniformHandle()
+    {
+        return uvMultiplierUniformHandle;
+    }
 
     /**
      * Shader constructor. Create and compile the GLSL shader in Open GL ES memory and then register
