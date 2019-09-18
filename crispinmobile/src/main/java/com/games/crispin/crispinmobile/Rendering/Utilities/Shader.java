@@ -208,7 +208,7 @@ public class Shader
      * @return  Integer ID of the uv multiplierzx uniform handle
      * @since   1.0
      */
-    public int getUvMultiplierUniformHandlea() { return uvMultiplierUniformHandle; }
+    public int getUvMultiplierUniformHandle() { return uvMultiplierUniformHandle; }
 
     /**
      * Shader constructor. Create and compile the GLSL shader in Open GL ES memory and then register

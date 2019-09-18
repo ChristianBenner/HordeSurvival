@@ -47,7 +47,7 @@ Project Classes:
 			Camera3D		- CHECKLIST
 			Font			- CHECKLIST
 			Material		- CHECKLIST
-			RenderObject	- VERIFY (JavaDoc missing params)
+			RenderObject	- CHECKLIST
 			Shader			- VERIFY
 			Texture			- VERIFY
 			TextureOptions	- VERIFY

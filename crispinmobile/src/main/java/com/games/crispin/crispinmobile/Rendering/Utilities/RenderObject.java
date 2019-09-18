@@ -45,7 +45,6 @@ import static android.opengl.GLES30.glVertexAttribPointer;
  * @version     %I%, %G%
  * @since       1.0
  */
-
 public class RenderObject
 {
     /**
@@ -96,17 +95,40 @@ public class RenderObject
         POSITION_THEN_NORMAL_THEN_COLOUR_THEN_TEXEL
     }
 
-    // The 'numVerticesPerGroup' if the vertices are not grouped
-    public static final int UNGROUPED = 1;
+    // Method of rendering the object. Points renders one vertex at a time and places a point. Lines
+    // renders two vertex at a time and render a line between them. Triangles renders three vertices
+    // at a time and uses the fragment shader to fill the middle.
+    public enum RenderMethod
+    {
+        POINTS,
+        LINES,
+        TRIANGLES,
+        NONE
+    }
 
     // Tag used in logging output
     private static final String TAG = "RenderObject";
 
-    // ability to change for dimensions?
+    // The 'numVerticesPerGroup' if the vertices are not grouped
+    public static final int UNGROUPED = 1;
+
+    // The number of bytes in a float
     public static final int BYTES_PER_FLOAT = 4;
+
+    // Value that represents an invalid OpenGL ES GLSL shader uniform handle
+    private static final int INVALID_UNIFORM_HANDLE = -1;
+
+    // Number of uniform elements to upload in a GLSL uniform upload
+    private static final int UNIFORM_UPLOAD_COUNT = 1;
 
     // The number of vertices in the model data
     private final int VERTEX_COUNT;
+
+    // The number of elements in a 4x4 view matrix
+    private final int NUM_VALUES_PER_VIEW_MATRIX = 16;
+
+    // The number to multiply the specified rotation on a rotation axis
+    private final float ROTATION_AXIS_MULTIPLIER = 1.0f;
 
     // The number of elements that are in the position data
     private int elementsPerPosition;
@@ -138,9 +160,7 @@ public class RenderObject
     // Float buffer that holds all the triangle co-ordinate data
     private FloatBuffer vertexBuffer;
 
-    // The format of the render data
-    //private final RenderObjectDataFormat DATA_FORMAT;
-
+    // The method to render the data as (e.g. triangles or lines)
     private final RenderMethod renderMethod;
 
     // If the model has a custom shader
@@ -164,24 +184,12 @@ public class RenderObject
     // Shader applied to the object
     protected Shader shader;
 
-    // Method of rendering the object. Points renders one vertex at a time and places a point. Lines
-    // renders two vertex at a time and render a line between them. Triangles renders three vertices
-    // at a time and uses the fragment shader to fill the middle.
-    public enum RenderMethod
-    {
-        POINTS,
-        LINES,
-        TRIANGLES,
-        NONE
-    }
-
     /**
      * Get the attribute order of the model depending on a set of allowed data types
      *
      * @param renderTexels  True if the model is allowed to use texel data, else false
      * @param renderColour  True if the model is allowed to use colour data, else false
      * @param renderNormals True if the model is allowed to use normal data, else false
-     *
      * @return  Returns an attribute order based on the set of allowed data types. Position will
      *          always be part of the attribute order. In the attribute order, texel data takes 2nd
      *          priority in the, colour data takes 3rd priority, and normal data takes 4th priority.
@@ -232,15 +240,21 @@ public class RenderObject
      * Create an object with vertex data comprised of multiple buffers containing different forms of
      * vertex data. For the buffers that you are not providing data for, put <code>null</code>.
      *
-     * @param positionBuffer            Float buffer containing the position data
-     * @param texelBuffer               Float buffer containing the texel data, or <code>null</code>
-     *                                  if no texel data is being provided
-     * @param colourBuffer              Float buffer containing the colour data, or
-     *                                  <code>null</code> if no colour data is being provided
-     * @param normalBuffer              Float buffer containing the normal data, or
-     *                                  <code>null</code> if no normal data is being provided
-     * @param material                  The material to apply to the object
-     * @since   1.0
+     * @param positionBuffer        Float buffer containing the position data
+     * @param texelBuffer           Float buffer containing the texel data, or <code>null</code> if
+     *                              no texel data is being provided
+     * @param colourBuffer          Float buffer containing the colour data, or <code>null</code> if
+     *                              no colour data is being provided
+     * @param normalBuffer          Float buffer containing the normal data, or <code>null</code> if
+     *                              no normal data is being provided
+     * @param renderMethod          The method to render the data (e.g. triangles or quads)
+     * @param numVerticesPerGroup   The number of vertices in a group
+     * @param elementsPerPosition   The number of components the position data is comprised of
+     * @param elementsPerTexel      The number of components that the texel data is comprised of
+     * @param elementsPerColour     The number of components that the colour data is comprised of
+     * @param elementsPerNormal     The number components that the normal data is comprised of
+     * @param material              The material to apply to the object
+     * @since 1.0
      */
     public RenderObject(float[] positionBuffer,
                         float[] texelBuffer,
@@ -289,6 +303,7 @@ public class RenderObject
 
         float[] vertexData = new float[VERTEX_DATA_LENGTH];
 
+        // If the position buffer has been specified, add it to the vertex data buffer
         if(positionBuffer != null)
         {
             System.arraycopy(positionBuffer,
@@ -298,6 +313,7 @@ public class RenderObject
                     positionBuffer.length);
         }
 
+        // If the texel buffer has been specified, add it to the vertex data buffer
         if(texelBuffer != null)
         {
             System.arraycopy(texelBuffer,
@@ -307,6 +323,7 @@ public class RenderObject
                     texelBuffer.length);
         }
 
+        // If the colour buffer has been specified, add it to the vertex data buffer
         if(colourBuffer != null)
         {
             System.arraycopy(colourBuffer,
@@ -315,6 +332,7 @@ public class RenderObject
                     colourBuffer.length);
         }
 
+        // If the normal buffer has been specified, add it to the vertex data buffer
         if(normalBuffer != null)
         {
             System.arraycopy(normalBuffer,
@@ -358,13 +376,19 @@ public class RenderObject
      * vertex data. For the buffers that you are not providing data for, put <code>null</code>. A
      * default material will be applied.
      *
-     * @param positionBuffer            Float buffer containing the position data
-     * @param texelBuffer               Float buffer containing the texel data, or <code>null</code>
-     *                                  if no texel data is being provided
-     * @param colourBuffer              Float buffer containing the colour data, or
-     *                                  <code>null</code> if no colour data is being provided
-     * @param normalBuffer              Float buffer containing the normal data, or
-     *                                  <code>null</code> if no normal data is being provided
+     * @param positionBuffer        Float buffer containing the position data
+     * @param texelBuffer           Float buffer containing the texel data, or <code>null</code> if
+     *                              no texel data is being provided
+     * @param colourBuffer          Float buffer containing the colour data, or <code>null</code> if
+     *                              no colour data is being provided
+     * @param normalBuffer          Float buffer containing the normal data, or <code>null</code> if
+     *                              no normal data is being provided
+     * @param renderMethod          The method to render the data (e.g. triangles or quads)
+     * @param numVerticesPerGroup   The number of vertices in a group
+     * @param elementsPerPosition   The number of components the position data is comprised of
+     * @param elementsPerTexel      The number of components that the texel data is comprised of
+     * @param elementsPerColour     The number of components that the colour data is comprised of
+     * @param elementsPerNormal     The number components that the normal data is comprised of
      * @since   1.0
      */
     public RenderObject(float[] positionBuffer,
@@ -396,9 +420,16 @@ public class RenderObject
      * in order for the data to be correctly interpreted. Data stride and attribute offsets are
      * calculated based on the format.
      *
-     * @param vertexData                Float buffer containing the vertex data
-     * @param material                  Material to apply to the object
-     * @since   1.0
+     * @param vertexData            Float buffer containing the vertex data
+     * @param renderMethod          The method to render the data (e.g. triangles or quads)
+     * @param attributeOrder        The order in which the vertex elements appear
+     * @param numVerticesPerGroup   The number of vertices in a group
+     * @param elementsPerPosition   The number of components the position data is comprised of
+     * @param elementsPerTexel      The number of components that the texel data is comprised of
+     * @param elementsPerColour     The number of components that the colour data is comprised of
+     * @param elementsPerNormal     The number components that the normal data is comprised of
+     * @param material              Material to apply to the object
+     * @since 1.0
      */
     public RenderObject(float[] vertexData,
                         RenderObject.RenderMethod renderMethod,
@@ -460,7 +491,14 @@ public class RenderObject
      * calculated based on the format. A default material will be applied to the object as one has
      * not been provided.
      *
-     * @param vertexData                Float buffer containing the vertex data
+     * @param vertexData            Float buffer containing the vertex data
+     * @param renderMethod          The method to render the data (e.g. triangles or quads)
+     * @param attributeOrder        The order in which the vertex elements appear
+     * @param numVerticesPerGroup   The number of vertices in a group
+     * @param elementsPerPosition   The number of components the position data is comprised of
+     * @param elementsPerTexel      The number of components that the texel data is comprised of
+     * @param elementsPerColour     The number of components that the colour data is comprised of
+     * @param elementsPerNormal     The number components that the normal data is comprised of
      * @since 1.0
      */
     public RenderObject(float[] vertexData,
@@ -768,6 +806,7 @@ public class RenderObject
      */
     public void render(Camera2D camera)
     {
+        // If the shader is null, create a shader for the object
         if(shader == null)
         {
             updateShader();
@@ -777,7 +816,7 @@ public class RenderObject
 
         shader.enableIt();
 
-        float[] modelViewMatrix = new float[16];
+        float[] modelViewMatrix = new float[NUM_VALUES_PER_VIEW_MATRIX];
         Matrix.multiplyMM(modelViewMatrix,
                 0,
                 camera.getOrthoMatrix(),
@@ -786,28 +825,31 @@ public class RenderObject
                 0);
 
         glUniformMatrix4fv(shader.getMatrixUniformHandle(),
-                1,
+                UNIFORM_UPLOAD_COUNT,
                 false,
                 modelViewMatrix,
                 0);
 
-        if(shader.getColourUniformHandle() != -1)
+        // If the shader colour uniform handle is not invalid, upload the colour data
+        if(shader.getColourUniformHandle() != INVALID_UNIFORM_HANDLE)
         {
             glUniform4fv(shader.getColourUniformHandle(),
-                    1,
+                    UNIFORM_UPLOAD_COUNT,
                     material.getColourData(),
                     0);
         }
 
-        if(shader.getTextureUniformHandle() != -1 && material.hasTexture())
+        // If the shader texture uniform handle is not invalid, upload the texture unit
+        if(shader.getTextureUniformHandle() !=INVALID_UNIFORM_HANDLE && material.hasTexture())
         {
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, material.getTexture().getId());
             glUniform1i(shader.getTextureUniformHandle(), 0);
 
-            if(shader.getUvMultiplierUniformHandlea() != -1)
+            // Upload the texture UV multiplier handle if it isn't an invalid handle
+            if(shader.getUvMultiplierUniformHandle() != INVALID_UNIFORM_HANDLE)
             {
-                glUniform2f(shader.getUvMultiplierUniformHandlea(),
+                glUniform2f(shader.getUvMultiplierUniformHandle(),
                         material.getUvMultiplier().x,
                         material.getUvMultiplier().y);
             }
@@ -815,6 +857,7 @@ public class RenderObject
 
         handleAttributes(true);
 
+        // Draw the vertex data with the specified render method
         switch (renderMethod)
         {
             case POINTS:
@@ -843,6 +886,7 @@ public class RenderObject
      */
     public void render(Camera3D camera)
     {
+        // If the shader is null, create a shader for the object
         if(shader == null)
         {
             updateShader();
@@ -852,7 +896,7 @@ public class RenderObject
 
         shader.enableIt();
 
-        float[] modelViewMatrix = new float[16];
+        float[] modelViewMatrix = new float[NUM_VALUES_PER_VIEW_MATRIX];
         Matrix.multiplyMM(modelViewMatrix,
                 0,
                 camera.getViewMatrix(),
@@ -860,7 +904,7 @@ public class RenderObject
                 modelMatrix,
                 0);
 
-        float[] modelViewProjectionMatrix = new float[16];
+        float[] modelViewProjectionMatrix = new float[NUM_VALUES_PER_VIEW_MATRIX];
         Matrix.multiplyMM(modelViewProjectionMatrix,
                 0,
                 camera.getPerspectiveMatrix(),
@@ -869,12 +913,13 @@ public class RenderObject
                 0);
 
         glUniformMatrix4fv(shader.getMatrixUniformHandle(),
-                1,
+                UNIFORM_UPLOAD_COUNT,
                 false,
                 modelViewProjectionMatrix,
                 0);
 
-        if(shader.getColourUniformHandle() != -1)
+        // If the shader colour uniform handle is not invalid, upload the colour data
+        if(shader.getColourUniformHandle() != INVALID_UNIFORM_HANDLE)
         {
             glUniform4f(shader.getColourUniformHandle(),
                     material.getColour().getRed(),
@@ -883,15 +928,18 @@ public class RenderObject
                     material.getColour().getAlpha());
         }
 
-        if(shader.getTextureUniformHandle() != -1 && material.hasTexture())
+        // If the shader texture uniform handle is not invalid, upload the texture unit
+        if(shader.getTextureUniformHandle() != INVALID_UNIFORM_HANDLE && material.hasTexture())
         {
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, material.getTexture().getId());
             glUniform1i(shader.getTextureUniformHandle(), 0);
 
-            if(shader.getUvMultiplierUniformHandlea() != -1)
+            // If the shader UV multiplier uniform handle is not invalid, upload the UV multiplier
+            // data
+            if(shader.getUvMultiplierUniformHandle() != INVALID_UNIFORM_HANDLE)
             {
-                glUniform2f(shader.getUvMultiplierUniformHandlea(),
+                glUniform2f(shader.getUvMultiplierUniformHandle(),
                         material.getUvMultiplier().x,
                         material.getUvMultiplier().y);
             }
@@ -899,6 +947,7 @@ public class RenderObject
 
         handleAttributes(true);
 
+        // Draw the vertex data with the specified render method
         switch (renderMethod)
         {
             case POINTS:
@@ -927,21 +976,50 @@ public class RenderObject
      */
     protected void updateModelMatrix()
     {
-        Matrix.setIdentityM(modelMatrix, 0);
-        Matrix.translateM(modelMatrix, 0, position.x, position.y, position.z);
-        Matrix.scaleM(modelMatrix, 0, scale.x, scale.y, scale.z);
+        Matrix.setIdentityM(modelMatrix,
+                0);
+        Matrix.translateM(modelMatrix,
+                0,
+                position.x,
+                position.y,
+                position.z);
+        Matrix.scaleM(modelMatrix,
+                0,
+                scale.x,
+                scale.y,
+                scale.z);
 
+        // Check if the rotation hasn't changed in the x-axis
         if(rotation.x != 0.0f)
         {
-            Matrix.rotateM(modelMatrix, 0, rotation.x, 1.0f, 0.0f, 0.0f);
+            Matrix.rotateM(modelMatrix,
+                    0,
+                    rotation.x,
+                    ROTATION_AXIS_MULTIPLIER,
+                    0.0f,
+                    0.0f);
         }
+
+        // Check if the rotation hasn't changed in the y-axis
         if(rotation.y != 0.0f)
         {
-            Matrix.rotateM(modelMatrix, 0, rotation.y, 0.0f, 1.0f, 0.0f);
+            Matrix.rotateM(modelMatrix,
+                    0,
+                    rotation.y,
+                    0.0f,
+                    ROTATION_AXIS_MULTIPLIER,
+                    0.0f);
         }
+
+        // Check if the rotation hasn't changed in the z-axis
         if(rotation.z != 0.0f)
         {
-            Matrix.rotateM(modelMatrix, 0, rotation.z, 0.0f, 0.0f, 1.0f);
+            Matrix.rotateM(modelMatrix,
+                    0,
+                    rotation.z,
+                    0.0f,
+                    0.0f,
+                    ROTATION_AXIS_MULTIPLIER);
         }
     }
 
@@ -954,37 +1032,35 @@ public class RenderObject
      */
     protected void updateShader()
     {
+        // If their has not been a custom shader allocated to the render object, automatically
+        // allocate one
         if(!hasCustomShader)
         {
-            boolean supportsTexture = false;
-            boolean supportsColourPerAttrib = false;
-
             // Check that the object has all of the components required to render a texture
-            supportsTexture = material.hasTexture() &&
+            boolean supportsTexture = material.hasTexture() &&
                     (elementsPerTexel != 0) &&
                     !material.isIgnoringTexelData();
 
             // Check if the object has all of the components required to render per vertex colour
-            supportsColourPerAttrib =
-                    (elementsPerColour != 0) &&
-                            !material.isIgnoringColourData();
+            boolean supportsColourPerAttrib = (elementsPerColour != 0) &&
+                    !material.isIgnoringColourData();
 
-//                // Determine the best shader to used depending on the material
-//                if(material.isLightingEnabled() && material.hasTexture() && material.hasNormalMap())
-//                {
-//                    // Use lighting, texture/direction map supporting shader
-//                }
-//                else if(material.isLightingEnabled() && material.hasTexture())
-//                {
-//                    // Use lighting, texture supporting shader
-//                }
-//                else if(material.isLightingEnabled())
-//                {
-//                    // Use lighting supporting shader
-//                }
-//                else
+//            // Determine the best shader to used depending on the material
+//            if(material.isLightingEnabled() && material.hasTexture() && material.hasNormalMap())
+//            {
+//                // Use lighting, texture/direction map supporting shader
+//            }
+//            else if(material.isLightingEnabled() && material.hasTexture())
+//            {
+//                // Use lighting, texture supporting shader
+//            }
+//            else if(material.isLightingEnabled())
+//            {
+//                // Use lighting supporting shader
+//            }
+//            else
 
-
+            // Select a shader based on what data attributes and uniforms the object supports
             if(supportsColourPerAttrib && supportsTexture)
             {
                 // A colour attribute and texture shader
@@ -1018,16 +1094,19 @@ public class RenderObject
      */
     protected void handleAttributes(boolean enable)
     {
+        // If the material is not ignoring position data, enable the position data attribute
         if(!material.isIgnoringPositionData())
         {
             handlePositionDataAttribute(enable);
         }
 
+        // If the material is not ignoring texel data, enable the texel data attribute
         if(!material.isIgnoringTexelData() && elementsPerTexel != 0)
         {
             handleTexelDataAttribute(enable);
         }
 
+        // If the material is not ignoring colour data, enable the colour data attribute
         if(!material.isIgnoringColourData() && elementsPerColour != 0)
         {
             handleColourDataAttribute(enable);
@@ -1043,6 +1122,7 @@ public class RenderObject
      */
     private void handlePositionDataAttribute(boolean enable)
     {
+        // Enable or disable the position data attribute
         if(enable)
         {
             vertexBuffer.position(positionDataOffset);
@@ -1070,9 +1150,10 @@ public class RenderObject
      */
     private void handleTexelDataAttribute(boolean enable)
     {
+        // Enable or disable the texel data attribute
         if(enable)
         {
-            // Enable attrib texture data
+            // Enable attribute texture data
             vertexBuffer.position(texelDataOffset);
             glEnableVertexAttribArray(shader.getTextureAttributeHandle());
             glVertexAttribPointer(shader.getTextureAttributeHandle(),
@@ -1098,9 +1179,10 @@ public class RenderObject
      */
     private void handleColourDataAttribute(boolean enable)
     {
+        // Enable or disable the colour data attribute
         if(enable)
         {
-            // Enable attrib colour data
+            // Enable attribute colour data
             vertexBuffer.position(colourDataOffset);
             glEnableVertexAttribArray(shader.getColourAttributeHandle());
             glVertexAttribPointer(shader.getColourAttributeHandle(),
@@ -1117,8 +1199,16 @@ public class RenderObject
         }
     }
 
+    /**
+     * Resolve the data stride. Data stride is the distance between elements of the same data type
+     * in bytes.
+     *
+     * @param numVerticesPerGroup   The number of vertices in a group
+     * @since 1.0
+     */
     private void resolveStride(int numVerticesPerGroup)
     {
+        // Check if the format of the data is ungrouped before resolving stride
         if(numVerticesPerGroup == UNGROUPED)
         {
             totalStrideBytes = (elementsPerPosition +
@@ -1133,6 +1223,14 @@ public class RenderObject
         }
     }
 
+    /**
+     * Resolve the data attribute offsets. This is where each data attribute starts looking at the
+     * vertex data.
+     *
+     * @param attributeOrder        The order that the attributes appear in the vertex data
+     * @param numVerticesPerGroup   The number of vertices in a group
+     * @since 1.0
+     */
     private void resolveAttributeOffsets(AttributeOrder_t attributeOrder,
                                          int numVerticesPerGroup)
     {
@@ -1142,6 +1240,7 @@ public class RenderObject
         final int TOTAL_NUMBER_COLOUR_ELEMENTS = elementsPerColour * numVerticesPerGroup;
         final int TOTAL_NUMBER_NORMAL_ELEMENTS = elementsPerNormal * numVerticesPerGroup;
 
+        // Figure out the attribute data offsets depending on the attribute order
         switch (attributeOrder)
         {
             case POSITION:
