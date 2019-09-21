@@ -58,9 +58,6 @@ public class SceneManager implements GLSurfaceView.Renderer
     // The default state of cull face being enabled
     private static final boolean DEFAULT_CULL_FACE_ENABLED_STATE = false;
 
-    // The application context
-    private Context context;
-
     // The current scene
     private Scene currentScene;
 
@@ -94,26 +91,17 @@ public class SceneManager implements GLSurfaceView.Renderer
      * pattern which limits only one to be constructed in the application context. If the object
      * has not been constructed yet, it will first be constructed before it is returned
      *
-     * @param context   Reference to the application context. The context can be passed to scenes
-     *                  that the engine user sets. This is important when creating new scenes for
-     *                  example because loading in assets such as map files requires the context.
-     * @return          Reference to the SceneManager singleton instance
      * @see             Context
      * @see             Scene.Constructor
      * @since           1.0
      */
-    public static SceneManager getInstance(Context context)
+    public static SceneManager getInstance()
     {
         // Check if a scene manager exists before creating one
         if(sceneManagerInstance == null)
         {
             // If scene manager hasn't been constructed yet, create one
-            sceneManagerInstance = new SceneManager(context);
-        }
-        else
-        {
-            // If the scene manager already exists, update its context with the one provided
-            sceneManagerInstance.updateContext(context);
+            sceneManagerInstance = new SceneManager();
         }
 
         return sceneManagerInstance;
@@ -121,11 +109,11 @@ public class SceneManager implements GLSurfaceView.Renderer
 
     /**
      * Set the initial scene. This can only happen once per application. Use the
-     * <code>setScene</code> method to set a new scene. You must provide a position scene to make use
-     * of the <code>SceneManager</code>. From the position scene you can later determine what scenes to
-     * run next. You must provide a <code>Scene.Constructor</code> type containing a lambda that
-     * constructs the scene. This is because it is up to the <code>SceneManager</code> how to to
-     * manage and control Scenes.
+     * <code>setScene</code> method to set a new scene. You must provide a position scene to make
+     * use of the <code>SceneManager</code>. From the position scene you can later determine what
+     * scenes to run next. You must provide a <code>Scene.Constructor</code> type containing a
+     * lambda that constructs the scene. This is because it is up to the <code>SceneManager</code>
+     * how to to manage and control Scenes.
      *
      * @param startSceneConstructor Start scene constructor lambda. Should contain function that
      *                              constructs a new <code>Scene</code> so that the Scene
@@ -144,7 +132,8 @@ public class SceneManager implements GLSurfaceView.Renderer
         }
         else
         {
-            Logger.error(TAG, "Failed to set position scene as one has already been specified");
+            Logger.error(TAG,
+                    "Failed to set position scene as one has already been specified");
         }
     }
 
@@ -438,13 +427,10 @@ public class SceneManager implements GLSurfaceView.Renderer
      * The constructor for the scene manager sets the member variables for later usage. The
      * application context is first supplied to the scene manager from this position.
      *
-     * @param context   Reference to the application context
-     * @see             Context
-     * @since           1.0
+     * @since 1.0
      */
-    private SceneManager(Context context)
+    private SceneManager()
     {
-        this.context = context;
         currentScene = null;
         currentSceneConstructor = null;
         setBackgroundColour(DEFAULT_BACKGROUND_COLOUR);
@@ -462,7 +448,7 @@ public class SceneManager implements GLSurfaceView.Renderer
      * the current scene (replacing the scene before it). This means that the previous scene looses
      * all references and will therefor be destroyed by Java.
      *
-     * @since           1.0
+     * @since 1.0
      */
     private void constructCurrentScene()
     {
@@ -479,17 +465,5 @@ public class SceneManager implements GLSurfaceView.Renderer
             Logger.error(TAG, "Cannot construct the current scene because no scene " +
                             "constructor has been provided");
         }
-    }
-
-    /**
-     * Update the scene managers application context. Whenever a new context has been provided to
-     * the scene manger, update it to make sure we have the most modern and up to date context.
-     *
-     * @param context   A reference to the application context
-     * @since           1.0
-     */
-    private void updateContext(Context context)
-    {
-        this.context = context;
     }
 }

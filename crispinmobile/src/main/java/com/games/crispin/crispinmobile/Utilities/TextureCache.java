@@ -15,6 +15,9 @@ import java.util.ArrayList;
  */
 public class TextureCache
 {
+    // Tag used for logging
+    private static final String TAG = "TextureCache";
+
     // Array of textures
     private static ArrayList<Texture> textures = new ArrayList<>();
 
@@ -36,9 +39,9 @@ public class TextureCache
     public static void removeAll()
     {
         // Remove the texture from graphics memory
-        for(Texture texture : textures)
+        for(int i = 0; i < textures.size(); i++)
         {
-            texture.destroy();
+            textures.get(i).destroy();
         }
 
         textures.clear();
@@ -54,15 +57,17 @@ public class TextureCache
      */
     public static void reinitialiseAll()
     {
+        // Iterate through the textures array, re-initialising all of them
         for(int i = 0; i < textures.size(); i++)
         {
+            // Attempt to reload the texture
             try
             {
                 textures.get(i).reload();
             }
             catch(Exception e)
             {
-                System.err.println("Failed to re-initialise texture");
+                Logger.error(TAG, "Failed to re-initialise texture");
                 e.printStackTrace();
             }
         }

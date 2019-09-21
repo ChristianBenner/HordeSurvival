@@ -786,7 +786,7 @@ public class RenderObject
      */
     public void useCustomShader(Shader customShader)
     {
-        // Check if the shader being assigned has been initialised
+        // Check if the shader being assigned has been freeTypeInitialised
         if(customShader != null)
         {
             hasCustomShader = true;

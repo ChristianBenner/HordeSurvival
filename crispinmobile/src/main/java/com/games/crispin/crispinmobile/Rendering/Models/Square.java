@@ -47,7 +47,7 @@ public class Square extends RenderObject
     /**
      * Create a square with specifically allowed data types. This allows you to limit what data is
      * uploaded to the GPU and rendered. This means that a vertex buffer of the minimum size is
-     * created when the render object is initialised, minimising the time it takes to a construct a
+     * created when the render object is freeTypeInitialised, minimising the time it takes to a construct a
      * square. This can prove efficient when making high performance software such as particle
      * engines as it allows you to prevent the handling of un-required data.
      *
@@ -74,7 +74,7 @@ public class Square extends RenderObject
     /**
      * Create a square with specifically allowed data types. This allows you to limit what data is
      * uploaded to the GPU and rendered. This means that a vertex buffer of the minimum size is
-     * created when the render object is initialised, minimising the time it takes to a construct a
+     * created when the render object is freeTypeInitialised, minimising the time it takes to a construct a
      * square. This can prove efficient when making high performance software such as particle
      * engines as it allows you to prevent the handling of un-required data.
      *

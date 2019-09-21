@@ -13,7 +13,7 @@ public class ActivityMain extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         // Initialise the engine with the first scene
-        Crispin.init(this, TestScene.TEST_SCENE_CONSTRUCTION);
-       // Crispin.init(this, TextDemoScene::new);
+       // Crispin.init(this, TestScene.TEST_SCENE_CONSTRUCTION);
+        Crispin.init(this, TextDemoScene::new);
     }
 }

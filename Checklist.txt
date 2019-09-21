@@ -6,7 +6,7 @@ COMPLETE(#AsOfCommitId) - Both the code checklist and functional check have been
 
 Project Classes:
 	Demos >
-		TextDemoScene	- INCOMPLETE
+		TextDemoScene	- CHECKLIST
 	Geometry - CHECKLIST(5b852fd) >
 		Geometry	- CHECKLIST(5b852fd): 2D types need functions
 		Plane		- CHECKLIST(5b852fd)
@@ -55,17 +55,17 @@ Project Classes:
 		FileResourceReader	- CHECKLIST
 		Logger				- CHECKLIST
 		OBJModelLoader		- CHECKLIST
-		OBJThreadTest		- VERIFY
-		Scene				- VERIFY
-		SceneManager		- VERIFY
-		ShaderCache			- VERIFY
-		TextureCache		- VERIFY
-	Crispin				- VERIFY
-	UnsupprtedDevice	- VERIFY
+		OBJThreadTest		- CHECKLIST
+		Scene				- CHECKLIST
+		SceneManager		- CHECKLIST
+		ShaderCache			- CHECKLIST
+		TextureCache		- CHECKLIST
+	Crispin				- CHECKLIST
+	UnsupprtedDevice	- CHECKLIST
 	
 Native Classes:
 	crispinni >
-		funcs.cpp	- INCOMPLETE
+		funcs.cpp	- CHECKLIST
 
 Code Checklist:
 - JavaDoc Documentation

@@ -4,6 +4,7 @@ package com.games.crispin.crispinmobile.Utilities;
  * Scene base class. This provides functions that are controlled by the SceneManager object in
  * different ways.
  *
+ * @see         SceneManager
  * @author      Christian Benner
  * @version     %I%, %G%
  * @since       1.0

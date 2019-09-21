@@ -54,7 +54,7 @@ public class Crispin
      *                              loading in a texture file for example).
      * @param startSceneConstructor A reference to the scene constructor lambda. This will be used
      *                              to construct the provided scene. It is best for the engine to
-     *                              control how and when the scenes are initialised so that the
+     *                              control how and when the scenes are freeTypeInitialised so that the
      *                              user doesn't have to worry about memory management and can
      *                              switch from a global/static context.
      * @see                         AppCompatActivity
@@ -77,7 +77,7 @@ public class Crispin
      */
     public static Context getApplicationContext()
     {
-        // Check if the engine is initialised before accessing the context
+        // Check if the engine is freeTypeInitialised before accessing the context
         if(isInit())
         {
             return crispinInstance.CONTEXT;
@@ -96,7 +96,7 @@ public class Crispin
      */
     public static void setScene(Scene.Constructor sceneConstructor)
     {
-        // Check if the engine is initialised before accessing the scene manager
+        // Check if the engine is freeTypeInitialised before accessing the scene manager
         if(isInit())
         {
             crispinInstance.sceneManager.setScene(sceneConstructor);
@@ -112,7 +112,7 @@ public class Crispin
      */
     public static void setBackgroundColour(Colour backgroundColour)
     {
-        // Check if the engine is initialised before accessing the scene manager
+        // Check if the engine is freeTypeInitialised before accessing the scene manager
         if(isInit())
         {
             crispinInstance.sceneManager.setBackgroundColour(backgroundColour);
@@ -128,7 +128,7 @@ public class Crispin
      */
     public static Colour getBackgroundColour()
     {
-        // Check if the engine is initialised before accessing the scene manager
+        // Check if the engine is freeTypeInitialised before accessing the scene manager
         if(isInit())
         {
             return crispinInstance.sceneManager.getBackgroundColour();
@@ -150,7 +150,7 @@ public class Crispin
      */
     public static void setDepthState(boolean depthState)
     {
-        // Check if the engine is initialised before accessing the scene manager
+        // Check if the engine is freeTypeInitialised before accessing the scene manager
         if(isInit())
         {
             crispinInstance.sceneManager.setDepthState(depthState);
@@ -165,7 +165,7 @@ public class Crispin
      */
     public static boolean isDepthEnabled()
     {
-        // Check if the engine is initialised before accessing the scene manager
+        // Check if the engine is freeTypeInitialised before accessing the scene manager
         if(isInit())
         {
             return crispinInstance.sceneManager.isDepthEnabled();
@@ -185,7 +185,7 @@ public class Crispin
      */
     public static void setAlphaState(boolean alphaState)
     {
-        // Check if the engine is initialised before accessing the scene manager
+        // Check if the engine is freeTypeInitialised before accessing the scene manager
         if(isInit())
         {
             crispinInstance.sceneManager.setAlphaState(alphaState);
@@ -200,7 +200,7 @@ public class Crispin
      */
     public static boolean isAlphaEnabled()
     {
-        // Check if the engine is initialised before accessing the scene manager
+        // Check if the engine is freeTypeInitialised before accessing the scene manager
         if(isInit())
         {
             return crispinInstance.sceneManager.isAlphaEnabled();
@@ -222,7 +222,7 @@ public class Crispin
      */
     public static void setCullFaceState(boolean cullFaceState)
     {
-        // Check if the engine is initialised before accessing the scene manager
+        // Check if the engine is freeTypeInitialised before accessing the scene manager
         if(isInit())
         {
             crispinInstance.sceneManager.setCullFaceState(cullFaceState);
@@ -237,7 +237,7 @@ public class Crispin
      */
     public static boolean isCullFaceEnabled()
     {
-        // Check if the engine is initialised before accessing the scene manager
+        // Check if the engine is freeTypeInitialised before accessing the scene manager
         if(isInit())
         {
             return crispinInstance.sceneManager.isCullFaceEnabled();
@@ -254,7 +254,7 @@ public class Crispin
      */
     public static int getSurfaceWidth()
     {
-        // Check if the engine is initialised before accessing the scene manager
+        // Check if the engine is freeTypeInitialised before accessing the scene manager
         if(isInit())
         {
             return crispinInstance.sceneManager.getSurfaceWidth();
@@ -271,7 +271,7 @@ public class Crispin
      */
     public static int getSurfaceHeight()
     {
-        // Check if the engine is initialised before accessing the scene manager
+        // Check if the engine is freeTypeInitialised before accessing the scene manager
         if(isInit())
         {
             return crispinInstance.sceneManager.getSurfaceHeight();
@@ -281,10 +281,10 @@ public class Crispin
     }
 
     /**
-     * Checks whether or not the engine has been initialised. If the engine hasn't been initialised
+     * Checks whether or not the engine has been freeTypeInitialised. If the engine hasn't been freeTypeInitialised
      * then an error message is printed.
      *
-     * @return  <code>true</code> if engine is initialised, <code>false</code> otherwise
+     * @return  <code>true</code> if engine is freeTypeInitialised, <code>false</code> otherwise
      * @since   1.0
      */
     private static boolean isInit()
@@ -299,7 +299,7 @@ public class Crispin
         }
         else
         {
-            Logger.error(TAG, "ERROR: Crispin has not been initialised, " +
+            Logger.error(TAG, "ERROR: Crispin has not been freeTypeInitialised, " +
                     "use Crispin.init(AppCompatActivity)");
         }
 
@@ -338,7 +338,7 @@ public class Crispin
             glSurfaceView.setEGLContextClientVersion(OPENGL_ES_TARGET_VERSION);
 
             // Get the scene manager instance
-            sceneManager = SceneManager.getInstance(CONTEXT);
+            sceneManager = SceneManager.getInstance();
 
             // Set the renderer to the scene manager
             glSurfaceView.setRenderer(sceneManager);
@@ -357,7 +357,7 @@ public class Crispin
      * Checks if the minimum OpenGL ES version (version 2.0), is supported. The check is performed
      * by receiving configuration information associated to the devices hardware.
      *
-     * @return  <code>true</code> if engine is initialised, <code>false</code> otherwise
+     * @return  <code>true</code> if engine is freeTypeInitialised, <code>false</code> otherwise
      * @since   1.0
      */
     private boolean isOpenGLESSupported()

@@ -15,8 +15,11 @@ import java.util.ArrayList;
  */
 public class ShaderCache
 {
+    // Tag used for logging
+    private static final String TAG = "ShaderCache";
+
     // The array of shader programs
-    private static ArrayList<Shader> shaders = new ArrayList<>();
+    private static ArrayList<Shader> shaderArray = new ArrayList<>();
 
     /**
      * Register a shader program in the cache
@@ -25,7 +28,7 @@ public class ShaderCache
      */
     public static void registerShader(Shader shader)
     {
-        shaders.add(shader);
+        shaderArray.add(shader);
     }
 
     /**
@@ -35,13 +38,14 @@ public class ShaderCache
      */
     public static void removeAll()
     {
-        // Remove the shader from graphics memory
-        for(Shader shader : shaders)
+        // Iterate through the shader array, destroying all of the shaders. This will also remove
+        // shader from OpenGL controlled memory.
+        for(Shader shader : shaderArray)
         {
             shader.destroy();
         }
 
-        shaders.clear();
+        shaderArray.clear();
     }
 
     /**
@@ -53,15 +57,17 @@ public class ShaderCache
      */
     public static void reinitialiseAll()
     {
-        for(Shader shader : shaders)
+        // Iterate through the shader array, reconstructing all of them
+        for(int i = 0; i < shaderArray.size(); i++)
         {
+            // Attempt to reconstruct
             try
             {
-                shader.reconstruct();
+                shaderArray.get(i).reconstruct();
             }
             catch(Exception e)
             {
-                System.err.println("Failed to re-initialise shader");
+                Logger.error(TAG, "Failed to re-initialise shader");
                 e.printStackTrace();
             }
         }
