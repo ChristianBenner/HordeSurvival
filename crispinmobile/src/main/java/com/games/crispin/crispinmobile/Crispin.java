@@ -340,6 +340,12 @@ public class Crispin
             // Get the scene manager instance
             sceneManager = SceneManager.getInstance();
 
+            // Get the display refresh rate
+            final float DISPLAY_REFRESH_RATE = appCompatActivity.getWindowManager().
+                    getDefaultDisplay().getRefreshRate();
+
+            sceneManager.setTargetRefreshRate(DISPLAY_REFRESH_RATE);
+
             // Set the renderer to the scene manager
             glSurfaceView.setRenderer(sceneManager);
 

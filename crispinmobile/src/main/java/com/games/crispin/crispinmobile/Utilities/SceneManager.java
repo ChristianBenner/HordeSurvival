@@ -2,7 +2,6 @@ package com.games.crispin.crispinmobile.Utilities;
 
 import android.content.Context;
 import android.opengl.GLSurfaceView;
-
 import com.games.crispin.crispinmobile.Rendering.Data.Colour;
 
 import javax.microedition.khronos.egl.EGLConfig;
@@ -58,6 +57,15 @@ public class SceneManager implements GLSurfaceView.Renderer
     // The default state of cull face being enabled
     private static final boolean DEFAULT_CULL_FACE_ENABLED_STATE = false;
 
+    // The default delta time value
+    private static final float DEFAULT_DELTA_TIME = 1.0f;
+
+    // The default refresh rate
+    private static final float DEFAULT_REFRESH_RATE = 60.0f;
+
+    // Number of frames to skip before re-calculating delta time value
+    private static final int FRAMES_TO_CALCULATE = 15;
+
     // The current scene
     private Scene currentScene;
 
@@ -84,6 +92,21 @@ public class SceneManager implements GLSurfaceView.Renderer
 
     // Has a position scene been specified
     private boolean startSceneSpecified;
+
+    // The update count (frame count)
+    private int updateCount;
+
+    // Delta time value
+    private float deltaTime;
+
+    // Target update rate (should be the maximum screen refresh rate)
+    private float targetRefreshRate;
+
+    // The start time used in the timing calculations
+    private long startNanoTime;
+
+    // Time paused in nanoseconds during the timing calculations
+    private long timePausedInNanos;
 
     /**
      * Retrieve the singleton instance of the scene manager. The scene manager can only be
@@ -297,6 +320,16 @@ public class SceneManager implements GLSurfaceView.Renderer
     }
 
     /**
+     * Set the target refresh rate for the update timing method.
+     *
+     * @since 1.0
+     */
+    public void setTargetRefreshRate(float targetRefreshRate)
+    {
+        this.targetRefreshRate = targetRefreshRate;
+    }
+
+    /**
      * The method is overridden from <code>GLSurfaceView.Renderer</code>, it is called when the
      * surface gets created. At this position OpenGL ES memory has been destroyed so its a good time
      * to re-initialise components that depend on this memory.
@@ -319,6 +352,8 @@ public class SceneManager implements GLSurfaceView.Renderer
             ShaderCache.reinitialiseAll();
             TextureCache.reinitialiseAll();
         }
+
+        resetTimingValues();
     }
 
     /**
@@ -341,6 +376,8 @@ public class SceneManager implements GLSurfaceView.Renderer
         this.surfaceWidth = width;
         this.surfaceHeight = height;
 
+        resetTimingValues();
+
         // Set the OpenGL viewport to fill the entire surface
         glViewport(0,
                 0,
@@ -354,10 +391,10 @@ public class SceneManager implements GLSurfaceView.Renderer
      * rendering and logic update mechanics have be implemented so that graphical output can be
      * processed.
      *
-     * @param gl        A reference to the GL10 library. This is a legacy parameter that no longer
-     *                  has a use (due to the usage of a newer OpenGL version).
-     * @see             GLSurfaceView.Renderer
-     * @since           1.0
+     * @param gl    A reference to the GL10 library. This is a legacy parameter that no longer has a
+     *              use (due to the usage of a newer OpenGL version).
+     * @see         GLSurfaceView.Renderer
+     * @since       1.0
      */
     @Override
     public void onDrawFrame(GL10 gl)
@@ -368,10 +405,22 @@ public class SceneManager implements GLSurfaceView.Renderer
             constructCurrentScene();
         }
 
-        // The delta time (before delta time calculations are added)
-        final float TEMP_DELTA_TIME = 1.0f;
+        // This method calls the update functionality with a delta time value so that all things
+        // updated move at the same speed independent on the rate the update function is called.
+        if(updateCount == FRAMES_TO_CALCULATE)
+        {
+            deltaTime = targetRefreshRate / (1000 /
+                    (((System.nanoTime() - startNanoTime - timePausedInNanos) / 1000000) /
+                            (float)FRAMES_TO_CALCULATE));
+            startNanoTime = System.nanoTime();
 
-        currentScene.update(TEMP_DELTA_TIME);
+            //  System.out.println("Debug : DeltaTime (" + deltaTime + ")");
+            updateCount = 0;
+        }
+
+        updateCount++;
+
+        currentScene.update(deltaTime);
 
         // Always clear the buffer bit
         glClear(GL_COLOR_BUFFER_BIT);
@@ -440,6 +489,8 @@ public class SceneManager implements GLSurfaceView.Renderer
         surfaceWidth = 0;
         surfaceHeight = 0;
         startSceneSpecified = false;
+        targetRefreshRate = DEFAULT_REFRESH_RATE;
+        resetTimingValues();
     }
 
     /**
@@ -465,5 +516,19 @@ public class SceneManager implements GLSurfaceView.Renderer
             Logger.error(TAG, "Cannot construct the current scene because no scene " +
                             "constructor has been provided");
         }
+    }
+
+    /**
+     * Reset the timing values used in the delta time calculation. This will restore them to default
+     * values.
+     *
+     * @since 1.0
+     */
+    private void resetTimingValues()
+    {
+        updateCount = 0;
+        deltaTime = DEFAULT_DELTA_TIME;
+        startNanoTime = System.nanoTime();
+        timePausedInNanos = 0;
     }
 }
