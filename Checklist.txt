@@ -40,8 +40,11 @@ Project Classes:
 			TextureShader					- CHECKLIST(ceb4891)
 			UniformColourShader				- CHECKLIST(ceb4891)
 		UserInterface >
-			Text		- CHECKLIST(ceb4891)
-			UIObject	- CHECKLIST(ceb4891)
+			Image			- VERIFY
+			LinearLayout 	- VERIFY
+			Plane			- VERIFY
+			Text			- CHECKLIST(ceb4891)
+			UIObject		- CHECKLIST(ceb4891)
 		Utilities >
 			Camera2D		- CHECKLIST(ceb4891)
 			Camera3D		- CHECKLIST(ceb4891)

@@ -12,6 +12,7 @@ import com.games.crispin.crispinmobile.Rendering.Shaders.TextShader;
 import com.games.crispin.crispinmobile.Rendering.Utilities.Camera2D;
 import com.games.crispin.crispinmobile.Rendering.Utilities.Font;
 import com.games.crispin.crispinmobile.Rendering.Utilities.Material;
+import com.games.crispin.crispinmobile.Utilities.Logger;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -31,7 +32,7 @@ import static android.opengl.GLES20.glEnable;
  * @version     %I%, %G%
  * @since       1.0
  */
-public class Text extends UIObject
+public class Text implements UIObject
 {
     /**
      * Word class is designed to store data on multiple characters
@@ -205,6 +206,18 @@ public class Text extends UIObject
     // This is used in a calculation to make the sin wave produce an output from 0.0 to 1.0
     private static final float SIN_WAVE_DIVIDE = 2.0f;
 
+    // Position of the text
+    private Point3D position;
+
+    // Width of the text
+    private float width;
+
+    // Height of the text
+    private float height;
+
+    // Colour of the text
+    private Colour colour;
+
     // The font that the text string is in
     private Font font;
 
@@ -222,12 +235,6 @@ public class Text extends UIObject
 
     // Scale multiplier
     private float scale;
-
-    // The width of the text
-    private float width;
-
-    // The height of the text
-    private float height;
 
     // Amount in pixels that the text can wiggle
     private float wiggleAmountPixels;
@@ -395,6 +402,32 @@ public class Text extends UIObject
             this.textString = text;
             generateText();
         }
+    }
+
+    /**
+     * Overridden from the UI object base class. Disabled as you cant change the width of a text
+     * object
+     *
+     * @param width The new width of the object. This isn't actually used
+     * @since 1.0
+     */
+    @Override
+    public void setWidth(float width)
+    {
+        Logger.info("Cannot change the width of a text object");
+    }
+
+    /**
+     * Overridden from the UI object base class. Disabled as you cant change the height of a text
+     * object
+     *
+     * @param height    The new Height of the object. This isn't actually used
+     * @since 1.0
+     */
+    @Override
+    public void setHeight(float height)
+    {
+        Logger.info("Cannot change the height of a text object");
     }
 
     /**
@@ -774,11 +807,50 @@ public class Text extends UIObject
      */
     public void setColour(Colour colour)
     {
+        this.colour = colour;
+
         // Iterate through all of the characters setting their new material colours
         for(int i = 0; i < squares.size(); i++)
         {
             squares.get(i).getMaterial().setColour(colour);
         }
+    }
+
+    /**
+     * Get the colour of the UI object
+     *
+     * @return The colour of the UI object
+     * @since 1.0
+     */
+    @Override
+    public Colour getColour()
+    {
+        return colour;
+    }
+
+    /**
+     * Set the opacity of the UI object
+     *
+     * @param alpha The new alpha channel value for the UI object
+     * @since 1.0
+     */
+    @Override
+    public void setOpacity(float alpha)
+    {
+        this.colour.setAlpha(alpha);
+        setColour(this.colour);
+    }
+
+    /**
+     * Get the opacity of the UI object
+     *
+     * @return  The alpha channel value of the UI object
+     * @since 1.0
+     */
+    @Override
+    public float getOpacity()
+    {
+        return this.colour.getAlpha();
     }
 
     /**
@@ -884,6 +956,18 @@ public class Text extends UIObject
     }
 
     /**
+     * Get the user interface position
+     *
+     * @return The user interface position
+     * @since 1.0
+     */
+    @Override
+    public Point2D getPosition()
+    {
+        return new Point2D(position.x, position.y);
+    }
+
+    /**
      * Enable text wiggle. This is the vertical movement of characters in a sin wave style motion.
      * The speed and amount of wiggle is adjustable
      *
@@ -933,6 +1017,7 @@ public class Text extends UIObject
      * @param camera
      * @since 1.0
      */
+    @Override
     public void draw(Camera2D camera)
     {
         final boolean REENABLE_DEPTH = Crispin.isDepthEnabled();

@@ -1,8 +1,10 @@
 package com.games.crispin.crispinmobile.Demos;
 
 import com.games.crispin.crispinmobile.Crispin;
+import com.games.crispin.crispinmobile.Geometry.Point2D;
 import com.games.crispin.crispinmobile.R;
 import com.games.crispin.crispinmobile.Rendering.Data.Colour;
+import com.games.crispin.crispinmobile.Rendering.UserInterface.LinearLayout;
 import com.games.crispin.crispinmobile.Rendering.UserInterface.Text;
 import com.games.crispin.crispinmobile.Rendering.Utilities.Camera2D;
 import com.games.crispin.crispinmobile.Rendering.Utilities.Font;
@@ -73,6 +75,11 @@ public class TextDemoScene extends Scene
     // 2-dimensional camera
     private Camera2D camera2D;
 
+    // Linear layout for the text tests
+    private LinearLayout linearLayout;
+
+    private Text demo;
+
     /**
      * Construct the text demo scene
      *
@@ -83,6 +90,7 @@ public class TextDemoScene extends Scene
         Crispin.setBackgroundColour(Colour.DARK_GREY);
 
         camera2D = new Camera2D();
+
 
         // Load the font that the text objects will use
         final Font AILERON_REGULAR = new Font(R.raw.aileron_regular, FONT_SIZE);
@@ -128,6 +136,16 @@ public class TextDemoScene extends Scene
         wiggleText.setPosition(HALF_SURFACE_WIDTH - (wiggleText.getWidth() / TEXT_WIDTH_DIVIDE),
                 wrappedCenteredText.getPosition().y - wiggleText.getHeight() -
                         (PADDING_PIXELS * WIGGLE_MULTIPLIER));
+
+        linearLayout = new LinearLayout(new Point2D(0.0f, 0.0f), Crispin.getSurfaceWidth(), Crispin.getSurfaceHeight(), false);
+
+        for(int i = 0; i < 10; i++)
+        {
+            linearLayout.add(new Text(AILERON_REGULAR, "Test", false, false, 0.0f));
+        }
+
+        demo = new Text(AILERON_REGULAR, "Demo Text");
+        demo.setPosition(0.0f, 0.0f);
     }
 
     /**
@@ -151,11 +169,15 @@ public class TextDemoScene extends Scene
     @Override
     public void render()
     {
-        standardText.draw(camera2D);
+/*        standardText.draw(camera2D);
         standardTextMaxLength.draw(camera2D);
         centeredText.draw(camera2D);
         wrappedText.draw(camera2D);
         wrappedCenteredText.draw(camera2D);
-        wiggleText.draw(camera2D);
+        wiggleText.draw(camera2D);*/
+
+      //  linearLayout.draw(camera2D);
+
+        demo.draw(camera2D);
     }
 }

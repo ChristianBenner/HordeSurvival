@@ -3,25 +3,38 @@ package com.games.crispin.crispinmobile.Rendering.UserInterface;
 import com.games.crispin.crispinmobile.Geometry.Point2D;
 import com.games.crispin.crispinmobile.Geometry.Point3D;
 import com.games.crispin.crispinmobile.Rendering.Data.Colour;
+import com.games.crispin.crispinmobile.Rendering.Models.Square;
 import com.games.crispin.crispinmobile.Rendering.Utilities.Camera2D;
 
-/**
- * Base class for user interface objects. Contains functions that should be generic to most user
- * interface objects so that there is a common way to interact with them.
- *
- * @author      Christian Benner
- * @version     %I%, %G%
- * @since       1.0
- */
-public interface UIObject
+public class Plane implements UIObject
 {
+    // The square render object
+    private Square square;
+
+    public Plane(Point2D position, float width, float height)
+    {
+        square = new Square(false);
+        square.setPosition(position);
+        square.setScale(width, height);
+    }
+
+    public Plane(float width, float height)
+    {
+        this(new Point2D(), width, height);
+    }
+
+
     /**
      * Set the position of the user interface
      *
      * @param position  The new position for the user interface
      * @since 1.0
      */
-    void setPosition(Point3D position);
+    @Override
+    public void setPosition(Point3D position)
+    {
+        square.setPosition(position);
+    }
 
     /**
      * Set the position of the user interface
@@ -31,9 +44,13 @@ public interface UIObject
      * @param z The z-coordinate
      * @since 1.0
      */
-    void setPosition(float x,
-                     float y,
-                     float z);
+    @Override
+    public void setPosition(float x,
+                            float y,
+                            float z)
+    {
+        square.setPosition(x, y, z);
+    }
 
     /**
      * Set the position of the user interface
@@ -41,7 +58,11 @@ public interface UIObject
      * @param position  The new position for the user interface
      * @since 1.0
      */
-    void setPosition(Point2D position);
+    @Override
+    public void setPosition(Point2D position)
+    {
+        square.setPosition(position);
+    }
 
     /**
      * Set the position of the user interface
@@ -50,7 +71,11 @@ public interface UIObject
      * @param y The y-coordinate
      * @since 1.0
      */
-    void setPosition(float x, float y);
+    @Override
+    public void setPosition(float x, float y)
+    {
+        square.setPosition(x, y);
+    }
 
     /**
      * Get the user interface position
@@ -58,7 +83,11 @@ public interface UIObject
      * @return The user interface position
      * @since 1.0
      */
-    Point2D getPosition();
+    @Override
+    public Point2D getPosition()
+    {
+        return square.getPosition();
+    }
 
     /**
      * Set the width of the UI object
@@ -66,7 +95,11 @@ public interface UIObject
      * @param width The new width of the object
      * @since 1.0
      */
-    void setWidth(float width);
+    @Override
+    public void setWidth(float width)
+    {
+        square.setScaleX(width);
+    }
 
     /**
      * Get the width of the UI object
@@ -74,7 +107,11 @@ public interface UIObject
      * @return The width of the UI object
      * @since 1.0
      */
-    float getWidth();
+    @Override
+    public float getWidth()
+    {
+        return square.getScale().x;
+    }
 
     /**
      * Set the height of the UI object
@@ -82,7 +119,11 @@ public interface UIObject
      * @param height    The new width of the object
      * @since 1.0
      */
-    void setHeight(float height);
+    @Override
+    public void setHeight(float height)
+    {
+        square.setScaleY(height);
+    }
 
     /**
      * Get the height of the UI object
@@ -90,7 +131,11 @@ public interface UIObject
      * @return The height of the UI object
      * @since 1.0
      */
-    float getHeight();
+    @Override
+    public float getHeight()
+    {
+        return square.getScale().y;
+    }
 
     /**
      * Set the colour of the UI object
@@ -98,7 +143,11 @@ public interface UIObject
      * @param colour    The new colour for the UI object
      * @since 1.0
      */
-    void setColour(Colour colour);
+    @Override
+    public void setColour(Colour colour)
+    {
+        this.square.getMaterial().setColour(colour);
+    }
 
     /**
      * Get the colour of the UI object
@@ -106,7 +155,11 @@ public interface UIObject
      * @return The colour of the UI object
      * @since 1.0
      */
-    Colour getColour();
+    @Override
+    public Colour getColour()
+    {
+        return this.square.getMaterial().getColour();
+    }
 
     /**
      * Set the opacity of the UI object
@@ -114,7 +167,11 @@ public interface UIObject
      * @param alpha The new alpha channel value for the UI object
      * @since 1.0
      */
-    void setOpacity(float alpha);
+    @Override
+    public void setOpacity(float alpha)
+    {
+        this.square.getMaterial().getColour().setAlpha(alpha);
+    }
 
     /**
      * Get the opacity of the UI object
@@ -122,12 +179,20 @@ public interface UIObject
      * @return  The alpha channel value of the UI object
      * @since 1.0
      */
-    float getOpacity();
+    @Override
+    public float getOpacity()
+    {
+        return this.square.getMaterial().getColour().getAlpha();
+    }
 
     /**
      * Draw function designed to be overridden
      *
      * @since 1.0
      */
-    void draw(Camera2D camera);
+    @Override
+    public void draw(Camera2D camera)
+    {
+        square.render(camera);
+    }
 }

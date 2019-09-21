@@ -1,7 +1,12 @@
 package com.games.crispin.hordesurvival;
 
+import com.games.crispin.crispinmobile.Geometry.Point2D;
 import com.games.crispin.crispinmobile.Geometry.Scale2D;
+import com.games.crispin.crispinmobile.Rendering.Models.FontSquare;
 import com.games.crispin.crispinmobile.Rendering.Models.Square;
+import com.games.crispin.crispinmobile.Rendering.UserInterface.Image;
+import com.games.crispin.crispinmobile.Rendering.UserInterface.LinearLayout;
+import com.games.crispin.crispinmobile.Rendering.UserInterface.Plane;
 import com.games.crispin.crispinmobile.Rendering.Utilities.Camera2D;
 import com.games.crispin.crispinmobile.Rendering.Utilities.Camera3D;
 import com.games.crispin.crispinmobile.Rendering.Data.Colour;
@@ -42,6 +47,12 @@ public class TestScene extends Scene {
     private RenderObject personmodel;
 
     private Square square;
+    private Square texSquare;
+    private Image imageUI;
+    private Plane planeUI;
+
+    private LinearLayout linearLayout;
+
     public TestScene()
     {
         // Set the background colour to yellow
@@ -115,7 +126,35 @@ public class TestScene extends Scene {
 
         square = new Square();
         square.setMaterial(brickMaterial);
+
+        Material man = new Material(new Texture(R.drawable.man));
+        texSquare = new Square();
+        texSquare.setMaterial(man);
+        texSquare.setPosition(0.0f, 0.0f);
+        texSquare.setScale(100.0f, 100.0f);
+        // Create the render object square
+        squareTest = new FontSquare(man,
+                new Point3D(0.0f, 100.0f, 0.0f), new Point2D(0.0f, 0.0f));
+        squareTest.setScale(100.0f, 100.0f);
+
+
+        linearLayout = new LinearLayout(new Point2D(0.0f, 50.0f), Crispin.getSurfaceWidth(), 0.0f, false);
+        imageUI = new Image(R.drawable.man);
+        planeUI = new Plane(100.0f, 100.0f);
+        planeUI.setColour(Colour.BLUE);
+       // linearLayout.add(imageUI);
+       // linearLayout.add(planeUI);
+
+        for(int i = 0; i < 60; i++)
+        {
+            linearLayout.add(new Image(R.drawable.man));
+        }
+
+        Colour colour = Colour.ORANGE;
+        linearLayout.setColour(colour);
+        linearLayout.setOpacity(0.5f);
     }
+    FontSquare squareTest;
 
     boolean onetimeDino = false;
     float modelFadeInDino = 0.0f;
@@ -234,7 +273,13 @@ public class TestScene extends Scene {
         // Draw the cube
         cubeThree.render(camera);
         square.render(camera);
+     //   texSquare.render(camera2D);
+       // squareTest.render(camera2D);
+       // imageUI.draw(camera2D);
+        //planeUI.draw(camera2D);
         //cubeTwo.render(camera);
+
+        linearLayout.draw(camera2D);
 
         if(dinomodel != null)
         {

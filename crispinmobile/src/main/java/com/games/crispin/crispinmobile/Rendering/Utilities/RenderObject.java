@@ -360,11 +360,8 @@ public class RenderObject
         vertexBuffer.position(0);
 
         // Calculate the number of vertices in the data
-        VERTEX_COUNT = vertexData.length /
-                (elementsPerPosition +
-                        elementsPerTexel +
-                        elementsPerColour +
-                        elementsPerNormal);
+        VERTEX_COUNT = vertexData.length / (this.elementsPerPosition + this.elementsPerTexel +
+                this.elementsPerColour + this.elementsPerNormal);
 
         setMaterial(material);
 
@@ -474,11 +471,8 @@ public class RenderObject
         vertexBuffer.position(0);
 
         // Calculate the number of vertices in the data
-        VERTEX_COUNT = vertexData.length /
-                (elementsPerPosition +
-                        elementsPerTexel +
-                        elementsPerColour +
-                        elementsPerNormal);
+        VERTEX_COUNT = vertexData.length / (this.elementsPerPosition + this.elementsPerTexel +
+                this.elementsPerColour + this.elementsPerNormal);
 
         setMaterial(material);
 
@@ -659,6 +653,50 @@ public class RenderObject
     {
         this.scale.x = w;
         this.scale.y = h;
+    }
+
+    /**
+     * Set x-axis scale multiplier
+     *
+     * @param x Multiplier for the x-axis
+     * @since 1.0
+     */
+    public void setScaleX(float x)
+    {
+        this.scale.x = x;
+    }
+
+    /**
+     * Set y-axis scale multiplier
+     *
+     * @param y Multiplier for the y-axis
+     * @since 1.0
+     */
+    public void setScaleY(float y)
+    {
+        this.scale.y = y;
+    }
+
+    /**
+     * Set z-axis scale multiplier
+     *
+     * @param z Multiplier for the z-axis
+     * @since 1.0
+     */
+    public void setScaleZ(float z)
+    {
+        this.scale.z = z;
+    }
+
+    /**
+     * Get the scale
+     *
+     * @return The scale multiplier of the object
+     * @since 1.0
+     */
+    public Scale3D getScale()
+    {
+        return this.scale;
     }
 
     /**
