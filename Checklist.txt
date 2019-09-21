@@ -6,7 +6,7 @@ COMPLETE(#AsOfCommitId) - Both the code checklist and functional check have been
 
 Project Classes:
 	Demos >
-		TextDemoScene	- CHECKLIST(ceb4891)
+		TextDemoScene	- VERIFY
 	Geometry >
 		Geometry	- CHECKLIST(ceb4891)
 		Plane		- CHECKLIST(ceb4891)
@@ -44,13 +44,13 @@ Project Classes:
 			LinearLayout 	- VERIFY
 			Plane			- VERIFY
 			Text			- CHECKLIST(ceb4891)
-			UIObject		- CHECKLIST(ceb4891)
+			UIObject		- CHECKLIST(e6aaf73)
 		Utilities >
 			Camera2D		- CHECKLIST(ceb4891)
 			Camera3D		- CHECKLIST(ceb4891)
 			Font			- CHECKLIST(ceb4891)
 			Material		- CHECKLIST(ceb4891)
-			RenderObject	- CHECKLIST(ceb4891)
+			RenderObject	- CHECKLIST(e6aaf73)
 			Shader			- CHECKLIST(ceb4891)
 			Texture			- CHECKLIST(ceb4891)
 			TextureOptions	- CHECKLIST(ceb4891)
