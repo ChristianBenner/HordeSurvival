@@ -14,43 +14,27 @@ import static android.opengl.GLES20.glEnable;
 
 public class Button implements UIObject
 {
-    private static final float BORDER_SIZE_PIXELS = 5;
     private Text text;
     private Plane plane;
-    private Plane border;
 
     private Point3D position;
     private Scale2D size;
-    private float borderSize;
 
     public Button(Font font, String text)
     {
-        this.borderSize = BORDER_SIZE_PIXELS;
         this.size = new Scale2D(200.0f, 200.0f);
         this.position = new Point3D();
         this.text = new Text(font, text, true, true, 200.0f);
-        plane = new Plane(200.0f, 200.0f);
+        plane = new Plane(size);
         plane.setColour(Colour.CYAN);
-        border = new Plane(200.0f, 200.0f);
-        border.setColour(Colour.BLUE);
+        plane.setBorderColour(Colour.BLUE);
 
         updatePosition();
     }
 
     private void updatePosition()
     {
-        final float WIDTH = size.x;
-        final float HEIGHT = size.y;
-        this.border.setWidth(WIDTH);
-        this.border.setHeight(HEIGHT);
-
-        final float WIDTH_INNER = size.x - (borderSize * 2f);
-        final float HEIGHT_INNER = size.y - (borderSize * 2f);
-        this.plane.setWidth(WIDTH_INNER);
-        this.plane.setHeight(HEIGHT_INNER);
-
-        this.border.setPosition(position);
-        this.plane.setPosition(Geometry.translate(position, borderSize, borderSize));
+        this.plane.setPosition(position);
 
         final float TEXT_POS_Y = plane.getPosition().y + (plane.getHeight() / 2.0f) - (text.getHeight() / 2.0f);
         this.text.setPosition(position.x, TEXT_POS_Y);
@@ -123,7 +107,7 @@ public class Button implements UIObject
 
     public void setBorderColour(Colour colour)
     {
-        this.border.setColour(colour);
+        this.plane.setBorderColour(colour);
     }
 
     @Override
@@ -145,7 +129,6 @@ public class Button implements UIObject
     @Override
     public void draw(Camera2D camera) {
         glDisable(GL_DEPTH_TEST);
-        this.border.draw(camera);
         this.plane.draw(camera);
         this.text.draw(camera);
         glEnable(GL_DEPTH_TEST);

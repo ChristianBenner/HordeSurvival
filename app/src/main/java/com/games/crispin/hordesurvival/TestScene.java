@@ -141,20 +141,20 @@ public class TestScene extends Scene {
 
         linearLayout = new LinearLayout(new Point2D(0.0f, 50.0f), Crispin.getSurfaceWidth(), 0.0f, false);
         imageUI = new Image(R.drawable.man);
-        planeUI = new Plane(100.0f, 100.0f);
+        planeUI = new Plane(new Scale2D(100.0f, 100.0f));
         planeUI.setColour(Colour.BLUE);
        // linearLayout.add(imageUI);
        // linearLayout.add(planeUI);
 
         linearLayout.add(new Text(new Font(R.raw.aileron_regular, 64), "Testing text"));
-        for(int i = 0; i < 60; i++)
+        for(int i = 0; i < 30; i++)
         {
             linearLayout.add(new Image(R.drawable.man));
         }
 
         Colour colour = Colour.ORANGE;
         linearLayout.setColour(colour);
-        linearLayout.setOpacity(0.5f);
+       // linearLayout.setOpacity(0.5f);
 
         linearLayout.add(new Button(new Font(R.raw.aileron_regular, 64), "Test Text"));
     }
@@ -187,7 +187,7 @@ public class TestScene extends Scene {
         {
           //  renderObject = OBJModelLoader.readObjFile(R.raw.dragon);
             dinomodel = dinomodelThread.getRenderObject();
-            dinomodel.setPosition(-2.0f, -2.5f, 0.0f);
+            dinomodel.setPosition(-2.0f, 2.0f, 0.0f);
             dinomodel.setScale(0.005f, 0.005f, 0.005f);
             dinomodel.setMaterial(mRed);
             startModelFadeInDino = true;

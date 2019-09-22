@@ -31,7 +31,7 @@ Project Classes:
 			Light	- CHECKLIST(ceb4891)
 		Models >
 			Cube		- CHECKLIST(ceb4891)
-			FontSquare	- CHECKLIST
+			FontSquare	- CHECKLIST(88077fb)
 			Square		- CHECKLIST(ceb4891)
 		Shaders >
 			AttributeColourShader			- CHECKLIST(ceb4891)
@@ -44,7 +44,7 @@ Project Classes:
 			Image			- VERIFY
 			LinearLayout 	- VERIFY
 			Plane			- VERIFY
-			Text			- CHECKLIST
+			Text			- CHECKLIST(88077fb)
 			UIObject		- CHECKLIST(e6aaf73)
 		Utilities >
 			Camera2D		- CHECKLIST(ceb4891)

@@ -2,6 +2,7 @@ package com.games.crispin.crispinmobile.Rendering.UserInterface;
 
 import com.games.crispin.crispinmobile.Geometry.Point2D;
 import com.games.crispin.crispinmobile.Geometry.Point3D;
+import com.games.crispin.crispinmobile.Geometry.Scale2D;
 import com.games.crispin.crispinmobile.Rendering.Data.Colour;
 import com.games.crispin.crispinmobile.Rendering.Utilities.Camera2D;
 
@@ -41,7 +42,8 @@ public class LinearLayout implements UIObject
         this.height = height;
         this.vertical = vertical;
         this.showBackground = false;
-        this.background = new Plane(position, width, height);
+        this.background = new Plane(position, new Scale2D(width, height));
+        background.setBorderColour(Colour.BLACK);
         this.automaticHeight = height == 0.0f;
 
         uiObjects = new ArrayList<>();

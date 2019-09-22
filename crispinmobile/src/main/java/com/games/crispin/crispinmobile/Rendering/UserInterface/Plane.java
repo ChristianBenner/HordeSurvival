@@ -1,28 +1,59 @@
 package com.games.crispin.crispinmobile.Rendering.UserInterface;
 
+import com.games.crispin.crispinmobile.Geometry.Geometry;
 import com.games.crispin.crispinmobile.Geometry.Point2D;
 import com.games.crispin.crispinmobile.Geometry.Point3D;
+import com.games.crispin.crispinmobile.Geometry.Scale2D;
+import com.games.crispin.crispinmobile.Geometry.Scale3D;
 import com.games.crispin.crispinmobile.Rendering.Data.Colour;
 import com.games.crispin.crispinmobile.Rendering.Models.Square;
 import com.games.crispin.crispinmobile.Rendering.Utilities.Camera2D;
 
+import static android.opengl.GLES20.GL_DEPTH_TEST;
+import static android.opengl.GLES20.glDisable;
+import static android.opengl.GLES20.glEnable;
+
 public class Plane implements UIObject
 {
-    // The square render object
-    private Square square;
+    private static final float BORDER_SIZE_PIXELS = 5;
+    private Point2D position;
+    private Scale2D size;
+    private float borderSize;
 
-    public Plane(Point2D position, float width, float height)
+    protected Square plane;
+    private Square border;
+
+    protected Plane(Point2D position, Scale2D size, boolean renderTexels)
     {
-        square = new Square(false);
-        square.setPosition(position);
-        square.setScale(width, height);
+        this.position = position;
+        this.size = size;
+        this.borderSize = BORDER_SIZE_PIXELS;
+
+        plane = new Square(renderTexels);
+        border = new Square(renderTexels);
+        updatePosition();
     }
 
-    public Plane(float width, float height)
+    public Plane(Point2D position, Scale2D size)
     {
-        this(new Point2D(), width, height);
+        this(position, size, false);
     }
 
+    public Plane(Scale2D size)
+    {
+        this(new Point2D(), size);
+    }
+
+    // recalculate positions
+    private void updatePosition()
+    {
+        this.border.setScale(size);
+        this.plane.setScale(new Scale2D(size.x - (borderSize * 2f),
+                size.y - (borderSize * 2f)));
+
+        this.border.setPosition(position);
+        this.plane.setPosition(Geometry.translate(position, borderSize, borderSize));
+    }
 
     /**
      * Set the position of the user interface
@@ -33,7 +64,8 @@ public class Plane implements UIObject
     @Override
     public void setPosition(Point3D position)
     {
-        square.setPosition(position);
+        this.position = position;
+        updatePosition();
     }
 
     /**
@@ -49,7 +81,9 @@ public class Plane implements UIObject
                             float y,
                             float z)
     {
-        square.setPosition(x, y, z);
+        this.position.x = x;
+        this.position.y = y;
+        updatePosition();
     }
 
     /**
@@ -61,7 +95,8 @@ public class Plane implements UIObject
     @Override
     public void setPosition(Point2D position)
     {
-        square.setPosition(position);
+        this.position = position;
+        updatePosition();
     }
 
     /**
@@ -74,7 +109,9 @@ public class Plane implements UIObject
     @Override
     public void setPosition(float x, float y)
     {
-        square.setPosition(x, y);
+        this.position.x = x;
+        this.position.y = y;
+        updatePosition();
     }
 
     /**
@@ -86,7 +123,7 @@ public class Plane implements UIObject
     @Override
     public Point2D getPosition()
     {
-        return square.getPosition();
+        return position;
     }
 
     /**
@@ -98,7 +135,8 @@ public class Plane implements UIObject
     @Override
     public void setWidth(float width)
     {
-        square.setScaleX(width);
+        size.x = width;
+        updatePosition();
     }
 
     /**
@@ -110,7 +148,7 @@ public class Plane implements UIObject
     @Override
     public float getWidth()
     {
-        return square.getScale().x;
+        return size.x;
     }
 
     /**
@@ -122,7 +160,8 @@ public class Plane implements UIObject
     @Override
     public void setHeight(float height)
     {
-        square.setScaleY(height);
+        size.y = height;
+        updatePosition();
     }
 
     /**
@@ -134,7 +173,7 @@ public class Plane implements UIObject
     @Override
     public float getHeight()
     {
-        return square.getScale().y;
+        return size.y;
     }
 
     /**
@@ -146,7 +185,12 @@ public class Plane implements UIObject
     @Override
     public void setColour(Colour colour)
     {
-        this.square.getMaterial().setColour(colour);
+        this.plane.getMaterial().setColour(colour);
+    }
+
+    public void setBorderColour(Colour colour)
+    {
+        this.border.getMaterial().setColour(colour);
     }
 
     /**
@@ -158,7 +202,7 @@ public class Plane implements UIObject
     @Override
     public Colour getColour()
     {
-        return this.square.getMaterial().getColour();
+        return this.plane.getMaterial().getColour();
     }
 
     /**
@@ -170,7 +214,8 @@ public class Plane implements UIObject
     @Override
     public void setOpacity(float alpha)
     {
-        this.square.getMaterial().getColour().setAlpha(alpha);
+        this.plane.getMaterial().getColour().setAlpha(alpha);
+        this.border.getMaterial().getColour().setAlpha(alpha);
     }
 
     /**
@@ -182,7 +227,7 @@ public class Plane implements UIObject
     @Override
     public float getOpacity()
     {
-        return this.square.getMaterial().getColour().getAlpha();
+        return this.plane.getMaterial().getColour().getAlpha();
     }
 
     /**
@@ -193,6 +238,9 @@ public class Plane implements UIObject
     @Override
     public void draw(Camera2D camera)
     {
-        square.render(camera);
+        glDisable(GL_DEPTH_TEST);
+        border.render(camera);
+        plane.render(camera);
+        glEnable(GL_DEPTH_TEST);
     }
 }

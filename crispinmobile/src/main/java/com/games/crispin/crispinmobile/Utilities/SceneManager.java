@@ -2,6 +2,8 @@ package com.games.crispin.crispinmobile.Utilities;
 
 import android.content.Context;
 import android.opengl.GLSurfaceView;
+import android.view.MotionEvent;
+
 import com.games.crispin.crispinmobile.Rendering.Data.Colour;
 
 import javax.microedition.khronos.egl.EGLConfig;
