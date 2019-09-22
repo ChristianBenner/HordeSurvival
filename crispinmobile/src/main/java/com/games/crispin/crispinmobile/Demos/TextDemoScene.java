@@ -37,7 +37,7 @@ public class TextDemoScene extends Scene
 
     // Text string for the text object with standard formatting that has a maximum line length
     private static final String STANDARD_MAX_LENGTH_TEXT_STRING = "This is standard text. It has " +
-            "a max line length so it will wrap.";
+            "a max line length so it will wrap characters when it reaches it's maximum line length";
 
     // Text string for the text object with centered text format
     private static final String CENTERED_TEXT_STRING = "This text has the centered format applied" +
@@ -146,6 +146,9 @@ public class TextDemoScene extends Scene
 
         demo = new Text(AILERON_REGULAR, "Demo Text");
         demo.setPosition(0.0f, 0.0f);
+
+        System.out.println("Standard Text Height: " + standardText.getHeight());
+        System.out.println("Standard Text Max: " + standardTextMaxLength.getHeight());
     }
 
     /**
@@ -169,15 +172,15 @@ public class TextDemoScene extends Scene
     @Override
     public void render()
     {
-/*        standardText.draw(camera2D);
+        standardText.draw(camera2D);
         standardTextMaxLength.draw(camera2D);
         centeredText.draw(camera2D);
         wrappedText.draw(camera2D);
         wrappedCenteredText.draw(camera2D);
-        wiggleText.draw(camera2D);*/
+        wiggleText.draw(camera2D);
 
       //  linearLayout.draw(camera2D);
 
-        demo.draw(camera2D);
+       // demo.draw(camera2D);
     }
 }

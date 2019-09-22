@@ -282,6 +282,7 @@ public class Text implements UIObject
         this.centerText = centerText;
         this.maxLineWidth = maxLineWidth;
         this.scale = scale;
+        this.colour = new Colour(0.0f, 0.0f, 0.0f);
 
         wiggleAmountPixels = 0.0f;
         wiggleTime = 0.0f;
@@ -531,6 +532,12 @@ public class Text implements UIObject
                         width = CHAR_X + CHAR_WIDTH;
                     }
 
+                    // If the character exceeds the known height, recalculate height
+                    if(CHAR_Y + CHAR_HEIGHT >= height)
+                    {
+                        height = CHAR_Y + CHAR_HEIGHT;
+                    }
+
                     FontSquare square = new FontSquare(new Material(theChar.texture, Colour.BLACK),
                             position, new Point2D(CHAR_X, CHAR_Y));
                     square.useCustomShader(textShader);
@@ -543,10 +550,6 @@ public class Text implements UIObject
 
             theY += font.getSize() * scale;
         }
-
-        // The height of the text is the number of lines * the height of one line (the font
-        // size)
-        height = lines.size() * font.getSize() * scale;
 
         // If the text is centered the width is the maximum line length
         if(centerText)
@@ -579,9 +582,6 @@ public class Text implements UIObject
         // Create an array of lines to store words in
         ArrayList<CharLine> lines = new ArrayList<>();
 
-        // Used while calculating the height of the text
-        float heightCalc = 0.0f;
-
         float cursorX = 0.0f;
         CharLine currentLine = new CharLine();
         for(int i = 0; i < textString.length(); i++)
@@ -599,8 +599,6 @@ public class Text implements UIObject
 
                 currentLine = new CharLine();
                 cursorX = 0.0f;
-
-                heightCalc += font.getSize() * scale;
             }
 
             // Calculate the x-position
@@ -626,7 +624,6 @@ public class Text implements UIObject
         if(!currentLine.line.isEmpty())
         {
             lines.add(currentLine);
-            heightCalc += font.getSize() * scale;
         }
 
         squares = new ArrayList<>();
@@ -661,6 +658,12 @@ public class Text implements UIObject
                 // Calculate the height
                 final float CHAR_HEIGHT = FREE_TYPE_CHAR_DATA.getHeight() * scale;
 
+                // If the character exceeds the known height, recalculate height
+                if(CHAR_Y + CHAR_HEIGHT >= height)
+                {
+                    height = CHAR_Y + CHAR_HEIGHT;
+                }
+
                 // Create the render object square
                 FontSquare square = new FontSquare(new Material(FREE_TYPE_CHAR_DATA.texture,
                         Colour.BLACK), position, new Point2D(CHAR_X, CHAR_Y));
@@ -678,7 +681,6 @@ public class Text implements UIObject
             cursorY += font.getSize() * scale;
         }
 
-        height = heightCalc;
         width = maxLineWidth;
     }
 
@@ -700,9 +702,6 @@ public class Text implements UIObject
         // Y position of the cursor
         float cursorY = 0.0f;
 
-        // Used while calculating the height of the text
-        float heightCalc = font.getSize() * scale;
-
         // Iterate through the text string
         for(int i = 0; i < textString.length(); i++)
         {
@@ -723,9 +722,17 @@ public class Text implements UIObject
                             Geometry.translate(squares.get(squareIt).getCharacterOffset(),
                                     0.0f,
                                     font.getSize() * scale));
-                }
 
-                heightCalc += font.getSize() * scale;
+                    // The characters end y co-ordinate
+                    final float CHAR_END_Y = squares.get(squareIt).getCharacterOffset().y +
+                            squares.get(squareIt).getHeight();
+
+                    // If the character exceeds the known height, recalculate height
+                    if(CHAR_END_Y >= height)
+                    {
+                        height = CHAR_END_Y;
+                    }
+                }
             }
 
             // Calculate the x-position
@@ -750,6 +757,12 @@ public class Text implements UIObject
             // Calculate the height
             final float CHAR_HEIGHT = FREE_TYPE_CHAR_DATA.getHeight() * scale;
 
+            // If the character exceeds the known height, recalculate height
+            if(CHAR_Y + CHAR_HEIGHT >= height)
+            {
+                height = CHAR_Y + CHAR_HEIGHT;
+            }
+
             // Create the render object square
             FontSquare square = new FontSquare(new Material(FREE_TYPE_CHAR_DATA.texture,
                     Colour.BLACK),
@@ -765,8 +778,6 @@ public class Text implements UIObject
             // Add the square to the square array for rendering later
             squares.add(square);
         }
-
-        height = heightCalc;
     }
 
     /**

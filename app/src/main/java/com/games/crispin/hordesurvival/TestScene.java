@@ -4,6 +4,7 @@ import com.games.crispin.crispinmobile.Geometry.Point2D;
 import com.games.crispin.crispinmobile.Geometry.Scale2D;
 import com.games.crispin.crispinmobile.Rendering.Models.FontSquare;
 import com.games.crispin.crispinmobile.Rendering.Models.Square;
+import com.games.crispin.crispinmobile.Rendering.UserInterface.Button;
 import com.games.crispin.crispinmobile.Rendering.UserInterface.Image;
 import com.games.crispin.crispinmobile.Rendering.UserInterface.LinearLayout;
 import com.games.crispin.crispinmobile.Rendering.UserInterface.Plane;
@@ -145,6 +146,7 @@ public class TestScene extends Scene {
        // linearLayout.add(imageUI);
        // linearLayout.add(planeUI);
 
+        linearLayout.add(new Text(new Font(R.raw.aileron_regular, 64), "Testing text"));
         for(int i = 0; i < 60; i++)
         {
             linearLayout.add(new Image(R.drawable.man));
@@ -153,6 +155,8 @@ public class TestScene extends Scene {
         Colour colour = Colour.ORANGE;
         linearLayout.setColour(colour);
         linearLayout.setOpacity(0.5f);
+
+        linearLayout.add(new Button(new Font(R.raw.aileron_regular, 64), "Test Text"));
     }
     FontSquare squareTest;
 

@@ -136,6 +136,7 @@ public class LinearLayout implements UIObject
 
     public void add(UIObject uiObject)
     {
+        uiObject.setOpacity(background.getOpacity());
         this.uiObjects.add(uiObject);
 
         if(vertical)

@@ -187,4 +187,26 @@ public class FontSquare extends Square
     {
         return this.characterOffset;
     }
+
+    /**
+     * Get the width of the font square
+     *
+     * @return The font square width
+     * @since 1.0
+     */
+    public float getWidth()
+    {
+        return super.getScale().x;
+    }
+
+    /**
+     * Get the height of the font square
+     *
+     * @return The font square height
+     * @since 1.0
+     */
+    public float getHeight()
+    {
+        return super.getScale().y;
+    }
 }
