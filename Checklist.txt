@@ -61,7 +61,7 @@ Project Classes:
 		OBJModelLoader		- CHECKLIST(ceb4891)
 		OBJThreadTest		- CHECKLIST(ceb4891)
 		Scene				- CHECKLIST(ceb4891)
-		SceneManager		- CHECKLIST(ceb4891)
+		SceneManager		- CHECKLIST(ff35ecc)
 		ShaderCache			- CHECKLIST(ceb4891)
 		TextureCache		- CHECKLIST(ceb4891)
 	Crispin				- CHECKLIST(ceb4891)
