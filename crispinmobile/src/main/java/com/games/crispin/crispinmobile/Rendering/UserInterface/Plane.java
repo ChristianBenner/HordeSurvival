@@ -16,21 +16,22 @@ import static android.opengl.GLES20.glEnable;
 public class Plane implements UIObject
 {
     private static final float BORDER_SIZE_PIXELS = 5;
-    private Point2D position;
-    private Scale2D size;
+    protected Point2D position;
+    protected Scale2D size;
     private float borderSize;
 
     protected Square plane;
     private Square border;
+    private boolean borderEnabled;
 
     protected Plane(Point2D position, Scale2D size, boolean renderTexels)
     {
         this.position = position;
         this.size = size;
         this.borderSize = BORDER_SIZE_PIXELS;
+        this.borderEnabled = false;
 
         plane = new Square(renderTexels);
-        border = new Square(renderTexels);
         updatePosition();
     }
 
@@ -44,15 +45,27 @@ public class Plane implements UIObject
         this(new Point2D(), size);
     }
 
+    public Plane(Scale2D size, boolean renderTexels)
+    {
+        this(new Point2D(), size, renderTexels);
+    }
+
     // recalculate positions
     private void updatePosition()
     {
-        this.border.setScale(size);
-        this.plane.setScale(new Scale2D(size.x - (borderSize * 2f),
-                size.y - (borderSize * 2f)));
-
-        this.border.setPosition(position);
-        this.plane.setPosition(Geometry.translate(position, borderSize, borderSize));
+        if(borderEnabled)
+        {
+            this.border.setScale(size);
+            this.border.setPosition(position);
+            this.plane.setScale(new Scale2D(size.x - (borderSize * 2f),
+                    size.y - (borderSize * 2f)));
+            this.plane.setPosition(Geometry.translate(position, borderSize, borderSize));
+        }
+        else
+        {
+            this.plane.setScale(new Scale2D(size.x, size.y));
+            this.plane.setPosition(position);
+        }
     }
 
     /**
@@ -190,6 +203,12 @@ public class Plane implements UIObject
 
     public void setBorderColour(Colour colour)
     {
+        if(border == null)
+        {
+            border = new Square(false);
+            border.setPosition(position);
+        }
+
         this.border.getMaterial().setColour(colour);
     }
 
@@ -215,7 +234,11 @@ public class Plane implements UIObject
     public void setOpacity(float alpha)
     {
         this.plane.getMaterial().getColour().setAlpha(alpha);
-        this.border.getMaterial().getColour().setAlpha(alpha);
+
+        if (borderEnabled)
+        {
+            this.border.getMaterial().getColour().setAlpha(alpha);
+        }
     }
 
     /**
@@ -239,7 +262,10 @@ public class Plane implements UIObject
     public void draw(Camera2D camera)
     {
         glDisable(GL_DEPTH_TEST);
-        border.render(camera);
+        if(borderEnabled)
+        {
+            border.render(camera);
+        }
         plane.render(camera);
         glEnable(GL_DEPTH_TEST);
     }

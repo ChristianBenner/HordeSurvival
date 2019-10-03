@@ -42,7 +42,7 @@ public class TestScene extends Scene {
     private Material mGreen;
     private Material mBlue;
 
-    private OBJThreadTest dinomodelThread;
+  //  private OBJThreadTest dinomodelThread;
     private RenderObject dinomodel;
     private OBJThreadTest carmodelThread;
     private RenderObject carmodel;
@@ -140,8 +140,8 @@ public class TestScene extends Scene {
         brickMaterial = new Material(new Texture(R.drawable.brick), new Scale2D(0.25f, 0.25f));
        // brickMaterial.ignoreData(Material.IGNORE_TEXEL_DATA_FLAG);
 
-        dinomodelThread = new OBJThreadTest(R.raw.dinomodel);
-        new Thread(dinomodelThread).start();
+//        dinomodelThread = new OBJThreadTest(R.raw.dinomodel);
+   //     new Thread(dinomodelThread).start();
 //        personmodelThread = new OBJThreadTest(R.raw.personmodel);
 //        new Thread(personmodelThread).start();
 //        carmodelThread = new OBJThreadTest(R.raw.shotty);
@@ -217,6 +217,9 @@ public class TestScene extends Scene {
        // linearLayout.add(planeUI);
 
         linearLayout.add(new Text(new Font(R.raw.aileron_regular, 64), "Testing text for the bloody text class"));
+        Text t = new Text(new Font(R.raw.aileron_regular, 64), "Testing Text");
+        t.showBounds();
+        linearLayout.add(t);
         for(int i = 0; i < 30; i++)
         {
             linearLayout.add(new Image(R.drawable.man));
@@ -226,7 +229,7 @@ public class TestScene extends Scene {
         linearLayout.setColour(colour);
        // linearLayout.setOpacity(0.5f);
 
-        linearLayout.add(new Button(new Font(R.raw.aileron_regular, 64), "Test Text"));
+        linearLayout.add(new Button(new Font(R.raw.aileron_regular, 64), "iiiiiii iiiiiii"));
     }
     FontSquare squareTest;
 
@@ -253,31 +256,31 @@ public class TestScene extends Scene {
       //  text.setText("Rotations: " + (int)(angle / 360));
      //   text.setPosition(5.0f, Crispin.getSurfaceHeight() - text.getHeight() - 5f);
 
-        if(dinomodelThread.isComplete() && !onetimeDino)
-        {
-          //  renderObject = OBJModelLoader.readObjFile(R.raw.dragon);
-            dinomodel = dinomodelThread.getRenderObject();
-            dinomodel.setPosition(-2.0f, 2.0f, 0.0f);
-            dinomodel.setScale(0.005f, 0.005f, 0.005f);
-            dinomodel.setMaterial(mRed);
-            startModelFadeInDino = true;
-            onetimeDino = true;
-        }
+//        if(dinomodelThread.isComplete() && !onetimeDino)
+//        {
+//          //  renderObject = OBJModelLoader.readObjFile(R.raw.dragon);
+//            dinomodel = dinomodelThread.getRenderObject();
+//            dinomodel.setPosition(-2.0f, 2.0f, 0.0f);
+//            dinomodel.setScale(0.005f, 0.005f, 0.005f);
+//            dinomodel.setMaterial(mRed);
+//            startModelFadeInDino = true;
+//            onetimeDino = true;
+//        }
+////
+//        if(dinomodelThread.isComplete())
+//        {
+//            dinomodel.setRotation(15.0f, angle, 0.0f);
 //
-        if(dinomodelThread.isComplete())
-        {
-            dinomodel.setRotation(15.0f, angle, 0.0f);
-
-            if(startModelFadeInDino && modelFadeInDino != 1.0f)
-            {
-                modelFadeInDino += 0.03f;
-                if(modelFadeInDino >= 0.5f)
-                {
-                    modelFadeInDino = 0.5f;
-                }
-                dinomodel.getMaterial().getColour().setAlpha(modelFadeInDino);
-            }
-        }
+//            if(startModelFadeInDino && modelFadeInDino != 1.0f)
+//            {
+//                modelFadeInDino += 0.03f;
+//                if(modelFadeInDino >= 0.5f)
+//                {
+//                    modelFadeInDino = 0.5f;
+//                }
+//                dinomodel.getMaterial().getColour().setAlpha(modelFadeInDino);
+//            }
+//        }
 //
 //        if(carmodelThread.isComplete() && !onetimeCar)
 //        {

@@ -1,6 +1,5 @@
 package com.games.crispin.crispinmobile.Rendering.UserInterface;
 
-import com.games.crispin.crispinmobile.Geometry.Geometry;
 import com.games.crispin.crispinmobile.Geometry.Point2D;
 import com.games.crispin.crispinmobile.Geometry.Point3D;
 import com.games.crispin.crispinmobile.Geometry.Scale2D;
@@ -25,6 +24,7 @@ public class Button implements UIObject
         this.size = new Scale2D(200.0f, 200.0f);
         this.position = new Point3D();
         this.text = new Text(font, text, true, true, 200.0f);
+        this.text.showBounds();
         plane = new Plane(size);
         plane.setColour(Colour.CYAN);
         plane.setBorderColour(Colour.BLUE);

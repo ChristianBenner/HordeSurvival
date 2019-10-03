@@ -52,6 +52,11 @@ public class Text implements UIObject
         // Length of the word
         private float length;
 
+        // Length of the word with no spaces in it
+        private float lengthPreSpaces;
+
+        private boolean spaceDetected;
+
         /**
          * Construct a word object.
          *
@@ -63,6 +68,8 @@ public class Text implements UIObject
             characters = new ArrayList<>();
             this.startX = startX;
             length = 0.0f;
+            lengthPreSpaces = 0.0f;
+            spaceDetected = false;
         }
 
         /**
@@ -88,7 +95,21 @@ public class Text implements UIObject
 
             final float X_POS = startX + (character.getBearingX() * scale);
             final float WIDTH = character.getWidth() * scale;
+
+
+            System.out.println("TTT CHAR: " + (char)character.getAscii());
+
+            // If a space has not yet been detected and one has just been found, set the word length
+            // without any spaces to be the current length
+            if(!spaceDetected && character.getAscii() == (byte)32)
+            {
+                lengthPreSpaces = length;
+                System.out.println("TTT Found a space: " + lengthPreSpaces);
+                spaceDetected = true;
+            }
+
             length = X_POS + WIDTH;
+            System.out.println("TTT After Length: " + length);
 
             // The advance for the next character
             startX += (character.getAdvance() >> ADVANCE_TRANSFORMATION) * scale;
@@ -160,6 +181,21 @@ public class Text implements UIObject
 
             // Word doesn't fit on the line, return false
             return false;
+        }
+
+        public void adjustLength()
+        {
+            // Look at the latest word in the line. Remove its length and add its spaceless length
+            if(!words.isEmpty())
+            {
+                if(words.get(words.size() - 1).lengthPreSpaces != 0.0f)
+                {
+                    length -= words.get(words.size() - 1).length;
+                    length += words.get(words.size() - 1).lengthPreSpaces;
+                    System.out.println("TTT Word length: " + words.get(words.size() - 1).length);
+                    System.out.println("TTT Word pre spaces length: " + words.get(words.size() - 1).lengthPreSpaces);
+                }
+            }
         }
     }
 
@@ -254,6 +290,12 @@ public class Text implements UIObject
     // Speed of the wiggle
     private float wiggleSpeed;
 
+    // The text boundaries
+    private Plane bounds;
+
+    // Whether or not to show the text boundaries
+    private boolean showBounds;
+
     /**
      * Construct a text user interface object
      *
@@ -283,6 +325,7 @@ public class Text implements UIObject
         this.maxLineWidth = maxLineWidth;
         this.scale = scale;
         this.colour = new Colour(0.0f, 0.0f, 0.0f);
+        this.showBounds = false;
 
         wiggleAmountPixels = 0.0f;
         wiggleTime = 0.0f;
@@ -363,6 +406,35 @@ public class Text implements UIObject
                 false,
                 0.0f,
                 DEFAULT_SCALE);
+    }
+
+    /**
+     * Enable the texts boundaries to be drawn (this is useful for debugging)
+     *
+     * @since   1.0
+     */
+    public void showBounds()
+    {
+        // Check that bounds exit
+        if(bounds == null)
+        {
+            bounds = new Plane(new Point2D(position.x, position.y), new Scale2D(getWidth(),
+                    getHeight()));
+            bounds.setColour(new Colour(0.0f, 255.0f, 0.0f, 100.0f));
+        }
+
+        showBounds = true;
+    }
+
+    /**
+     * Will disable the text boundaries from being drawn
+     *
+     * @since   1.0
+     */
+    public void hideBounds()
+    {
+        showBounds = false;
+        bounds = null;
     }
 
     /**
@@ -492,6 +564,9 @@ public class Text implements UIObject
             }
             else
             {
+                // The previous line may have had spaces at the end, adjust the length
+                tempLine.adjustLength();
+
                 // Add the temp line
                 lines.add(tempLine);
 
@@ -508,6 +583,23 @@ public class Text implements UIObject
         {
             float theX = centerText ? (maxLineWidth - lines.get(pLine).length) /
                     CENTER_LINE_DIVIDE : 0.0f;
+
+
+
+            ////////////////////////////
+            System.out.print("TTT LINE: '");
+            for(int i = 0; i < lines.get(pLine).words.size(); i++)
+            {
+                for(int w = 0; w < lines.get(pLine).words.get(i).characters.size(); w++)
+                {
+                    System.out.print(String.format("%02X", lines.get(pLine).words.get(i).characters.get(w).getAscii()));
+                }
+            }
+            System.out.println("' x: " + theX);
+            ////////////////////////////
+
+
+
 
             ArrayList<Word> pWords = lines.get(pLine).getWords();
 
@@ -932,6 +1024,12 @@ public class Text implements UIObject
      */
     private void updateSquarePositions()
     {
+        // If the boundaries are enabled, update the position
+        if(showBounds)
+        {
+            bounds.setPosition(position);
+        }
+
         // Iterate through all of the characters updating the text position (they will re-calculate
         // their position based on the text position by using their character offset data)
         for(int i = 0; i < squares.size(); i++)
@@ -1094,6 +1192,12 @@ public class Text implements UIObject
     {
         final boolean REENABLE_DEPTH = Crispin.isDepthEnabled();
         glDisable(GL_DEPTH_TEST);
+
+        // If show bounds is enabled, render the boundary
+        if(showBounds)
+        {
+            bounds.draw(camera);
+        }
 
         // If wiggle is enabled, apply the
         if(wiggle)
