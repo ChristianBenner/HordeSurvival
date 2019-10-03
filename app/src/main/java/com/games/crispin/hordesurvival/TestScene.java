@@ -22,6 +22,8 @@ import com.games.crispin.crispinmobile.Rendering.Utilities.Texture;
 import com.games.crispin.crispinmobile.Utilities.OBJThreadTest;
 import com.games.crispin.crispinmobile.Utilities.Scene;
 
+import java.util.ArrayList;
+
 public class TestScene extends Scene {
     static Scene.Constructor TEST_SCENE_CONSTRUCTION = () -> new TestScene();
 
@@ -54,8 +56,76 @@ public class TestScene extends Scene {
 
     private LinearLayout linearLayout;
 
+    int getNumChars(String word)
+    {
+        int lastIndex = 0;
+        int count = 0;
+
+        while (lastIndex != -1) {
+
+            lastIndex = word.indexOf("\n", lastIndex);
+
+            if (lastIndex != -1) {
+                count++;
+                lastIndex += "\n".length();
+            }
+        }
+
+        return word.length() - count;
+    }
+
     public TestScene()
     {
+        /*
+        SpaceLeft := LineWidth
+        for each Word in Text
+            if (Width(Word) + SpaceWidth) > SpaceLeft
+                insert line break before Word in Text
+                SpaceLeft := LineWidth - Width(Word)
+            else
+                SpaceLeft := SpaceLeft - (Width(Word) + SpaceWidth)
+         */
+
+
+        class Line extends ArrayList<String>
+        {
+
+        }
+
+        final float LINE_WIDTH = 20f;
+        final float SPACE_WIDTH = 1f;
+        float spaceLeft = LINE_WIDTH;
+
+        ArrayList<String> words = new ArrayList<>();
+        words.add("test");
+        words.add("the");
+        words.add("line");
+        words.add("wrap");
+        words.add("algorithm");
+        for(int i = 0; i < words.size(); i++)
+        {
+            if(getNumChars(words.get(i)) + SPACE_WIDTH > spaceLeft)
+            {
+                System.out.println();
+                spaceLeft = LINE_WIDTH - getNumChars(words.get(i));
+            }
+            else
+            {
+                spaceLeft = spaceLeft - (getNumChars(words.get(i)) + SPACE_WIDTH);
+            }
+
+            System.out.print(words.get(i) + " ");
+        }
+        System.out.println();
+
+        String textString = "this is a sentence that will be cut up into multiple words";
+        String[] words2 = textString.split("\\s+");
+        for(int i = 0; i < words2.length; i++)
+        {
+            System.out.println("WORD: " + words2[i] + ": Length[" + words2[i].length() + "]");
+        }
+
+
         // Set the background colour to yellow
         Crispin.setBackgroundColour(Colour.LIGHT_GREY);
 
@@ -146,7 +216,7 @@ public class TestScene extends Scene {
        // linearLayout.add(imageUI);
        // linearLayout.add(planeUI);
 
-        linearLayout.add(new Text(new Font(R.raw.aileron_regular, 64), "Testing text"));
+        linearLayout.add(new Text(new Font(R.raw.aileron_regular, 64), "Testing text for the bloody text class"));
         for(int i = 0; i < 30; i++)
         {
             linearLayout.add(new Image(R.drawable.man));
