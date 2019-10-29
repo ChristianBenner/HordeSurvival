@@ -161,9 +161,9 @@ public class TestScene extends Scene {
         cubeTwo = new Cube(brickMaterial);
         cubeTwo.setPosition(new Point3D(-0.1f, 3.2f, -2.0f));
 
-        cubeThree = new Cube(brickMaterial, true, true);
+        cubeThree = new Cube(mBlue, false, true,false);
         cubeThree.setPosition(new Point3D(2.0f, 3.0f, 0.0f));
-
+       // cubeThree.setRotation(0.0f, 0.0f, 0.0f);
        // Font font = new Font(R.raw.opensans, 64);
 
 /*        text = new Text(font,

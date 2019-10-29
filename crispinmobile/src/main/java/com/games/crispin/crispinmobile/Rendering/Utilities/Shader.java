@@ -57,6 +57,9 @@ public class Shader
     // Texture attribute handle
     protected int textureAttributeHandle;
 
+    // Normal attribute handle
+    protected int normalAttributeHandle;
+
     // Colour uniform handle
     protected int colourUniformHandle;
 
@@ -68,6 +71,18 @@ public class Shader
 
     // UV Multiplier Uniform handle
     protected int uvMultiplierUniformHandle;
+
+    // Projection matrix uniform handle
+    protected int projectionMatrixUniformHandle;
+
+    // View matrix uniform handle
+    protected int viewMatrixUniformHandle;
+
+    // Model matrix uniform handle
+    protected int modelMatrixUniformHandle;
+
+    // Is the shader a lighting shader
+    protected boolean lightingShader;
 
     /**
      * Enable the shader program. Should be used before making render calls to objects that you wish
@@ -170,6 +185,17 @@ public class Shader
     }
 
     /**
+     * Get the normal attribute handle
+     *
+     * @return Integer ID of the normal attribute handle
+     * @since 1.0
+     */
+    public int getNormalAttributeHandle()
+    {
+        return normalAttributeHandle;
+    }
+
+    /**
      * Get the colour uniform handle
      *
      * @return Integer ID of the colour uniform handle
@@ -203,14 +229,69 @@ public class Shader
     }
 
     /**
-     * Get the uv multiplier uniform handle
+     * Get the UV multiplier uniform handle
      *
-     * @return  Integer ID of the uv multipliers uniform handle
+     * @return  Integer ID of the UV multipliers uniform handle
      * @since   1.0
      */
     public int getUvMultiplierUniformHandle()
     {
         return uvMultiplierUniformHandle;
+    }
+
+    /**
+     * Get the projection matrix uniform handle
+     *
+     * @return  Integer ID of the projection matrix uniform handle
+     * @since   1.0
+     */
+    public int getProjectionMatrixUniformHandle()
+    {
+        return projectionMatrixUniformHandle;
+    }
+
+    /**
+     * Get the view matrix uniform handle
+     *
+     * @return  Integer ID of the view matrix uniform handle
+     * @since   1.0
+     */
+    public int getViewMatrixUniformHandle()
+    {
+        return viewMatrixUniformHandle;
+    }
+
+    /**
+     * Get the model matrix uniform handle
+     *
+     * @return  Integer ID of the model matrix uniform handle
+     * @since   1.0
+     */
+    public int getModelMatrixUniformHandle()
+    {
+        return modelMatrixUniformHandle;
+    }
+
+    /**
+     * Set the state of the lighting shader variable. If the shader supports lighting then this
+     * should be set to true, else false.
+     * @param state Set to true if the shader supports lighting. This will enable different upload
+     *              of matrix data to the shader program from the RenderObject.
+     * @since 1.0
+     */
+    public void setLightingShader(boolean state)
+    {
+        lightingShader = state;
+    }
+
+    /**
+     * Is the shader a lighting shader. Get the state of the lighting shader variable.
+     *
+     * @return  True if the shader is a lighting shader, else false
+     */
+    public boolean isLightingShader()
+    {
+        return lightingShader;
     }
 
     /**
@@ -239,14 +320,20 @@ public class Shader
         // to worry about this and can just create new shader's in the constructor of their scenes.
         ShaderCache.registerShader(this);
 
+        lightingShader = false;
+
         // Set the default values of all of the different handles to undefined
         positionAttributeHandle = UNDEFINED_HANDLE;
         colourAttributeHandle = UNDEFINED_HANDLE;
         textureAttributeHandle = UNDEFINED_HANDLE;
+        normalAttributeHandle = UNDEFINED_HANDLE;
         colourUniformHandle = UNDEFINED_HANDLE;
         textureUniformHandle = UNDEFINED_HANDLE;
         matrixUniformHandle = UNDEFINED_HANDLE;
         uvMultiplierUniformHandle = UNDEFINED_HANDLE;
+        projectionMatrixUniformHandle = UNDEFINED_HANDLE;
+        viewMatrixUniformHandle = UNDEFINED_HANDLE;
+        modelMatrixUniformHandle = UNDEFINED_HANDLE;
     }
 
     /**

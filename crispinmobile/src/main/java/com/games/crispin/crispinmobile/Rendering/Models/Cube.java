@@ -23,8 +23,8 @@ public class Cube extends RenderObject
     // The number of colour components in the colour data (3 because its RGB)
     private static final byte NUMBER_COLOUR_COMPONENTS = 3;
 
-    // The number of normal components in the normal data (0 because there is no normal data)
-    private static final byte NUMBER_NORMAL_COMPONENTS = 0;
+    // The number of normal components in the normal data (3 because its xyz)
+    private static final byte NUMBER_NORMAL_COMPONENTS = 3;
 
     // The render method to draw the data with (triangles because that's how the data is
     // constructed)
@@ -168,6 +168,52 @@ public class Cube extends RenderObject
             1.0f, 1.0f,
     };
 
+    // Normal vertex data that contains XYZ components
+    private static final float NORMAL_DATA[] =
+    {
+            -1.0f, 0.0f, 0.0f,
+            -1.0f, 0.0f, 0.0f,
+            -1.0f, 0.0f, 0.0f,
+            0.0f, 0.0f, -1.0f,
+            0.0f, 0.0f, -1.0f,
+            0.0f, 0.0f, -1.0f,
+
+            0.0f, -1.0f, 0.0f,
+            0.0f, -1.0f, 0.0f,
+            0.0f, -1.0f, 0.0f,
+            0.0f, 0.0f, -1.0f,
+            0.0f, 0.0f, -1.0f,
+            0.0f, 0.0f, -1.0f,
+
+            -1.0f, 0.0f, 0.0f,
+            -1.0f, 0.0f, 0.0f,
+            -1.0f, 0.0f, 0.0f,
+            0.0f, -1.0f, 0.0f,
+            0.0f, -1.0f, 0.0f,
+            0.0f, -1.0f, 0.0f,
+
+            0.0f, 0.0f, 1.0f,
+            0.0f, 0.0f, 1.0f,
+            0.0f, 0.0f, 1.0f,
+            1.0f, 0.0f, 0.0f,
+            1.0f, 0.0f, 0.0f,
+            1.0f, 0.0f, 0.0f,
+
+            1.0f, 0.0f, 0.0f,
+            1.0f, 0.0f, 0.0f,
+            1.0f, 0.0f, 0.0f,
+            0.0f, 1.0f, 0.0f,
+            0.0f, 1.0f, 0.0f,
+            0.0f, 1.0f, 0.0f,
+
+            0.0f, 1.0f, 0.0f,
+            0.0f, 1.0f, 0.0f,
+            0.0f, 1.0f, 0.0f,
+            0.0f, 0.0f, 1.0f,
+            0.0f, 0.0f, 1.0f,
+            0.0f, 0.0f, 1.0f
+    };
+
     /**
      * Create a cube with specifically allowed data types. This means that on creation of the object
      * that a controllable amount of vertex data is submitted to a buffer. This can prove efficient
@@ -176,17 +222,19 @@ public class Cube extends RenderObject
      *
      * @param material      A material to apply to the rendered object
      * @param renderTexels  True if the model is allowed to use texel data, else false
+     * @param renderNormals True if the model is allowed to use normal data, else false
      * @param renderColour  True if the model is allowed to use colour data, else false
      * @since   1.0
      */
     public Cube(Material material,
                 boolean renderTexels,
+                boolean renderNormals,
                 boolean renderColour)
     {
         super(POSITION_DATA,
                 renderTexels ? TEXEL_DATA : null,
                 renderColour ? COLOUR_DATA : null,
-                null,
+                renderNormals ? NORMAL_DATA : null,
                 RENDER_METHOD,
                 POSITION_DATA.length / NUMBER_POSITION_COMPONENTS,
                 NUMBER_POSITION_COMPONENTS,
@@ -203,14 +251,17 @@ public class Cube extends RenderObject
      * particle engines as it allows you to prevent the handling of un-required data.
      *
      * @param renderTexels  True if the model is allowed to use texel data, else false
+     * @param renderNormals True if the model is allowed to use normal data, else false
      * @param renderColour  True if the model is allowed to use colour data, else false
      * @since   1.0
      */
     public Cube(boolean renderTexels,
+                boolean renderNormals,
                 boolean renderColour)
     {
         this(new Material(),
                 renderTexels,
+                renderNormals,
                 renderColour);
     }
 
@@ -229,6 +280,7 @@ public class Cube extends RenderObject
     {
         this(material,
                 true,
+                false,
                 false);
     }
 
@@ -246,6 +298,7 @@ public class Cube extends RenderObject
     {
         this(new Material(),
                 true,
+                false,
                 false);
     }
 }

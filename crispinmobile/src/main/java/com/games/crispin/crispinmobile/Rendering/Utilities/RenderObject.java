@@ -9,6 +9,7 @@ import com.games.crispin.crispinmobile.Geometry.Rotation3D;
 import com.games.crispin.crispinmobile.Geometry.Scale2D;
 import com.games.crispin.crispinmobile.Geometry.Scale3D;
 import com.games.crispin.crispinmobile.Rendering.Shaders.AttributeColourShader;
+import com.games.crispin.crispinmobile.Rendering.Shaders.NormalShader;
 import com.games.crispin.crispinmobile.Rendering.Shaders.TextureAttributeColourShader;
 import com.games.crispin.crispinmobile.Rendering.Shaders.TextureShader;
 import com.games.crispin.crispinmobile.Utilities.Logger;
@@ -291,8 +292,8 @@ public class RenderObject
         resolveAttributeOffsets(attributeOrder, numVerticesPerGroup);
 
         final int POS_BUFFER_LENGTH = positionBuffer == null ? 0 : positionBuffer.length;
-        final int COL_BUFFER_LENGTH = texelBuffer == null ? 0 : texelBuffer.length;
-        final int TEX_BUFFER_LENGTH = colourBuffer == null ? 0 : colourBuffer.length;
+        final int TEX_BUFFER_LENGTH = texelBuffer == null ? 0 : texelBuffer.length;
+        final int COL_BUFFER_LENGTH = colourBuffer == null ? 0 : colourBuffer.length;
         final int NOR_BUFFER_LENGTH = normalBuffer == null ? 0 : normalBuffer.length;
 
         // Vertex data length
@@ -310,7 +311,7 @@ public class RenderObject
                     0,
                     vertexData,
                     0,
-                    positionBuffer.length);
+                    POS_BUFFER_LENGTH);
         }
 
         // If the texel buffer has been specified, add it to the vertex data buffer
@@ -320,7 +321,7 @@ public class RenderObject
                     0,
                     vertexData,
                     POS_BUFFER_LENGTH,
-                    texelBuffer.length);
+                    TEX_BUFFER_LENGTH);
         }
 
         // If the colour buffer has been specified, add it to the vertex data buffer
@@ -328,8 +329,8 @@ public class RenderObject
         {
             System.arraycopy(colourBuffer,
                     0, vertexData,
-                    POS_BUFFER_LENGTH + COL_BUFFER_LENGTH,
-                    colourBuffer.length);
+                    POS_BUFFER_LENGTH + TEX_BUFFER_LENGTH,
+                    COL_BUFFER_LENGTH);
         }
 
         // If the normal buffer has been specified, add it to the vertex data buffer
@@ -338,9 +339,8 @@ public class RenderObject
             System.arraycopy(normalBuffer,
                     0,
                     vertexData,
-                    POS_BUFFER_LENGTH + COL_BUFFER_LENGTH +
-                            TEX_BUFFER_LENGTH + NOR_BUFFER_LENGTH,
-                    normalBuffer.length);
+                    POS_BUFFER_LENGTH + COL_BUFFER_LENGTH + TEX_BUFFER_LENGTH,
+                    NOR_BUFFER_LENGTH);
         }
 
         // Initialise a vertex byte buffer for the shape float array
@@ -878,7 +878,7 @@ public class RenderObject
         }
 
         // If the shader texture uniform handle is not invalid, upload the texture unit
-        if(shader.getTextureUniformHandle() !=INVALID_UNIFORM_HANDLE && material.hasTexture())
+        if(shader.getTextureUniformHandle() != INVALID_UNIFORM_HANDLE && material.hasTexture())
         {
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, material.getTexture().getId());
@@ -934,27 +934,51 @@ public class RenderObject
 
         shader.enableIt();
 
-        float[] modelViewMatrix = new float[NUM_VALUES_PER_VIEW_MATRIX];
-        Matrix.multiplyMM(modelViewMatrix,
-                0,
-                camera.getViewMatrix(),
-                0,
-                modelMatrix,
-                0);
+        // Matrix upload for a lighting enabled shader is slightly different
+        if(shader.isLightingShader())
+        {
+            glUniformMatrix4fv(shader.getProjectionMatrixUniformHandle(),
+                    UNIFORM_UPLOAD_COUNT,
+                    false,
+                    camera.getPerspectiveMatrix(),
+                    0);
 
-        float[] modelViewProjectionMatrix = new float[NUM_VALUES_PER_VIEW_MATRIX];
-        Matrix.multiplyMM(modelViewProjectionMatrix,
-                0,
-                camera.getPerspectiveMatrix(),
-                0,
-                modelViewMatrix,
-                0);
+            glUniformMatrix4fv(shader.getViewMatrixUniformHandle(),
+                    UNIFORM_UPLOAD_COUNT,
+                    false,
+                    camera.getViewMatrix(),
+                    0);
 
-        glUniformMatrix4fv(shader.getMatrixUniformHandle(),
-                UNIFORM_UPLOAD_COUNT,
-                false,
-                modelViewProjectionMatrix,
-                0);
+            glUniformMatrix4fv(shader.getModelMatrixUniformHandle(),
+                    UNIFORM_UPLOAD_COUNT,
+                    false,
+                    modelMatrix,
+                    0);
+        }
+        else
+        {
+            float[] modelViewMatrix = new float[NUM_VALUES_PER_VIEW_MATRIX];
+            Matrix.multiplyMM(modelViewMatrix,
+                    0,
+                    camera.getViewMatrix(),
+                    0,
+                    modelMatrix,
+                    0);
+
+            float[] modelViewProjectionMatrix = new float[NUM_VALUES_PER_VIEW_MATRIX];
+            Matrix.multiplyMM(modelViewProjectionMatrix,
+                    0,
+                    camera.getPerspectiveMatrix(),
+                    0,
+                    modelViewMatrix,
+                    0);
+
+            glUniformMatrix4fv(shader.getMatrixUniformHandle(),
+                    UNIFORM_UPLOAD_COUNT,
+                    false,
+                    modelViewProjectionMatrix,
+                    0);
+        }
 
         // If the shader colour uniform handle is not invalid, upload the colour data
         if(shader.getColourUniformHandle() != INVALID_UNIFORM_HANDLE)
@@ -1074,13 +1098,17 @@ public class RenderObject
         // allocate one
         if(!hasCustomShader)
         {
+            // Check that the object has all of the components required to render normal data
+            final boolean supportsNormals = !material.isIgnoringNormalData() &&
+                    elementsPerNormal != 0;
+
             // Check that the object has all of the components required to render a texture
-            boolean supportsTexture = material.hasTexture() &&
+            final boolean supportsTexture = material.hasTexture() &&
                     (elementsPerTexel != 0) &&
                     !material.isIgnoringTexelData();
 
             // Check if the object has all of the components required to render per vertex colour
-            boolean supportsColourPerAttrib = (elementsPerColour != 0) &&
+            final boolean supportsColourPerAttrib = (elementsPerColour != 0) &&
                     !material.isIgnoringColourData();
 
 //            // Determine the best shader to used depending on the material
@@ -1099,7 +1127,24 @@ public class RenderObject
 //            else
 
             // Select a shader based on what data attributes and uniforms the object supports
-            if(supportsColourPerAttrib && supportsTexture)
+            if(supportsNormals && supportsTexture && supportsColourPerAttrib)
+            {
+                System.out.println("NORMAL, TEXTURE AND COLOUR SHADER");
+            }
+            else if(supportsNormals && supportsTexture)
+            {
+                System.out.println("NORMAL AND TEXTURE SHADER");
+            }
+            else if(supportsNormals && supportsColourPerAttrib)
+            {
+                System.out.println("NORMAL AND COLOUR SHADER");
+            }
+            else if(supportsNormals)
+            {
+                System.out.println("NORMAL SHADER");
+                shader = new NormalShader();
+            }
+            else if(supportsColourPerAttrib && supportsTexture)
             {
                 // A colour attribute and texture shader
                 shader = new TextureAttributeColourShader();
@@ -1148,6 +1193,12 @@ public class RenderObject
         if(!material.isIgnoringColourData() && elementsPerColour != 0)
         {
             handleColourDataAttribute(enable);
+        }
+
+        // If the material is not ignoring normal data, enable the normal data attribute
+        if(!material.isIgnoringNormalData() && elementsPerNormal != 0)
+        {
+            handleNormalDataAttribute(enable);
         }
     }
 
@@ -1234,6 +1285,35 @@ public class RenderObject
         else
         {
             glDisableVertexAttribArray(shader.getColourAttributeHandle());
+        }
+    }
+
+    /**
+     * Enable or disable the normal attribute. This will upload the vertex buffer and tell OpenGL SL
+     * how to read the normal data from it.
+     *
+     * @param enable    True will enable the attribute, false will disable the attribute
+     * @since 1.0
+     */
+    private void handleNormalDataAttribute(boolean enable)
+    {
+        // Enable or disable the colour data attribute
+        if(enable)
+        {
+            // Enable attribute colour data
+            vertexBuffer.position(normalDataOffset);
+            glEnableVertexAttribArray(shader.getNormalAttributeHandle());
+            glVertexAttribPointer(shader.getNormalAttributeHandle(),
+                    elementsPerNormal,
+                    GL_FLOAT,
+                    true,
+                    totalStrideBytes,
+                    vertexBuffer);
+            vertexBuffer.position(0);
+        }
+        else
+        {
+            glDisableVertexAttribArray(shader.getNormalAttributeHandle());
         }
     }
 

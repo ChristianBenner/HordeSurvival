@@ -37,6 +37,9 @@ public class Material
     // Flag position for ignoring colour data
     public static final int IGNORE_COLOUR_DATA_FLAG = 4;
 
+    // Flag position for ignoring normal data
+    public static final int IGNORE_NORMAL_DATA_FLAG = 8;
+
     // The material texture
     private Texture texture;
 
@@ -54,6 +57,9 @@ public class Material
 
     // Ignore colour data in rendering
     private boolean ignoreColourData;
+
+    // Ignore normal data in rendering
+    private boolean ignoreNormalData;
 
     /**
      * Construct the material object. Includes all of the material data elements. The constructor
@@ -78,6 +84,7 @@ public class Material
         this.ignorePositionData = false;
         this.ignoreTexelData = false;
         this.ignoreColourData = false;
+        this.ignoreNormalData = false;
     }
 
     /**
@@ -213,6 +220,12 @@ public class Material
         {
             setIgnoreColourData(true);
         }
+
+        // Check if the data flag matches the ignore normal data flag
+        if((dataFlags & Material.IGNORE_NORMAL_DATA_FLAG) == Material.IGNORE_NORMAL_DATA_FLAG)
+        {
+            setIgnoreNormalData(true);
+        }
     }
 
     /**
@@ -279,6 +292,28 @@ public class Material
     public boolean isIgnoringColourData()
     {
         return ignoreColourData;
+    }
+
+    /**
+     * Set the state of ignoring normal data
+     *
+     * @param state The state of ignoring normal data
+     * @since       1.0
+     */
+    public void setIgnoreNormalData(boolean state)
+    {
+        ignoreNormalData = state;
+    }
+
+    /**
+     * Get the state of ignoring normal data
+     *
+     * @return  A boolean of the state of ignoring normal data
+     * @since   1.0
+     */
+    public boolean isIgnoringNormalData()
+    {
+        return ignoreNormalData;
     }
 
     /**
