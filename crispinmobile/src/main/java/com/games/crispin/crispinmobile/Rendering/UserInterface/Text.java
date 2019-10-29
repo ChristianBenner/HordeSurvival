@@ -872,6 +872,35 @@ public class Text implements UIObject
         }
     }
 
+    float getWordWidth(String word)
+    {
+        float wordWidth = 0.0f;
+        float cursorX = 0.0f;
+
+        for(int i = 0; i < word.length(); i++)
+        {
+            FreeTypeCharData FTCD = font.getCharacter(word.charAt(i));
+
+            // Calculate the x-position
+            final float CHAR_X = cursorX + FTCD.getBearingX() * scale;
+
+            // Move the cursor along now that we have calculated the x position
+            cursorX += (FTCD.getAdvance() >> ADVANCE_TRANSFORMATION) * scale;
+
+            // Calculate the width
+            final float CHAR_WIDTH = FTCD.getWidth() * scale;
+
+            // If the character exceeds the known width, set its pos + width as the new width
+            if(CHAR_X + CHAR_WIDTH >= width)
+            {
+                wordWidth = CHAR_X + CHAR_WIDTH +
+                        ((FTCD.getAdvance() >> ADVANCE_TRANSFORMATION) * scale);
+            }
+        }
+
+        return wordWidth;
+    }
+
     /**
      * Wrapped and centered sets text width to the length of the line as you are centering in
      * regards to the line length
@@ -881,6 +910,38 @@ public class Text implements UIObject
      */
     private void generateText()
     {
+        /*
+        SpaceLeft := LineWidth
+        for each Word in Text
+            if (Width(Word) + SpaceWidth) > SpaceLeft
+                insert line break before Word in Text
+                SpaceLeft := LineWidth - Width(Word)
+            else
+                SpaceLeft := SpaceLeft - (Width(Word) + SpaceWidth)
+         */
+
+        float spaceLeft = maxLineWidth;
+        String[] words = textString.split("\\s+");
+        FreeTypeCharData SDC = font.getCharacter(' ');
+
+        ArrayList<String> lines = new ArrayList<>();
+
+        final float SPACE_WIDTH = SDC.getWidth() + SDC.getAdvance();
+        for(int i = 0; i < words.length; i++)
+        {
+            final float WORD_WIDTH = getWordWidth(words[i]);
+
+            if(WORD_WIDTH + SPACE_WIDTH > spaceLeft)
+            {
+                // insert line break
+                spaceLeft = maxLineWidth - WORD_WIDTH;
+            }
+            else
+            {
+                spaceLeft = spaceLeft - (WORD_WIDTH + spaceLeft);
+            }
+        }
+
         // If word wrapping is enabled then use the word wrap function, otherwise use the non-word
         // wrap functions.
         if(wrapWords)

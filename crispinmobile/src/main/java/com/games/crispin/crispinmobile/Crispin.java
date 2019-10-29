@@ -4,6 +4,7 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.opengl.GLSurfaceView;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.FrameLayout;
 
 import com.games.crispin.crispinmobile.Rendering.Data.Colour;
 import com.games.crispin.crispinmobile.Utilities.Logger;
@@ -54,8 +55,8 @@ public class Crispin
      *                              loading in a texture file for example).
      * @param startSceneConstructor A reference to the scene constructor lambda. This will be used
      *                              to construct the provided scene. It is best for the engine to
-     *                              control how and when the scenes are freeTypeInitialised so that the
-     *                              user doesn't have to worry about memory management and can
+     *                              control how and when the scenes are freeTypeInitialised so that
+     *                              the user doesn't have to worry about memory management and can
      *                              switch from a global/static context.
      * @see                         AppCompatActivity
      * @see                         Scene.Constructor
@@ -65,6 +66,33 @@ public class Crispin
                             Scene.Constructor startSceneConstructor)
     {
         crispinInstance = new Crispin(appCompatActivity);
+        crispinInstance.sceneManager.setStartScene(startSceneConstructor);
+    }
+
+    /**
+     * Initialises the Crispin engine. Creates a graphical surface and components that enables the
+     * engine users to position an application that utilises GPU hardware.
+     *
+     * @param appCompatActivity     Reference to the application that called the function. It is
+     *                              used so that the engine can take control of what is shown. The
+     *                              engine also uses it to retrieve the application context and pass
+     *                              it down to other components or scenes (this can be useful when
+     *                              loading in a texture file for example).
+     * @param frameLayout           The frame layout to place the graphical view onto
+     * @param startSceneConstructor A reference to the scene constructor lambda. This will be used
+     *                              to construct the provided scene. It is best for the engine to
+     *                              control how and when the scenes are freeTypeInitialised so that
+     *                              the user doesn't have to worry about memory management and can
+     *                              switch from a global/static context.
+     * @see                         AppCompatActivity
+     * @see                         Scene.Constructor
+     * @since                       1.0
+     */
+    public static void init(AppCompatActivity appCompatActivity,
+                            FrameLayout frameLayout,
+                            Scene.Constructor startSceneConstructor)
+    {
+        crispinInstance = new Crispin(appCompatActivity, frameLayout);
         crispinInstance.sceneManager.setStartScene(startSceneConstructor);
     }
 
@@ -351,6 +379,61 @@ public class Crispin
 
             // Set the application view to the graphics view
             appCompatActivity.setContentView(glSurfaceView);
+        }
+        else
+        {
+            // Set the application view to the graphics view
+            appCompatActivity.setContentView(R.layout.activity_unsupported_device);
+        }
+    }
+
+    /**
+     * Constructs the Crispin engine object. The object handles the major components to the
+     * engine such as the graphics surface and the scene manager. Constructor is private because
+     * only one should exist at one time. Construction of the object is made strict through a static
+     * initialisation function. If the engine fails to position correctly it will use Android UI to
+     * inform the application user of errors.
+     *
+     * @param appCompatActivity Reference to the application that called the function. It is used so
+     *                          that the engine can take control of what is shown. The engine also
+     *                          uses it to retrieve the application context and pass it down to
+     *                          other components or scenes (this can be useful when loading in a
+     *                          texture file for example).
+     * @param frameLayout       The frame layout to add the graphical view onto
+     * @see                     AppCompatActivity
+     * @see                     Scene.Constructor
+     * @see                     #init(AppCompatActivity, Scene.Constructor)
+     * @since                   1.0
+     */
+    private Crispin(AppCompatActivity appCompatActivity,
+                    FrameLayout frameLayout)
+    {
+        // Get the application context
+        this.CONTEXT = appCompatActivity.getApplicationContext();
+
+        // Check if OpenGL ES is supported before continuing
+        if(isOpenGLESSupported())
+        {
+            // Use context to initialise a GLSurfaceView
+            glSurfaceView = new GLSurfaceView(CONTEXT);
+
+            // Tell the application to use OpenGL ES 3.0
+            glSurfaceView.setEGLContextClientVersion(OPENGL_ES_TARGET_VERSION);
+
+            // Get the scene manager instance
+            sceneManager = SceneManager.getInstance();
+
+            // Get the display refresh rate
+            final float DISPLAY_REFRESH_RATE = appCompatActivity.getWindowManager().
+                    getDefaultDisplay().getRefreshRate();
+
+            sceneManager.setTargetRefreshRate(DISPLAY_REFRESH_RATE);
+
+            // Set the renderer to the scene manager
+            glSurfaceView.setRenderer(sceneManager);
+
+            // Set the application view to the graphics view
+            frameLayout.addView(glSurfaceView);
         }
         else
         {

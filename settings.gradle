@@ -1,1 +1,1 @@
-include ':app', ':crispinmobile'
+include ':app', ':CrispinMobile'

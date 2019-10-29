@@ -146,7 +146,7 @@ public class TestScene extends Scene {
        // linearLayout.add(imageUI);
        // linearLayout.add(planeUI);
 
-        Text t = new Text(new Font(R.raw.aileron_regular, 64), "Testing Text");
+        Text t = new Text(new Font(R.raw.opensans, 64), "Testing Text");
         t.showBounds();
         linearLayout.add(t);
         for(int i = 0; i < 30; i++)
@@ -158,7 +158,7 @@ public class TestScene extends Scene {
         linearLayout.setColour(colour);
        // linearLayout.setOpacity(0.5f);
 
-        linearLayout.add(new Button(new Font(R.raw.aileron_regular, 64), "iiiiiii iiiiiii"));
+        linearLayout.add(new Button(new Font(R.raw.opensans, 64), "iiiiiii iiiiiii"));
     }
     FontSquare squareTest;
 
