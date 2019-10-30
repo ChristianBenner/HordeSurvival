@@ -2,6 +2,7 @@ package com.games.crispin.hordesurvival;
 
 import com.games.crispin.crispinmobile.Geometry.Point2D;
 import com.games.crispin.crispinmobile.Geometry.Scale2D;
+import com.games.crispin.crispinmobile.Geometry.Vector3D;
 import com.games.crispin.crispinmobile.Rendering.Models.FontSquare;
 import com.games.crispin.crispinmobile.Rendering.Models.Square;
 import com.games.crispin.crispinmobile.Rendering.UserInterface.Button;
@@ -19,6 +20,7 @@ import com.games.crispin.crispinmobile.Rendering.Utilities.Material;
 import com.games.crispin.crispinmobile.Rendering.Utilities.RenderObject;
 import com.games.crispin.crispinmobile.Rendering.UserInterface.Text;
 import com.games.crispin.crispinmobile.Rendering.Utilities.Texture;
+import com.games.crispin.crispinmobile.Utilities.OBJModelLoader;
 import com.games.crispin.crispinmobile.Utilities.OBJThreadTest;
 import com.games.crispin.crispinmobile.Utilities.Scene;
 
@@ -56,6 +58,7 @@ public class TestScene extends Scene {
 
     private LinearLayout linearLayout;
 
+    private RenderObject cubeRenderObj;
     int getNumChars(String word)
     {
         int lastIndex = 0;
@@ -158,11 +161,17 @@ public class TestScene extends Scene {
 
   //3      renderObject.setMaterial(brickMaterial);
 
+        System.out.println("CUBE LOAD");
+        cubeRenderObj = OBJModelLoader.readObjFile(R.raw.monkey);
+        cubeRenderObj.setPosition(0.0f, 3.0f, 0.0f);
+        System.out.println("CUBE LOAD END");
+       // cubeRenderObj.setMaterial(mBlue);
+
         cubeTwo = new Cube(brickMaterial);
         cubeTwo.setPosition(new Point3D(-0.1f, 3.2f, -2.0f));
 
         cubeThree = new Cube(mBlue, false, true,false);
-        cubeThree.setPosition(new Point3D(2.0f, 3.0f, 0.0f));
+        cubeThree.setPosition(new Point3D(0.0f, 4.0f, 0.0f));
        // cubeThree.setRotation(0.0f, 0.0f, 0.0f);
        // Font font = new Font(R.raw.opensans, 64);
 
@@ -244,13 +253,44 @@ public class TestScene extends Scene {
     float modelFadeInPerson = 0.0f;
     boolean startModelFadeInPerson = false;
 
+    float cameraAngle = 0.0f;
+    boolean cubeXUp = true;
+    float cubeX = 0.0f;
     @Override
     public void update(float deltaTime)
     {
         angle += 1.0f;
         cubeTwo.setRotation(0.0f, angle, angle);
-        cubeThree.setRotation( angle, 0.0f, angle);
+       // cubeThree.setRotation( angle, 0.0f, angle);
+
+        if(cubeXUp)
+        {
+            cubeX += 0.05f;
+        }
+        else
+        {
+            cubeX -= 0.05f;
+        }
+
+        if(cubeX >= 1.0f)
+        {
+            cubeXUp = false;
+        }
+        else if(cubeX <= -1.0f)
+        {
+            cubeXUp = true;
+        }
+
+        cubeThree.setRotation(0.0f, 45.0f, 0.0f);
+        cubeThree.setPosition(cubeX, 0.0f, 0.0f);
+
+        //cubeRenderObj.setRotation(0.0f, 45.0f, 0.0f);
+        //cubeRenderObj.setPosition(cubeX, 0.0f, 0.0f);
+        cubeRenderObj.setRotation( angle, 0.0f, angle);
+
         square.setRotation(angle, 0.0f, angle);
+
+        camera.setDirection(new Vector3D(cameraAngle, 0.0f, -1.0f));
 
       //  text.setText("Rotations: " + (int)(angle / 360));
      //   text.setPosition(5.0f, Crispin.getSurfaceHeight() - text.getHeight() - 5f);
@@ -347,7 +387,8 @@ public class TestScene extends Scene {
         brickMaterial.setColour(new Colour(colourR, 1.0f, 1.0f));
 
         // Draw the cube
-        cubeThree.render(camera);
+    //    cubeThree.render(camera);
+        cubeRenderObj.render(camera);
         square.render(camera);
      //   texSquare.render(camera2D);
        // squareTest.render(camera2D);

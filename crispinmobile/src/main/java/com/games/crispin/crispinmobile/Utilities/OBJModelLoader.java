@@ -417,6 +417,8 @@ public class OBJModelLoader
                 dataStartIndex = NO_START_INDEX;
 
                 countPositionDataElements = false;
+                countTexelDataElements = false;
+                countNormalDataElements = false;
                 countFaceDataPerLine = false;
             }
 
