@@ -159,11 +159,16 @@ public class TestScene extends Scene {
         mBlue = new Material();
         mBlue.setColour(Colour.BLUE);
 
+        Material coloured = new Material();
+        coloured.setColour(new Colour(0.6f, 0.6f, 1.0f));
+
   //3      renderObject.setMaterial(brickMaterial);
 
         System.out.println("CUBE LOAD");
-        cubeRenderObj = OBJModelLoader.readObjFile(R.raw.monkey);
-        cubeRenderObj.setPosition(0.0f, 3.0f, 0.0f);
+        cubeRenderObj = OBJModelLoader.readObjFile(R.raw.dino2);
+        cubeRenderObj.setScale(0.3f, 0.3f, 0.3f);
+        cubeRenderObj.setPosition(0.0f, 2.0f, 0.0f);
+        cubeRenderObj.setMaterial(coloured);
         System.out.println("CUBE LOAD END");
        // cubeRenderObj.setMaterial(mBlue);
 
@@ -171,7 +176,7 @@ public class TestScene extends Scene {
         cubeTwo.setPosition(new Point3D(-0.1f, 3.2f, -2.0f));
 
         cubeThree = new Cube(mBlue, false, true,false);
-        cubeThree.setPosition(new Point3D(0.0f, 4.0f, 0.0f));
+        cubeThree.setPosition(new Point3D(0.0f, 3.0f, 0.0f));
        // cubeThree.setRotation(0.0f, 0.0f, 0.0f);
        // Font font = new Font(R.raw.opensans, 64);
 
@@ -286,7 +291,7 @@ public class TestScene extends Scene {
 
         //cubeRenderObj.setRotation(0.0f, 45.0f, 0.0f);
         //cubeRenderObj.setPosition(cubeX, 0.0f, 0.0f);
-        cubeRenderObj.setRotation( angle, 0.0f, angle);
+        cubeRenderObj.setRotation( 0.0f, angle, 0.0f);
 
         square.setRotation(angle, 0.0f, angle);
 

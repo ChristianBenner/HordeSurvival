@@ -2,63 +2,51 @@ precision mediump float;
 
 uniform vec4 uColour;
 
-varying vec3 vFragPos;
 varying vec3 vNormal;
 varying vec3 vLightDir;
 varying vec3 vPosition;
-
-
-/*
-varying vec3 vPosition;
-varying vec3 vLightPos;
-varying vec3 vNormal;*/
+varying vec3 vEyeDirection;
 
 void main()
 {
-/*    // Light colour
-    float intensity = 0.3f;
-    vec3 lightColour = vec3(1.0f, 1.0f, 1.0f);
-    vec4 objectColour = vec4(1.0f, 0.0f, 0.0f, 1.0f);
-
-    // Ambient light calculation
-    float ambientStrength = 0.3;
-    vec3 ambient = ambientStrength * lightColour;
-
-    vec4 result = vec4(ambient, 1.0f) * objectColour;
-    gl_FragColor = result;
-
-    vec3 norm = normalize(vNormal);
-    vec3 lightDir = normalize(vLightDir - vFragPos);
-
-    float diff = max(dot(norm, lightDir), 0.0f);
-    vec3 diffuse = diff * lightColour / (intensity*intensity);
-
-    gl_FragColor = vec4(diffuse, 1.0f) * objectColour;
-  //  gl_FragColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);*/
-
-
-
+    // Diffuse
+    vec3 lightColour = vec3(1.0, 1.0, 1.0);
+    vec3 ambientColour = vec3(0.5, 0.5, 0.5) * uColour.rgb;
+    vec3 diffuseColour = vec3(1.0f, 1.0f, 1.0f);
+    vec3 specularColour = vec3(1.0, 1.0, 1.0);
+    float lightIntensity = 65.0f;
 
     float distance = length(vLightDir - vPosition);
-    float lightIntensity = 65.0f;
     vec3 n = normalize(vNormal);
     vec3 l = normalize(vLightDir);
-    vec3 lightColour = vec3(1.0, 1.0, 1.0);
+
     float cosTheta = clamp(dot(n, l), 0.0f, 1.0f);
-    gl_FragColor = vec4(lightColour * lightIntensity * cosTheta / (distance*distance), 1.0);
 
- //   gl_FragColor = vec4(cosTheta, cosTheta, cosTheta, 1.0f);
- //   gl_FragColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);
+    // Specular
+    vec3 E = normalize(vEyeDirection);
+    vec3 R = reflect(-vLightDir, vNormal);
+    float cosAlpha = clamp(dot(E, R), 0.0, 1.0);
 
+    vec3 colour = uColour.rgb;
 
+   gl_FragColor = vec4(ambientColour +
+        diffuseColour * lightColour * lightIntensity * cosTheta / (distance*distance) +
+        specularColour * lightColour * lightIntensity * pow(cosAlpha, 5.0) / (distance*distance), 1.0);
 
-/*    vec3 pos = vLightDir;
-    vec3 lightColour = vec3(1.0f, 1.0f, 1.0f);
-    float intensity = 5.0f;
-    float distance = length(pos - vPosition);
-    vec3 lightVector = normalize(pos - vPosition);
-    float diffuse = max(dot(vNormal, lightVector) * 1.0f, 0.1);
-    diffuse = diffuse * (1.0 / (1.0 + ((1.0/intensity) * distance * distance)));
-    diffuse = diffuse * 10.0;
-    gl_FragColor = vec4(lightColour * max(0.2f, diffuse), 1.0f);*/
+  //  gl_FragColor = vec4(uColour.rgb + ambientColour, uColour.a) * vec4(lightColour * lightIntensity * cosTheta / (distance*distance), 1.0);
+
+/*    vec4 specular = vec4(1.0f, 1.0f, 1.0f, 1.0f);
+    float shininess = 1.0f;
+    vec4 spec = vec4(0.0);
+    vec3 n2 = normalize(vNormal);
+    vec3 e2 = normalize(vEyeDirection);
+    float intensity2 = max(dot(n2, vLightDir), 0.0);
+
+    if(intensity2 > 0.0) {
+        vec3 h2 = normalize(vLightDir + e2);
+        float intSpec = max(dot(h2, n2), 0.0);
+        spec = specular * pow(intSpec, shininess);
+    }
+
+    gl_FragColor =max(intensity2 * spec, vec4(ambientColour, 1.0f));*/
 }
