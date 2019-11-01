@@ -66,6 +66,9 @@ public class Shader
     // Texture uniform handle
     protected int textureUniformHandle;
 
+    // Specular map uniform handle
+    protected int specularMapUniformHandle;
+
     // Matrix uniform handle
     protected int matrixUniformHandle;
 
@@ -218,6 +221,16 @@ public class Shader
     }
 
     /**
+     * Get the specular map uniform handle
+     *
+     * @return Integer ID of the specular map uniform handle
+     * @since 1.0
+     */
+    public int getSpecularMapUniformHandle()
+    {
+        return specularMapUniformHandle;
+    }
+    /**
      * Get the matrix uniform handle
      *
      * @return  Integer ID of the matrix uniform handle
@@ -329,6 +342,7 @@ public class Shader
         normalAttributeHandle = UNDEFINED_HANDLE;
         colourUniformHandle = UNDEFINED_HANDLE;
         textureUniformHandle = UNDEFINED_HANDLE;
+        specularMapUniformHandle = UNDEFINED_HANDLE;
         matrixUniformHandle = UNDEFINED_HANDLE;
         uvMultiplierUniformHandle = UNDEFINED_HANDLE;
         projectionMatrixUniformHandle = UNDEFINED_HANDLE;

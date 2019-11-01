@@ -24,25 +24,31 @@ public class Square extends RenderObject
 
     // Position vertex data that contains XY components
     private static final float[] POSITION_DATA =
-    {
-            0.0f, 1.0f,
-            0.0f, 0.0f,
-            1.0f, 0.0f,
-            1.0f, 1.0f,
-            0.0f, 1.0f,
-            1.0f, 0.0f
-    };
+            {
+                    0.0f, 1.0f,
+                    0.0f, 0.0f,
+                    1.0f, 0.0f,
+                    1.0f, 1.0f,
+                    0.0f, 1.0f,
+                    1.0f, 0.0f
+            };
 
     // Texel vertex data that contains ST components
     private static final float[] TEXEL_DATA =
-    {
-            0.0f, 0.0f,
-            0.0f, 1.0f,
-            1.0f, 1.0f,
-            1.0f, 0.0f,
-            0.0f, 0.0f,
-            1.0f, 1.0f
-    };
+            {
+                    0.0f, 0.0f,
+                    0.0f, 1.0f,
+                    1.0f, 1.0f,
+                    1.0f, 0.0f,
+                    0.0f, 0.0f,
+                    1.0f, 1.0f
+            };
+
+    // Normal vertex data that contains XYZ components
+    private static final float[] NORMAL_DATA =
+            {
+
+            };
 
     /**
      * Create a square with specifically allowed data types. This allows you to limit what data is

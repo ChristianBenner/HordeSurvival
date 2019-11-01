@@ -164,11 +164,17 @@ public class TestScene extends Scene {
 
   //3      renderObject.setMaterial(brickMaterial);
 
-        System.out.println("CUBE LOAD");
-        cubeRenderObj = OBJModelLoader.readObjFile(R.raw.dino2);
-        cubeRenderObj.setScale(0.3f, 0.3f, 0.3f);
+        System.out.println("NORMAL CUBE LOAD");
+
+    //   cubeRenderObj = OBJModelLoader.readObjFile(R.raw.dinotex);
+        Material deckMaterial = new Material(new Texture(R.drawable.deck));
+        deckMaterial.setSpecularMap(new Texture(R.drawable.specularmap));
+
+       cubeRenderObj = new Cube(true, true, false);
+        cubeRenderObj.setMaterial(deckMaterial);
+        cubeRenderObj.setScale(1.0f, 1.5f, 1.0f);
         cubeRenderObj.setPosition(0.0f, 2.0f, 0.0f);
-        cubeRenderObj.setMaterial(coloured);
+        //cubeRenderObj.setMaterial(coloured);
         System.out.println("CUBE LOAD END");
        // cubeRenderObj.setMaterial(mBlue);
 
@@ -291,7 +297,7 @@ public class TestScene extends Scene {
 
         //cubeRenderObj.setRotation(0.0f, 45.0f, 0.0f);
         //cubeRenderObj.setPosition(cubeX, 0.0f, 0.0f);
-        cubeRenderObj.setRotation( 0.0f, angle, 0.0f);
+        cubeRenderObj.setRotation( 25.0f, angle, 0.0f);
 
         square.setRotation(angle, 0.0f, angle);
 
@@ -393,8 +399,10 @@ public class TestScene extends Scene {
 
         // Draw the cube
     //    cubeThree.render(camera);
+        System.out.println("CUBER");
         cubeRenderObj.render(camera);
-        square.render(camera);
+        System.out.println("CUBEE");
+      //  square.render(camera);
      //   texSquare.render(camera2D);
        // squareTest.render(camera2D);
        // imageUI.draw(camera2D);

@@ -43,6 +43,9 @@ public class Material
     // The material texture
     private Texture texture;
 
+    // The specular map texture
+    private Texture specularMap;
+
     // The UV multiplier for the texture
     private Scale2D uvMultiplier;
 
@@ -85,6 +88,7 @@ public class Material
         this.ignoreTexelData = false;
         this.ignoreColourData = false;
         this.ignoreNormalData = false;
+        this.specularMap = null;
     }
 
     /**
@@ -374,6 +378,41 @@ public class Material
     public boolean hasTexture()
     {
         return texture != null;
+    }
+
+    /**
+     * Set the specular map attached to the material
+     *
+     * @param texture   The specular map of the material
+     * @see             Texture
+     * @since           1.0
+     */
+    public void setSpecularMap(Texture texture)
+    {
+        this.specularMap = texture;
+    }
+
+    /**
+     * Get the specular map object attached to the material
+     *
+     * @return  The specular map object attached to the material
+     * @see     Texture
+     * @since   1.0
+     */
+    public Texture getSpecularMap()
+    {
+        return this.specularMap;
+    }
+
+    /**
+     * Check if the material has a specular map attached.
+     *
+     * @return  True if the material has a specular map, else false
+     * @since   1.0
+     */
+    public boolean hasSpecularMap()
+    {
+        return specularMap != null;
     }
 
     /**

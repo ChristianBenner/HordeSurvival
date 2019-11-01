@@ -10,6 +10,7 @@ import com.games.crispin.crispinmobile.Geometry.Scale2D;
 import com.games.crispin.crispinmobile.Geometry.Scale3D;
 import com.games.crispin.crispinmobile.Rendering.Shaders.AttributeColourShader;
 import com.games.crispin.crispinmobile.Rendering.Shaders.NormalShader;
+import com.games.crispin.crispinmobile.Rendering.Shaders.NormalTextureShader;
 import com.games.crispin.crispinmobile.Rendering.Shaders.TextureAttributeColourShader;
 import com.games.crispin.crispinmobile.Rendering.Shaders.TextureShader;
 import com.games.crispin.crispinmobile.Utilities.Logger;
@@ -21,6 +22,7 @@ import java.nio.FloatBuffer;
 
 import static android.opengl.GLES20.GL_LINES;
 import static android.opengl.GLES20.GL_POINTS;
+import static android.opengl.GLES20.GL_TEXTURE1;
 import static android.opengl.GLES20.glUniform2f;
 import static android.opengl.GLES20.glUniform4f;
 import static android.opengl.GLES30.GL_FLOAT;
@@ -990,12 +992,37 @@ public class RenderObject
                     material.getColour().getAlpha());
         }
 
+        System.out.println("TH[" + (shader.getTextureUniformHandle() != INVALID_UNIFORM_HANDLE ? "true" : "false") +
+                "] T[" + (material.hasTexture() ? "true" : "false") +
+            "] SH[" + (shader.getSpecularMapUniformHandle() != INVALID_UNIFORM_HANDLE ? "true" : "false") +
+                "] S[" + (material.hasSpecularMap() ? "true" : "false") +"]");
+
         // If the shader texture uniform handle is not invalid, upload the texture unit
         if(shader.getTextureUniformHandle() != INVALID_UNIFORM_HANDLE && material.hasTexture())
         {
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, material.getTexture().getId());
             glUniform1i(shader.getTextureUniformHandle(), 0);
+
+            // If the shader UV multiplier uniform handle is not invalid, upload the UV multiplier
+            // data
+            if(shader.getUvMultiplierUniformHandle() != INVALID_UNIFORM_HANDLE)
+            {
+                glUniform2f(shader.getUvMultiplierUniformHandle(),
+                        material.getUvMultiplier().x,
+                        material.getUvMultiplier().y);
+            }
+        }
+
+        // If the shader supports a specular map and the material has one, supply it to the
+        // shader.
+        if(shader.getSpecularMapUniformHandle() !=
+                INVALID_UNIFORM_HANDLE && material.hasSpecularMap())
+        {
+            System.out.println("RUNNING");
+            glActiveTexture(GL_TEXTURE1);
+            glBindTexture(GL_TEXTURE_2D, material.getSpecularMap().getId());
+            glUniform1i(shader.getSpecularMapUniformHandle(), 1);
 
             // If the shader UV multiplier uniform handle is not invalid, upload the UV multiplier
             // data
@@ -1126,7 +1153,7 @@ public class RenderObject
 //            }
 //            else
 
-            // Select a shader based on what data attributes and uniforms the object supports
+        // Select a shader based on what data attributes and uniforms the object supports
             if(supportsNormals && supportsTexture && supportsColourPerAttrib)
             {
                 System.out.println("NORMAL, TEXTURE AND COLOUR SHADER");
@@ -1134,6 +1161,7 @@ public class RenderObject
             else if(supportsNormals && supportsTexture)
             {
                 System.out.println("NORMAL AND TEXTURE SHADER");
+                shader = new NormalTextureShader();
             }
             else if(supportsNormals && supportsColourPerAttrib)
             {

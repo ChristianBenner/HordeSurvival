@@ -40,3 +40,7 @@ CrispinMobile/src/main/res/raw/deck5.obj
 CrispinMobile/src/main/res/raw/deck6.obj
 CrispinMobile/src/main/res/raw/deck7.obj
 CrispinMobile/src/main/res/raw/dino2.obj
+app/src/main/res/drawable/deck.jpg
+app/src/main/res/drawable/specularmap.png
+app/src/main/res/drawable/specularmap2.png
+app/src/main/res/raw/dinotex.obj

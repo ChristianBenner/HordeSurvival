@@ -33,6 +33,8 @@ void main()
         diffuseColour * lightColour * lightIntensity * cosTheta / (distance*distance) +
         specularColour * lightColour * lightIntensity * pow(cosAlpha, 5.0) / (distance*distance), 1.0);
 
+  //  gl_FragColor = vec4((specularColour * lightColour * lightIntensity * pow(cosAlpha, 5.0) / (distance*distance), 1.0));
+   // gl_FragColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);
   //  gl_FragColor = vec4(uColour.rgb + ambientColour, uColour.a) * vec4(lightColour * lightIntensity * cosTheta / (distance*distance), 1.0);
 
 /*    vec4 specular = vec4(1.0f, 1.0f, 1.0f, 1.0f);
